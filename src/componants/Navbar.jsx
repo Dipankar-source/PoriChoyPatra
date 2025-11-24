@@ -11,7 +11,7 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 
 // Moon Icon Component
 const MoonIcon = ({ size = 15, className = "" }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState('false')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState("false");
   return (
     <motion.svg
       xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +128,7 @@ const Navbar = () => {
   const handleNavigation = (path) => {
     navigate(path);
     setActiveLink(path);
-    setIsMobileMenuOpen(false)
+    setIsMobileMenuOpen(false);
   };
 
   // Toggle mobile menu
@@ -286,6 +286,25 @@ const Navbar = () => {
       {/* Left Section - Logo with Smooth Fade-Up Reveal */}
       <div className="flex items-center justify-center relative z-20">
         <div className="relative">
+          {/* Logo Image with Fade Out Animation */}
+          <AnimatePresence mode="wait">
+            {!isScrolled && (
+              <motion.img
+                key="logo-image"
+                className="w-8 h-8 object-cover rounded-full lg:hidden"
+                src="./Logo.png"
+                alt=""
+                initial={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.8,
+                  transition: { duration: 0.3, ease: "easeOut" },
+                }}
+              />
+            )}
+          </AnimatePresence>
+
           <AnimatePresence mode="wait">
             {isScrolled && (
               <motion.div
@@ -315,12 +334,11 @@ const Navbar = () => {
                     }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <MagneticWrapper >
+                    <MagneticWrapper>
                       <span className="font-bold dark:text-white">
                         <ShimmeringText className="" text="DipFolio" />
                       </span>
                     </MagneticWrapper>
-                    
                   </motion.div>
                 </motion.div>
 
@@ -486,7 +504,7 @@ const Navbar = () => {
         </motion.button>
 
         {/* Mobile Menu Button */}
-        {isMobileMenuOpen === 'true'}
+        {isMobileMenuOpen === "true"}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -552,42 +570,42 @@ const Navbar = () => {
               }`}
             >
               <div className="">
-                <CardSpotlight className='h-full w-full'>
-                {navItems.map((item, index) => (
-                  <motion.button
-                    key={item.path}
-                    variants={mobileMenuItemVariants}
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                    transition={{ delay: index * 0.1 }}
-                    onClick={() => handleNavigation(item.path)}
-                    className={`w-full text-left px-1 py-3 rounded-md transition-colors duration-200 flex items-center justify-between ${
-                      isActiveLink(item.path)
-                        ? isDark
-                          ? " text-white"
-                          : " text-black"
-                        : isDark
-                        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-black"
-                    }`}
-                  >
-                    <span className="font-medium">{item.name}</span>
-                    {isActiveLink(item.path) && (
-                      <motion.div
-                        className={`w-2 h-2 rounded-full ${
-                          isDark ? "bg-indigo-400" : "bg-indigo-600"
-                        }`}
-                        layoutId="mobileActiveIndicator"
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 30,
-                        }}
-                      />
-                    )}
-                  </motion.button>
-                ))}
+                <CardSpotlight className="h-full w-full">
+                  {navItems.map((item, index) => (
+                    <motion.button
+                      key={item.path}
+                      variants={mobileMenuItemVariants}
+                      initial="closed"
+                      animate="open"
+                      exit="closed"
+                      transition={{ delay: index * 0.1 }}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`w-full text-left px-1 py-3 rounded-md transition-colors duration-200 flex items-center justify-between ${
+                        isActiveLink(item.path)
+                          ? isDark
+                            ? " text-white"
+                            : " text-black"
+                          : isDark
+                          ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                      }`}
+                    >
+                      <span className="font-medium">{item.name}</span>
+                      {isActiveLink(item.path) && (
+                        <motion.div
+                          className={`w-2 h-2 rounded-full ${
+                            isDark ? "bg-indigo-400" : "bg-indigo-600"
+                          }`}
+                          layoutId="mobileActiveIndicator"
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                    </motion.button>
+                  ))}
                 </CardSpotlight>
               </div>
             </motion.div>
