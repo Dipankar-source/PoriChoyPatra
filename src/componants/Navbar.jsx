@@ -128,6 +128,7 @@ const Navbar = () => {
   const handleNavigation = (path) => {
     navigate(path);
     setActiveLink(path);
+    setIsMobileMenuOpen(false)
   };
 
   // Toggle mobile menu
@@ -565,7 +566,7 @@ const Navbar = () => {
                       isActiveLink(item.path)
                         ? isDark
                           ? " text-white"
-                          : " text-white"
+                          : " text-black"
                         : isDark
                         ? "text-gray-300 hover:bg-gray-800 hover:text-white"
                         : "text-gray-600 hover:bg-gray-100 hover:text-black"
