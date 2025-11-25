@@ -85,7 +85,7 @@ const Experience = () => {
       <hr className="border-gray-200 dark:border-gray-800" />
       <br />
       <br />
-      <p className="ml-5 text-2xl font-medium text-gray-900 dark:text-white mb-2 pr-4">
+      <p className="ml-4 text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-2 pr-4">
         Work Experience
       </p>
       <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans ">

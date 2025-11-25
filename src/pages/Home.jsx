@@ -12,6 +12,7 @@ import Navbar from "../componants/Navbar";
 import { useTheme } from "../context/ThemeContext";
 import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
+import GitHubStats from "@/componants/GitHubStats";
 
 const Home = () => {
   const { isDark } = useTheme();
@@ -47,7 +48,11 @@ const Home = () => {
           </section>
 
           <section id="about" className="w-full">
-            <About />
+            <About isDark={isDark} />
+          </section>
+
+          <section id="about" className="w-full">
+            <GitHubStats />
           </section>
 
           <section id="experience" className="w-full">

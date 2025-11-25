@@ -560,9 +560,7 @@ const Navbar = () => {
             whileHover="hover"
             whileTap="tap"
             onClick={toggleTheme}
-            className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${
-              isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-            }`}
+            className={'p-2 rounded-lg cursor-pointer transition-colors duration-300'}
             aria-label="Toggle theme"
           >
             <motion.div
@@ -610,7 +608,9 @@ const Navbar = () => {
           whileHover="hover"
           whileTap="tap"
           onClick={toggleTheme}
-          className={'p-2 rounded-lg cursor-pointer transition-colors duration-300'}
+          className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${
+            isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+          }`}
           aria-label="Toggle theme"
         >
           <motion.div

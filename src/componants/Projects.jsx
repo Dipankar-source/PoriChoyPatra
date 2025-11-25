@@ -100,14 +100,14 @@ const Projects = () => {
                       </motion.a>
 
                       <motion.a
-                      layoutId={`live-button-${active.title}-${id}`}
-                      href={active.liveLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-3 text-sm rounded-full hover:text-'LiveLink' font-bold text-black dark:text-white"
-                    >
-                      <FaRegPaperPlane className="w-4 h-4" />
-                    </motion.a>
+                        layoutId={`live-button-${active.title}-${id}`}
+                        href={active.liveLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-3 text-sm rounded-full hover:text-'LiveLink' font-bold text-black dark:text-white"
+                      >
+                        <FaRegPaperPlane className="w-4 h-4" />
+                      </motion.a>
                     </div>
                   </MagneticWrapper>
                 </div>
@@ -133,7 +133,7 @@ const Projects = () => {
       {/* Projects List */}
       <div className="max-w-4xl mx-auto">
         {/* <hr className="text-blue-100 mt-4" /> */}
-        <h2 className="text-2xl font-medium  my-auto mb-4 text-neutral-800 dark:text-neutral-200 px-4">
+        <h2 className="text-xl lg:text-2xl font-medium  my-auto mb-4 text-neutral-800 dark:text-neutral-200 px-4">
           Projects
         </h2>
         <ul className="grid gap-4 p-4">
