@@ -11,7 +11,6 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 
 // Moon Icon Component
 const MoonIcon = ({ size = 15, className = "" }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState("false");
   return (
     <motion.svg
       xmlns="http://www.w3.org/2000/svg"
@@ -76,6 +75,18 @@ const Navbar = () => {
   const [activeLink, setActiveLink] = useState("/");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  // Image modal functions
+  const openImageModal = () => {
+    setIsImageModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    document.body.style.overflow = "unset";
+  };
 
   // Check if mobile screen
   useEffect(() => {
@@ -126,7 +137,15 @@ const Navbar = () => {
 
   // Handle navigation
   const handleNavigation = (path) => {
-    navigate(path);
+    if (path.startsWith("#")) {
+      // Handle hash navigation
+      const element = document.querySelector(path);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(path);
+    }
     setActiveLink(path);
     setIsMobileMenuOpen(false);
   };
@@ -286,14 +305,15 @@ const Navbar = () => {
       {/* Left Section - Logo with Smooth Fade-Up Reveal */}
       <div className="flex items-center justify-center relative z-20">
         <div className="relative">
-          {/* Logo Image with Fade Out Animation */}
+          {/* Logo Image with Fade Out Animation and Click Handler */}
           <AnimatePresence mode="wait">
             {!isScrolled && (
               <motion.img
                 key="logo-image"
-                className="w-8 h-8 object-cover rounded-full lg:hidden"
+                className="w-8 h-8 object-cover rounded-full lg:hidden cursor-pointer"
                 src="./Logo.png"
-                alt=""
+                alt="DipFolio Logo"
+                onClick={openImageModal}
                 initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{
@@ -301,6 +321,11 @@ const Navbar = () => {
                   scale: 0.8,
                   transition: { duration: 0.3, ease: "easeOut" },
                 }}
+                whileHover={{
+                  scale: 1.1,
+                  transition: { duration: 0.2 },
+                }}
+                whileTap={{ scale: 0.9 }}
               />
             )}
           </AnimatePresence>
@@ -366,6 +391,109 @@ const Navbar = () => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Full Screen Image Modal */}
+        <AnimatePresence>
+          {isImageModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            >
+              {/* Backdrop */}
+              <motion.div
+                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={closeImageModal}
+              />
+
+              {/* Modal Content */}
+              <motion.div
+                className="relative z-10 max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
+                initial={{
+                  opacity: 0,
+                  scale: 0.8,
+                  y: 20,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.8,
+                  y: 20,
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                {/* Close Button */}
+                <motion.button
+                  className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-200 border border-white/20 dark:border-gray-700/50"
+                  onClick={closeImageModal}
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </motion.button>
+
+                {/* Image Container */}
+                <div className="relative">
+                  
+                  <motion.img
+                    className="w-full h-auto max-h-[70vh] object-contain"
+                    src="./Logo.png"
+                    alt="DipFolio Logo"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+                  />
+
+                  {/* Description */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.4 }}
+                  >
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        DipFolio Logo
+                      </h3>
+                      <p className="text-gray-200 text-sm max-w-md mx-auto">
+                        Professional portfolio showcasing creative work and
+                        development projects. Designed with modern aesthetics
+                        and smooth user experience.
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Desktop Navigation */}
@@ -379,11 +507,11 @@ const Navbar = () => {
             className={`relative transition-all cursor-pointer duration-300 text-sm lg:text-base px-3 py-2 rounded-lg ${
               isActiveLink(item.path)
                 ? isDark
-                  ? "text-white "
-                  : "text-black "
+                  ? "text-white"
+                  : "text-black"
                 : isDark
-                ? "text-gray-300 hover:text-white "
-                : "text-gray-600 hover:text-black "
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-black"
             }`}
           >
             {item.name}
@@ -432,7 +560,9 @@ const Navbar = () => {
             whileHover="hover"
             whileTap="tap"
             onClick={toggleTheme}
-            className={`p-2 rounded-lg cursor-pointer transition-colors duration-300`}
+            className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${
+              isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+            }`}
             aria-label="Toggle theme"
           >
             <motion.div
@@ -480,7 +610,9 @@ const Navbar = () => {
           whileHover="hover"
           whileTap="tap"
           onClick={toggleTheme}
-          className={`p-2 rounded-lg cursor-pointer transition-colors duration-300`}
+          className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${
+            isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+          }`}
           aria-label="Toggle theme"
         >
           <motion.div
@@ -504,7 +636,6 @@ const Navbar = () => {
         </motion.button>
 
         {/* Mobile Menu Button */}
-        {isMobileMenuOpen === "true"}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -569,7 +700,7 @@ const Navbar = () => {
                   : "bg-white border border-gray-200"
               }`}
             >
-              <div className="">
+              <div className="p-2">
                 <CardSpotlight className="h-full w-full">
                   {navItems.map((item, index) => (
                     <motion.button
@@ -580,11 +711,11 @@ const Navbar = () => {
                       exit="closed"
                       transition={{ delay: index * 0.1 }}
                       onClick={() => handleNavigation(item.path)}
-                      className={`w-full text-left px-1 py-3 rounded-md transition-colors duration-200 flex items-center justify-between ${
+                      className={`w-full text-left px-3 py-3 rounded-md transition-colors duration-200 flex items-center justify-between ${
                         isActiveLink(item.path)
                           ? isDark
-                            ? " text-white"
-                            : " text-black"
+                            ? "text-white bg-gray-800"
+                            : "text-black bg-gray-100"
                           : isDark
                           ? "text-gray-300 hover:bg-gray-800 hover:text-white"
                           : "text-gray-600 hover:bg-gray-100 hover:text-black"
