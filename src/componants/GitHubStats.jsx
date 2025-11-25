@@ -348,16 +348,16 @@ const GitHubStats = () => {
     }
   };
 
-  // Get contributions for display (last 3-4 months on mobile)
+  // Get contributions for display (last 5 months on mobile)
   const getDisplayContributions = () => {
     if (!contributions.length) return [];
 
     if (isMobile) {
-      // Show last 4 months on mobile
-      const fourMonthsAgo = new Date();
-      fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+      // Show last 5 months on mobile
+      const fiveMonthsAgo = new Date();
+      fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
       return contributions.filter(
-        (contribution) => contribution.date >= fourMonthsAgo
+        (contribution) => contribution.date >= fiveMonthsAgo
       );
     }
 
@@ -414,7 +414,7 @@ const GitHubStats = () => {
     displayContributions.forEach((contribution, index) => {
       const month = contribution.date.getMonth();
       // Only show labels at reasonable intervals based on screen size
-      const labelInterval = isMobile ? 15 : 30;
+      const labelInterval = isMobile ? 12 : 30;
 
       if (month !== currentMonth && index % labelInterval === 0) {
         months.push({
@@ -432,6 +432,12 @@ const GitHubStats = () => {
   const weeks = groupByWeek();
   const monthLabels = getMonthLabels();
 
+  // Calculate last 5 months contributions
+  const lastFiveMonthsContributions = displayContributions.reduce(
+    (sum, day) => sum + day.count,
+    0
+  );
+
   if (error) {
     return (
       <div className="w-full px-4 py-10">
@@ -447,41 +453,41 @@ const GitHubStats = () => {
     );
   }
 
-//   if (loading) {
-//     return (
-//       <div className="w-full px-4 py-10">
-//         <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
-//           GitHub Activities
-//         </p>
-//         <div className="max-w-4xl mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm ">
-//           <div className="animate-pulse">
-//             <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
-//             <div className="flex gap-1 mb-4">
-//               {/* <div className="flex flex-col gap-1 mr-2 pt-6">
-//                 {[...Array(7)].map((_, i) => (
-//                   <div
-//                     key={i}
-//                     className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-6"
-//                   ></div>
-//                 ))}
-//               </div> */}
-//               <div className="flex-1 grid grid-cols-52 gap-1">
-//                 {[...Array(364)].map((_, i) => (
-//                   <div
-//                     key={i}
-//                     className="h-3 bg-gray-300 dark:bg-gray-700 rounded"
-//                   ></div>
-//                 ))}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
+  if (loading) {
+    return (
+      <div className="w-full px-4 py-10">
+        <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
+          GitHub Activities
+        </p>
+        <div className="max-w-4xl mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm ">
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+            <div className="flex gap-1 mb-4">
+              <div className="flex flex-col gap-1 mr-2 pt-6">
+                {[...Array(7)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-6"
+                  ></div>
+                ))}
+              </div>
+              <div className="flex-1 grid grid-cols-52 gap-1">
+                {[...Array(364)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-3 bg-gray-300 dark:bg-gray-700 rounded"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full px-4 py-10 border-1 ">
+    <div className="w-full px-4 py-10">
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
@@ -492,7 +498,7 @@ const GitHubStats = () => {
             <span
               key={i}
               className="flex-1 text-center"
-              style={{ minWidth: isMobile ? "20%" : "8%" }}
+              style={{ minWidth: isMobile ? "25%" : "8%" }}
             >
               {month.month}
             </span>
@@ -507,7 +513,7 @@ const GitHubStats = () => {
           transition={{ duration: 0.5 }}
           className="flex gap-1 mb-4 px-2"
         >
-          {/* Day labels
+          {/* Day labels */}
           {!isMobile && (
             <div className="flex flex-col gap-1 mr-2 pt-6">
               {["", "Mon", "", "Wed", "", "Fri", ""].map((day, i) => (
@@ -519,7 +525,7 @@ const GitHubStats = () => {
                 </span>
               ))}
             </div>
-          )} */}
+          )}
 
           {/* Contribution squares */}
           <div className="flex-1 overflow-x-auto">
@@ -555,15 +561,17 @@ const GitHubStats = () => {
       <div
         className={`flex ${
           isMobile ? "flex-col" : "items-center justify-between"
-        } mt-4 px-5 max-w-4xl gap-3`}
+        } mt-4 px-5 max-w-4xl mx-1 gap-3`}
       >
         <div className="flex flex-col">
           <h2 className="text-sm font-medium text-gray-900 dark:text-white">
             Total: {totalContributions.toLocaleString()} contributions
-            {isMobile &&
-              ` (Last 4 months: ${displayContributions
-                .reduce((sum, day) => sum + day.count, 0)
-                .toLocaleString()})`}
+            {isMobile && (
+              <span className="block text-xs text-gray-600 dark:text-gray-400 mt-1">
+                Last 5 months: {lastFiveMonthsContributions.toLocaleString()}{" "}
+                contributions
+              </span>
+            )}
           </h2>
           <span className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             {yesterdayActivity.minutes > 0 ? (
