@@ -12,8 +12,8 @@ const GitHubStats = () => {
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // GitHub token - use environment variable in production
-  const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
+  // Safe environment variable access with fallback
+  const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
   // GitHub contribution colors
   const colors = {
@@ -348,14 +348,19 @@ const GitHubStats = () => {
     }
   };
 
-  // Get contributions for display (last 5 months on mobile)
+  // Get contributions for display (last 5 months including current on mobile)
   const getDisplayContributions = () => {
     if (!contributions.length) return [];
 
     if (isMobile) {
-      // Show last 5 months on mobile
+      // Show last 5 months including current month
       const fiveMonthsAgo = new Date();
-      fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+      fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 4); // -4 gives us 5 months total (current + 4 previous)
+
+      // Set to first day of that month for clean cutoff
+      fiveMonthsAgo.setDate(1);
+      fiveMonthsAgo.setHours(0, 0, 0, 0);
+
       return contributions.filter(
         (contribution) => contribution.date >= fiveMonthsAgo
       );
@@ -414,7 +419,7 @@ const GitHubStats = () => {
     displayContributions.forEach((contribution, index) => {
       const month = contribution.date.getMonth();
       // Only show labels at reasonable intervals based on screen size
-      const labelInterval = isMobile ? 12 : 30;
+      const labelInterval = isMobile ? 10 : 30;
 
       if (month !== currentMonth && index % labelInterval === 0) {
         months.push({
@@ -498,7 +503,7 @@ const GitHubStats = () => {
             <span
               key={i}
               className="flex-1 text-center"
-              style={{ minWidth: isMobile ? "25%" : "8%" }}
+              style={{ minWidth: isMobile ? "20%" : "8%" }}
             >
               {month.month}
             </span>
