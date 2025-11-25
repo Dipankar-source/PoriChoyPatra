@@ -481,7 +481,7 @@ const GitHubStats = () => {
 //   }
 
   return (
-    <div className="w-full px-4 py-10">
+    <div className="w-full px-4 py-10 border-1 ">
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
@@ -555,7 +555,7 @@ const GitHubStats = () => {
       <div
         className={`flex ${
           isMobile ? "flex-col" : "items-center justify-between"
-        } mt-4 px-5 max-w-4xl mx-1 gap-3`}
+        } mt-4 px-5 max-w-4xl gap-3`}
       >
         <div className="flex flex-col">
           <h2 className="text-sm font-medium text-gray-900 dark:text-white">
