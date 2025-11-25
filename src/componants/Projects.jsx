@@ -31,22 +31,10 @@ const Projects = () => {
   useOutsideClick(ref, () => setActive(null));
 
   return (
-    <div className="py-9 border-1">
-      {/* Added padding to account for fixed navbar */}
-      {/* <AnimatePresence>
-        {active && typeof active === "object" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 h-full w-full z-10"
-          />
-        )}
-      </AnimatePresence> */}
-
+    <div className="py-9 border-1 ">
       <AnimatePresence>
         {active && typeof active === "object" ? (
-          <div className="fixed inset-0 grid place-items-center z-[100]">
+          <div className="fixed inset-0 grid place-items-center z-[100] mt-15">
             <motion.button
               key={`button-${active.title}-${id}`}
               layout
@@ -141,6 +129,7 @@ const Projects = () => {
           </div>
         ) : null}
       </AnimatePresence>
+
       {/* Projects List */}
       <div className="max-w-4xl mx-auto">
         {/* <hr className="text-blue-100 mt-4" /> */}
