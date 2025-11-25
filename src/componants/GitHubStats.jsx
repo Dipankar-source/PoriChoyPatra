@@ -13,7 +13,7 @@ const GitHubStats = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   // GitHub token - use environment variable in production
-  const GITHUB_TOKEN = "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";
+  const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
   // GitHub contribution colors
   const colors = {
