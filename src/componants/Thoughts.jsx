@@ -1,4 +1,5 @@
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
 import { cn } from "@/lib/utils";
 import {
   IconBoxAlignRightFilled,
@@ -135,12 +136,28 @@ const SkeletonThree = () => {
         repeatType: "reverse",
       }}
       className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] rounded-lg bg-dot-black/[0.2] flex-col space-y-2"
-      style={{
-        background:
-          "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
-        backgroundSize: "400% 400%",
-      }}
     >
+      <PixelatedCanvas
+        src="./Logo.png"
+        width={213}
+        height={190}
+        cellSize={3}
+        dotScale={0.9}
+        shape="square"
+        backgroundColor="#000000"
+        dropoutStrength={0.4}
+        interactive
+        distortionStrength={3}
+        distortionRadius={80}
+        distortionMode="swirl"
+        followSpeed={0.2}
+        jitterStrength={4}
+        jitterSpeed={4}
+        sampleAverage
+        tintColor="#FFFFFF"
+        tintStrength={0.2}
+        className="rounded-xl border border-neutral-800 shadow-lg"
+      />
       <motion.div className="h-full w-full rounded-lg"></motion.div>
     </motion.div>
   );

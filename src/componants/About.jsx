@@ -71,9 +71,9 @@ const TechStackIcon = ({ icon: Icon, name, delay = 0, isDark }) => {
       <div className="relative p-2 flex items-center justify-center rounded-full h-12 w-12 md:h-14 md:w-14 border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-none transition-all duration-300 group-hover:shadow-lg group-hover:dark:shadow-gray-800/50 bg-white dark:bg-gray-800">
         {/* Hover tooltip */}
         <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
-          <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium px-2 py-1 rounded-md whitespace-nowrap">
+          <div className="bg-gray-900 dark:bg-white dark:text-black text-white text-xs font-medium px-2 py-1 rounded-md whitespace-nowrap">
             {name}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900 dark:bg-gray-700"></div>
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900 dark:bg-white"></div>
           </div>
         </div>
 

@@ -13,6 +13,7 @@ import { useTheme } from "../context/ThemeContext";
 import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import GitHubStats from "@/componants/GitHubStats";
+import NameHover from "@/componants/NameHover";
 
 const Home = () => {
   const { isDark } = useTheme();
@@ -65,6 +66,10 @@ const Home = () => {
 
           <section id="projects" className="w-full">
             <Projects />
+          </section>
+
+          <section id="projects" className="w-full">
+            <NameHover isDark={isDark} />
           </section>
 
           <section id="certificate" className="w-full">

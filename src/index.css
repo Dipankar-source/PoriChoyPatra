@@ -6,7 +6,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 @theme inline {
   --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
   --color-border: var(--border);
@@ -166,7 +165,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    
+
   }
 }
 ::-webkit-scrollbar{

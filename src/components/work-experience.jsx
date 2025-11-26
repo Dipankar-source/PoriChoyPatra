@@ -86,7 +86,7 @@ export function ExperiencePositionItem({ position }) {
 
   return (
     <Collapsible defaultOpen={position.isExpanded} asChild>
-      <div className="relative last:before:absolute last:before:h-full last:before:w-4 last:before:bg-white dark:last:before:bg-gray-900 ">
+      <div className="relative last:before:absolute last:before:h-full last:before:w-1">
         <CollapsibleTrigger
           className={cn(
             "group/experience not-prose block w-full text-left select-none",
@@ -94,11 +94,13 @@ export function ExperiencePositionItem({ position }) {
           )}
         >
           <div className="relative z-1 mb-1 flex items-center gap-3">
-            <div
-              className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-              aria-hidden
-            >
-              <ExperienceIcon className="size-4" />
+            <div className="flex size-7.5 p-1 border-1 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-400 text-gray-700 dark:text-gray-300">
+              <div
+                className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                aria-hidden
+              >
+                <ExperienceIcon className="size-4" />
+              </div>
             </div>
 
             <h4 className="flex-1 text-base font-medium text-balance text-gray-900 dark:text-white">

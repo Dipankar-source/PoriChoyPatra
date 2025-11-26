@@ -492,11 +492,11 @@ const GitHubStats = () => {
   }
 
   return (
-    <div className="w-full px-4 py-10">
+    <div className="w-full px-4 py-10 border-l-1 border-r-1">
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
-      <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border border-gray-200 rounded-md shadow-sm">
+      <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md">
         {/* Month labels */}
         <div className="flex text-xs text-gray-500 mb-2 px-2">
           {monthLabels.map((month, i) => (

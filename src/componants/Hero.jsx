@@ -186,23 +186,23 @@ const ContactDetails = () => (
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">
-              <div
-                className="relative"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                <MagneticWrapper>
-                  <HoverBorderGradient
-                    containerClassName="rounded-sm"
-                    as="button"
-                    className="dark:bg-black cursor-pointer bg-white text-black dark:text-white flex items-center space-x-2 relative z-10"
-                  >
-                    <span>Hire Me</span>
-                    <IoMdPaperPlane />
-                  </HoverBorderGradient>
-                </MagneticWrapper>
-                {isHovered && <ContactDetails />}
-              </div>
+            <div
+              className="relative"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <MagneticWrapper>
+                <HoverBorderGradient
+                  containerClassName="rounded-sm"
+                  as="button"
+                  className="dark:bg-black cursor-pointer bg-white text-black dark:text-white flex items-center space-x-2 relative z-10"
+                >
+                  <span>Hire Me</span>
+                  <IoMdPaperPlane />
+                </HoverBorderGradient>
+              </MagneticWrapper>
+              {isHovered && <ContactDetails />}
+            </div>
           </div>
         </div>
         <div>
@@ -242,7 +242,7 @@ const ContactDetails = () => (
               <a
                 className="z-50"
                 target="_blank"
-                href="https://github.com/Dipankar-source/"
+                href="https://www.instagram.com/techandbhakti/?next=%2F"
               >
                 <FaInstagram className="w-7 h-7 cursor-pointer z-50" />
               </a>
@@ -256,7 +256,7 @@ const ContactDetails = () => (
               <a
                 className="z-50"
                 target="_blank"
-                href="https://linkedin.com/in/dipankarbarik/"
+                href="https://x.com/_dipankarsource"
               >
                 <FaXTwitter className="w-7 h-7 cursor-pointer z-50" />
               </a>

@@ -93,7 +93,7 @@ const Experience = () => {
       </div>
       <br />
       <br />
-      <hr className="border-gray-200 dark:border-gray-800" />
+      {/* <hr className="border-gray-200 dark:border-gray-800" /> */}
     </div>
   );
 };

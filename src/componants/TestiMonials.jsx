@@ -20,7 +20,6 @@ import {
 const TestiMonials = () => {
   return (
     <div className=" w-full border-1">
-      <hr className="text-blue-100" />
       <div className="mt-13">
         <div className="w-full space-y-4 bg-background [&_.rfm-initial-child-container]:items-stretch! [&_.rfm-marquee]:items-stretch!">
           {[TESTIMONIALS_1, TESTIMONIALS_2].map((list, index) => (

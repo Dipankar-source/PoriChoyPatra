@@ -132,7 +132,6 @@ const Projects = () => {
 
       {/* Projects List */}
       <div className="max-w-4xl mx-auto">
-        {/* <hr className="text-blue-100 mt-4" /> */}
         <h2 className="text-xl lg:text-2xl font-medium  my-auto mb-4 text-neutral-800 dark:text-neutral-200 px-4">
           Projects
         </h2>
