@@ -585,8 +585,8 @@ const GitHubStats = () => {
                 {yesterdayActivity.seconds}s
               </span>
             ) : (
-              <span className="inline-flex items-center">
-                💤 No activity yesterday
+              <span className="inline-flex items-center ">
+                No activity yesterday
               </span>
             )}
           </span>

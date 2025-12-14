@@ -17,8 +17,10 @@ import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import GitHubStats from "@/componants/GitHubStats";
 import NameHover from "@/componants/NameHover";
-import Contact from "@/componants/Contact";
 import { LoaderFive } from "@/components/ui/loader";
+import { FocusBlades } from "@/uicomponents/projects/focus-blades";
+import Elevation from "@/componants/FooterElevation";
+import Footer from "@/componants/Footer";
 
 const Home = () => {
   const { isDark } = useTheme();
@@ -28,7 +30,7 @@ const Home = () => {
         isDark ? "bg-black" : "bg-white"
       }`}
     >
-      <LoaderFive text="Loading Experience..." />
+      <LoaderFive text="Loading..." />
     </div>
   );
 
@@ -78,7 +80,7 @@ const Home = () => {
               </section>
 
               <section id="projects" className="w-full">
-                <Projects />
+                <FocusBlades/>
               </section>
 
               <section id="namehover" className="w-full">
@@ -90,7 +92,11 @@ const Home = () => {
               </section>
 
               <section id="contact" className="w-full">
-                <Contact isDark={isDark} />
+                <Elevation isDark={isDark} />
+              </section>
+
+              <section id="contact" className="w-full">
+                <Footer/>
               </section>
             </div>
           </div>

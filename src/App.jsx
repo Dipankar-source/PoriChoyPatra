@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import { ThemeProvider } from "./context/ThemeContext";
 import Blog from "./pages/Blog";
 import { useEffect } from "react";
+import Contact from "./componants/Contact";
 
 const App = () => {
   // Scroll to top component
@@ -22,6 +23,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </ThemeProvider>
     </div>

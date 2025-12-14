@@ -1,4 +1,3 @@
-// components/Navbar.js
 import { SparklesCore } from "@/components/ui/sparkles";
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
@@ -9,7 +8,6 @@ import { ShimmeringText } from "@/components/shimmering-text";
 import { MagneticWrapper } from "./CustomMouseFollower";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 
-// Moon Icon Component
 const MoonIcon = ({ size = 15, className = "" }) => {
   return (
     <motion.svg
@@ -34,7 +32,6 @@ const MoonIcon = ({ size = 15, className = "" }) => {
   );
 };
 
-// Sun Icon Component
 const SunIcon = ({ size = 15, className = "" }) => {
   return (
     <motion.svg
@@ -77,7 +74,6 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
-  // Image modal functions
   const openImageModal = () => {
     setIsImageModalOpen(true);
     document.body.style.overflow = "hidden";
@@ -88,7 +84,6 @@ const Navbar = () => {
     document.body.style.overflow = "unset";
   };
 
-  // Check if mobile screen
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -99,12 +94,10 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Update active link based on current route
   useEffect(() => {
     setActiveLink(location.pathname);
   }, [location.pathname]);
 
-  // Scroll detection with throttle for performance
   useEffect(() => {
     let ticking = false;
 
@@ -123,22 +116,26 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Navigation items configuration
   const navItems = [
     { name: "Portfolio", path: "/" },
-    { name: "Blog", path: "#blog" },
+    { name: "Blog", path: "/blog" },
     { name: "Projects", path: "#projects" },
   ];
 
-  // Handle navigation
   const handleNavigation = (path) => {
     if (path.startsWith("#")) {
-      // Handle hash navigation
+      if (path === "#projects") {
+        const currentPath = location.pathname;
+        if (currentPath === "/" || currentPath === "/blog") {
+          navigate(`${currentPath}${path}`);
+        } else {
+          navigate(`/${path}`);
+        }
+      }
       const element = document.querySelector(path);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
@@ -150,12 +147,10 @@ const Navbar = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // Toggle mobile menu
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Smooth fade-up animation variants
   const fadeUpVariants = {
     hidden: {
       opacity: 0,
@@ -182,7 +177,6 @@ const Navbar = () => {
     },
   };
 
-  // Staggered children animation for logo and sparkles
   const containerVariants = {
     hidden: {
       opacity: 0,
@@ -203,7 +197,6 @@ const Navbar = () => {
     },
   };
 
-  // Nav item animation
   const navItemVariants = {
     hover: {
       y: -2,
@@ -216,7 +209,6 @@ const Navbar = () => {
     },
   };
 
-  // GitHub button variants
   const githubButtonVariants = {
     hover: {
       scale: 1.05,
@@ -232,7 +224,6 @@ const Navbar = () => {
     },
   };
 
-  // Theme toggle variants
   const themeToggleVariants = {
     hover: {
       scale: 1.1,
@@ -248,7 +239,6 @@ const Navbar = () => {
     },
   };
 
-  // Mobile menu variants
   const mobileMenuVariants = {
     closed: {
       opacity: 0,
@@ -268,7 +258,6 @@ const Navbar = () => {
     },
   };
 
-  // Mobile menu item variants
   const mobileMenuItemVariants = {
     closed: {
       opacity: 0,
@@ -280,10 +269,15 @@ const Navbar = () => {
     },
   };
 
-  // Check if link is active
   const isActiveLink = (path) => {
     if (path === "/") {
       return activeLink === "/";
+    }
+    if (path === "/blog") {
+      return activeLink === "/blog";
+    }
+    if (path === "#projects") {
+      return location.hash === "#projects";
     }
     return activeLink.startsWith(path);
   };
@@ -298,14 +292,12 @@ const Navbar = () => {
         damping: 20,
         duration: 0.6,
       }}
-      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 border-b transition-colors duration-300 z-70 sticky top-0 ${
+      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 border-b transition-colors duration-300 z-70 sticky top-0 border-l-1 border-r-1 ${
         isDark ? "bg-black border-gray-800" : "bg-white border-gray-200"
       } relative overflow-hidden`}
     >
-      {/* Left Section - Logo with Smooth Fade-Up Reveal */}
       <div className="flex items-center justify-center relative z-20">
         <div className="relative">
-          {/* Logo Image with Fade Out Animation and Click Handler */}
           <AnimatePresence mode="wait">
             {!isScrolled && (
               <motion.img
@@ -340,7 +332,6 @@ const Navbar = () => {
                 animate="visible"
                 exit="exit"
               >
-                {/* Logo Text with Smooth Fade-Up */}
                 <motion.div variants={fadeUpVariants} className="relative">
                   <motion.div
                     onClick={() => {
@@ -367,7 +358,6 @@ const Navbar = () => {
                   </motion.div>
                 </motion.div>
 
-                {/* SparklesCore with Delayed Fade-Up */}
                 <motion.div
                   variants={fadeUpVariants}
                   className="w-40 h-14 relative -mt-12 -ml-10"
@@ -380,7 +370,6 @@ const Navbar = () => {
                     className="w-full h-full"
                     particleColor={isDark ? "#FFFFFF" : "#000000"}
                   />
-                  {/* Radial Gradient */}
                   <div
                     className={`absolute inset-0 w-full h-full ${
                       isDark ? "bg-black" : "bg-white"
@@ -392,7 +381,6 @@ const Navbar = () => {
           </AnimatePresence>
         </div>
 
-        {/* Full Screen Image Modal */}
         <AnimatePresence>
           {isImageModalOpen && (
             <motion.div
@@ -402,7 +390,6 @@ const Navbar = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
-              {/* Backdrop */}
               <motion.div
                 className="absolute inset-0 bg-black/80 backdrop-blur-md"
                 initial={{ opacity: 0 }}
@@ -411,7 +398,6 @@ const Navbar = () => {
                 onClick={closeImageModal}
               />
 
-              {/* Modal Content */}
               <motion.div
                 className="relative z-10 max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
                 initial={{
@@ -434,7 +420,6 @@ const Navbar = () => {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                {/* Close Button */}
                 <motion.button
                   className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-200 border border-white/20 dark:border-gray-700/50"
                   onClick={closeImageModal}
@@ -459,9 +444,7 @@ const Navbar = () => {
                   </svg>
                 </motion.button>
 
-                {/* Image Container */}
                 <div className="relative">
-                  
                   <motion.img
                     className="w-full h-auto max-h-[70vh] object-contain"
                     src="./Logo.png"
@@ -471,7 +454,6 @@ const Navbar = () => {
                     transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
                   />
 
-                  {/* Description */}
                   <motion.div
                     className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6"
                     initial={{ opacity: 0, y: 20 }}
@@ -496,7 +478,6 @@ const Navbar = () => {
         </AnimatePresence>
       </div>
 
-      {/* Desktop Navigation */}
       <div className="hidden md:flex items-center space-x-4 lg:space-x-6 relative z-50">
         {navItems.map((item) => (
           <motion.button
@@ -531,7 +512,6 @@ const Navbar = () => {
           </motion.button>
         ))}
 
-        {/* GitHub Button */}
         <motion.button
           variants={githubButtonVariants}
           whileHover="hover"
@@ -553,14 +533,15 @@ const Navbar = () => {
           </MagneticWrapper>
         </motion.button>
 
-        {/* Theme Toggle Button */}
         <MagneticWrapper>
           <motion.button
             variants={themeToggleVariants}
             whileHover="hover"
             whileTap="tap"
             onClick={toggleTheme}
-            className={'p-2 rounded-lg cursor-pointer transition-colors duration-300'}
+            className={
+              "p-2 rounded-lg cursor-pointer transition-colors duration-300"
+            }
             aria-label="Toggle theme"
           >
             <motion.div
@@ -585,9 +566,7 @@ const Navbar = () => {
         </MagneticWrapper>
       </div>
 
-      {/* Mobile Navigation */}
       <div className="flex md:hidden items-center space-x-2 relative z-50">
-        {/* GitHub Button - Mobile */}
         <motion.button
           variants={githubButtonVariants}
           whileHover="hover"
@@ -602,7 +581,6 @@ const Navbar = () => {
           </div>
         </motion.button>
 
-        {/* Theme Toggle Button - Mobile */}
         <motion.button
           variants={themeToggleVariants}
           whileHover="hover"
@@ -633,7 +611,6 @@ const Navbar = () => {
           </motion.div>
         </motion.button>
 
-        {/* Mobile Menu Button */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -673,11 +650,9 @@ const Navbar = () => {
         </motion.button>
       </div>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -686,7 +661,6 @@ const Navbar = () => {
               className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
             />
 
-            {/* Menu Content */}
             <motion.div
               variants={mobileMenuVariants}
               initial="closed"
@@ -742,7 +716,6 @@ const Navbar = () => {
         )}
       </AnimatePresence>
 
-      {/* Background Gradients */}
       <div className="absolute inset-1 z-10">
         <motion.div
           initial={{ scaleX: 0 }}

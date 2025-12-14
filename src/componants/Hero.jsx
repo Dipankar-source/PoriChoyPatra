@@ -18,9 +18,11 @@ import { IoLocationSharp } from "react-icons/io5";
 import { ShimmeringText } from "@/components/shimmering-text";
 import { MagneticWrapper } from "./CustomMouseFollower";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const naviagte = useNavigate()
 
   const words = `Crafting digital experiences with MERN stack
 Design-focused developer with an eye for detail
@@ -195,6 +197,7 @@ const ContactDetails = () => (
                 <HoverBorderGradient
                   containerClassName="rounded-sm"
                   as="button"
+                  onClick={() => naviagte("/contact")}
                   className="dark:bg-black cursor-pointer bg-white text-black dark:text-white flex items-center space-x-2 relative z-10"
                 >
                   <span>Hire Me</span>

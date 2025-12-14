@@ -6,7 +6,7 @@ const Experience = () => {
       id: "3",
       companyName: "Samsung Innovation Campus",
       companyLogo: "https://assets.chanhdai.com/images/companies/quaric.svg",
-      isCurrentEmployer: true,
+      isCurrentEmployer: false,
       positions: [
         {
           id: "3-1",
