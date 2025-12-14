@@ -9,6 +9,7 @@ import {
   Linkedin,
   ArrowUpRight,
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext"; // Import your theme context
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -19,6 +20,7 @@ function cn(...inputs) {
 const FooterSystem = () => {
   const [time, setTime] = useState("");
   const [copied, setCopied] = useState(false);
+  const { isDark } = useTheme(); // Use your theme context
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,78 +41,139 @@ const FooterSystem = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const footerClasses = cn(
+    "w-full border-t mt-auto",
+    "transition-colors duration-300",
+    isDark ? "bg-[#09090b] border-white/10" : "bg-white border-black/10"
+  );
+
+  const textClasses = cn(
+    "text-xs font-sans transition-colors duration-300",
+    isDark ? "text-zinc-500" : "text-zinc-600"
+  );
+
+  const separatorClasses = cn(
+    "h-4 w-[1px] transition-colors duration-300",
+    isDark ? "bg-white/10" : "bg-black/10"
+  );
+
+  const hoverTextClasses = cn(
+    "transition-colors duration-200",
+    isDark ? "hover:text-white" : "hover:text-black"
+  );
+
+  const statusDotClasses = cn(
+    "relative flex h-2 w-2",
+    isDark ? "bg-emerald-500" : "bg-emerald-600"
+  );
+
+  const statusPingClasses = cn(
+    "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+    isDark ? "bg-emerald-400" : "bg-emerald-500"
+  );
+
+  const copyButtonClasses = cn(
+    "flex items-center gap-2 transition-colors duration-200 group relative",
+    isDark ? "hover:text-white text-zinc-500" : "hover:text-black text-zinc-600"
+  );
+
   return (
-    <footer className="w-full bg-[#09090b] border-t border-white/10 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between text-xs font-sans text-zinc-500">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 group cursor-help">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="group-hover:text-zinc-300 transition-colors">
-              SYSTEM_ONLINE
-            </span>
-          </div>
+    <footer className={footerClasses}>
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className={textClasses}>
+          <div className="flex items-center gap-6">
+            <div
+              className={cn(
+                "flex items-center gap-2 group cursor-help",
+                hoverTextClasses
+              )}
+            >
+              <span className={statusDotClasses}>
+                <span className={statusPingClasses}></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-inherit "></span>
+              </span>
+              <span className="transition-colors">SYSTEM_ONLINE</span>
+            </div>
 
-          <div className="h-4 w-[1px] bg-white/10 hidden sm:block" />
+            <div className={cn(separatorClasses, "hidden sm:block")} />
 
-          <div className="hidden sm:block hover:text-zinc-300 transition-colors">
-            LOC_TIME: {time}
+            <div
+              className={cn(
+                "hidden sm:block transition-colors",
+                hoverTextClasses
+              )}
+            >
+              LOC_TIME: {time}
+            </div>
           </div>
         </div>
 
-        <div className="hidden md:block opacity-50">DIPANKAR_BARIK © 2024</div>
+        <div className={cn("hidden md:block opacity-70", textClasses)}>
+          DIPANKAR_BARIK © 2024
+        </div>
 
-        <div className="flex items-center gap-6">
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-2 hover:text-white transition-colors group relative"
-          >
-            <AnimatePresence mode="wait">
-              {copied ? (
-                <motion.span
-                  key="copied"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="text-emerald-500 font-bold"
-                >
-                  COPIED!
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="email"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="flex items-center gap-2"
-                >
-                  <Copy className="w-3 h-3 group-hover:scale-110 transition-transform" />
-                  <span className="hidden sm:inline">COPY_MAIL</span>
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </button>
+        <div className={textClasses}>
+          <div className="flex items-center gap-6">
+            <button onClick={handleCopy} className={copyButtonClasses}>
+              <AnimatePresence mode="wait">
+                {copied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className={cn(
+                      "font-bold",
+                      isDark ? "text-emerald-400" : "text-emerald-600"
+                    )}
+                  >
+                    COPIED!
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="email"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy
+                      className={cn(
+                        "w-3 h-3 transition-transform duration-200",
+                        "group-hover:scale-110",
+                        isDark
+                          ? "text-zinc-500 group-hover:text-white"
+                          : "text-zinc-600 group-hover:text-black"
+                      )}
+                    />
+                    <span className="hidden sm:inline">COPY_MAIL</span>
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
 
-          <div className="h-4 w-[1px] bg-white/10" />
+            <div className={separatorClasses} />
 
-          <div className="flex items-center gap-4">
-            <SocialLink
-              href="https://github.com/Dipankar-source"
-              icon={Github}
-              label="GH"
-            />
-            <SocialLink
-              href="https://linkedin.com/in/dipankarbarik"
-              icon={Linkedin}
-              label="LI"
-            />
-            <SocialLink
-              href="https://x.com/_dipankarsource"
-              icon={Twitter}
-              label="TW"
-            />
+            <div className="flex items-center gap-4">
+              <SocialLink
+                href="https://github.com/Dipankar-source"
+                icon={Github}
+                label="GH"
+                isDark={isDark}
+              />
+              <SocialLink
+                href="https://linkedin.com/in/dipankarbarik"
+                icon={Linkedin}
+                label="LI"
+                isDark={isDark}
+              />
+              <SocialLink
+                href="https://x.com/_dipankarsource"
+                icon={Twitter}
+                label="TW"
+                isDark={isDark}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -118,18 +181,37 @@ const FooterSystem = () => {
   );
 };
 
-const SocialLink = ({ href, icon: Icon, label }) => {
+const SocialLink = ({ href, icon: Icon, label, isDark }) => {
+  const linkClasses = cn(
+    "group flex items-center gap-1 transition-colors duration-200",
+    isDark ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
+  );
+
+  const iconClasses = cn(
+    "w-3.5 h-3.5 transition-colors duration-200",
+    isDark
+      ? "text-zinc-500 group-hover:text-white"
+      : "text-zinc-600 group-hover:text-black"
+  );
+
+  const labelClasses = cn(
+    "w-0 overflow-hidden transition-all duration-300 ease-out",
+    "group-hover:w-auto group-hover:ml-1",
+    isDark
+      ? "opacity-0 group-hover:opacity-100 text-zinc-300"
+      : "opacity-0 group-hover:opacity-100 text-zinc-700"
+  );
+
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-1 hover:text-white transition-colors"
+      className={linkClasses}
+      aria-label={label}
     >
-      <Icon className="w-3.5 h-3.5" />
-      <span className="w-0 overflow-hidden group-hover:w-auto group-hover:ml-1 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100">
-        {label}
-      </span>
+      <Icon className={iconClasses} />
+      <span className={labelClasses}>{label}</span>
     </a>
   );
 };

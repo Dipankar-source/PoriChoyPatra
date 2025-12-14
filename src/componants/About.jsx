@@ -690,51 +690,26 @@ const About = ({ isDark }) => {
   return (
     <div className="w-full min-h-screen py-12 border-b-1 border-l-1 border-r-1 mt-28">
       <hr className="text-blue-100 mb-4" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 mt-8">
         <div className="grid grid-cols-1 gap-8">
           <GridItem
             area=""
             icon={<Box className="h-6 w-6 text-black dark:text-neutral-400" />}
             title="About Me"
-            description="Full Stack Developer passionate about creating digital experiences that make a difference."
+            description="Full-Stack Developer focused on building reliable and scalable web applications."
           >
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p>
-                I'm a MERN stack developer with a keen eye for design and a
-                passion for building scalable, efficient web applications. With
-                expertise in modern technologies and frameworks, I bring ideas
-                to life through clean code and intuitive user experiences.
+                I am a full-stack developer with hands-on experience working on
+                production-ready web applications. I enjoy building clean,
+                efficient, and user-focused solutions.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <h4 className="font-semibold text-black dark:text-white mb-2">
-                    Skills
-                  </h4>
-                  <ul className="text-sm space-y-1">
-                    <li>• React.js & Next.js</li>
-                    <li>• Node.js & Express</li>
-                    <li>• MongoDB & PostgreSQL</li>
-                    <li>• Tailwind CSS & Styled Components</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-black dark:text-white mb-2">
-                    Experience
-                  </h4>
-                  <ul className="text-sm space-y-1">
-                    <li>• 3+ Years in Web Development</li>
-                    <li>• 50+ Projects Completed</li>
-                    <li>• Client-focused Solutions</li>
-                    <li>• Agile Methodology</li>
-                  </ul>
-                </div>
-              </div>
-
-              <p className="pt-4">
-                When I'm not coding, you can find me exploring new technologies,
-                contributing to open-source projects, or sharing knowledge with
-                the developer community.
+              <p>
+                Through industry internships, I have collaborated with teams to
+                improve application usability, performance, and overall
+                stability. I value clean code, problem-solving, and continuous
+                learning.
               </p>
             </div>
           </GridItem>

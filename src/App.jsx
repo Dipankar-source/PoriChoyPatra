@@ -4,6 +4,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import Blog from "./pages/Blog";
 import { useEffect } from "react";
 import Contact from "./componants/Contact";
+import EachBlogById from "./pages/EachBlogById";
 
 const App = () => {
   // Scroll to top component
@@ -21,9 +22,10 @@ const App = () => {
       <ScrollToTop />
       <ThemeProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/blog" element={<Blog/>} />
+          <Route path="/contact" element={<Contact/>} />
+          <Route path="/blog/:id" element={<EachBlogById />}/>
         </Routes>
       </ThemeProvider>
     </div>

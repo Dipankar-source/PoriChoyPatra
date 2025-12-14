@@ -1,21 +1,23 @@
 "use client";
+import assets from "@/assets/assets";
+import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 import { useTheme } from "@/context/ThemeContext";
 import { PremiumSearch } from "@/uicomponents/searchs/premium-search";
 import { ArrowUpRight, Clock } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BLOG_POSTS = [
   {
     id: 1,
-    title: "Digital Identity",
-    excerpt: "From physical cards to decentralized proofs.",
-    date: "Dec 12",
+    title: "A Premium Navbar Design",
+    excerpt: "Navbar design to serve a great user experience.",
+    date: "Dec 07",
     readTime: "5m",
     category: "Design",
-    image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+    image: assets.NavbarComponent,
   },
   {
     id: 2,
@@ -49,23 +51,23 @@ const BLOG_POSTS = [
   },
   {
     id: 5,
-    title: "Scalable APIs",
-    excerpt: "Designing endpoints for millions of requests.",
-    date: "Dec 05",
-    readTime: "12m",
-    category: "Backend",
+    title: "AI in Web Development",
+    excerpt: "How AI tools are changing frontend development.",
+    date: "Dec 03",
+    readTime: "7m",
+    category: "AI",
     image:
-      "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2574&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2574&auto=format&fit=crop",
   },
   {
     id: 6,
-    title: "Scalable APIs",
-    excerpt: "Designing endpoints for millions of requests.",
-    date: "Dec 05",
-    readTime: "12m",
-    category: "Backend",
+    title: "Modern CSS Techniques",
+    excerpt: "Exploring grid, flexbox, and container queries.",
+    date: "Dec 01",
+    readTime: "10m",
+    category: "Frontend",
     image:
-      "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2574&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
   },
 ];
 
@@ -73,6 +75,8 @@ const Blog = () => {
   const { isDark } = useTheme();
   const [isClient, setIsClient] = useState(false);
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     setIsClient(true);
@@ -86,6 +90,10 @@ const Blog = () => {
   const separatorBg = isDark ? "bg-[#0a0a0a]" : "bg-zinc-50/50";
   const cardTitleColor = isDark ? "text-zinc-100" : "text-zinc-900";
   const cardExcerptColor = isDark ? "text-zinc-400" : "text-zinc-600";
+
+  const handleBlogClick = (blogId) => {
+    navigate(`/blog/${blogId}`);
+  };
 
   if (!isClient) {
     return (
@@ -129,6 +137,8 @@ const Blog = () => {
     <div
       className={`min-h-screen transition-all duration-300 ease-in-out overflow-x-hidden ${bgMain} ${textColor} font-sans`}
     >
+      <CustomMouseFollower className="hidden lg:block" />
+
       <div className={`lg:mx-92 ${bgMain}`}>
         <div className="fixed top-0 left-0 right-0 z-50 lg:ml-92 lg:mr-92">
           <Navbar />
@@ -179,6 +189,7 @@ const Blog = () => {
                         cardTitleColor={cardTitleColor}
                         cardExcerptColor={cardExcerptColor}
                         isDark={isDark}
+                        onClick={() => handleBlogClick(pair[0].id)}
                       />
                     </div>
                   </div>
@@ -205,6 +216,7 @@ const Blog = () => {
                           cardTitleColor={cardTitleColor}
                           cardExcerptColor={cardExcerptColor}
                           isDark={isDark}
+                          onClick={() => handleBlogClick(pair[1].id)}
                         />
                       </div>
                     </div>
@@ -232,13 +244,29 @@ const Blog = () => {
   );
 };
 
-const BlogCard = ({ post, isDark, cardTitleColor, cardExcerptColor }) => {
+const BlogCard = ({
+  post,
+  isDark,
+  cardTitleColor,
+  cardExcerptColor,
+  onClick,
+}) => {
   const categoryColor = isDark ? "text-emerald-400" : "text-emerald-600";
   const borderTopColor = isDark ? "border-gray-700/30" : "border-zinc-300";
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <article className="group cursor-pointer flex flex-col h-full border-1 p-7 rounded-md">
-      <div className="w-full aspect-[1.618/1] overflow-hidden border border-white/10 mb-6 relative bg-zinc-900 rounded-xl">
+    <article
+      onClick={handleClick}
+      className="group cursor-pointer flex flex-col h-full border-1 p-7 rounded-md hover:border-emerald-500/30 transition-all duration-300"
+    >
+      <div className="w-full aspect-[1.618/1] overflow-hidden border border-white/10 mb-6 relative bg-zinc-900 rounded-xl group-hover:shadow-lg group-hover:shadow-emerald-500/10 transition-all duration-300">
         <img
           src={post.image}
           alt={post.title}
@@ -276,7 +304,7 @@ const BlogCard = ({ post, isDark, cardTitleColor, cardExcerptColor }) => {
         >
           <Clock className="w-4 h-4" />
           <span>{post.readTime} READ</span>
-          <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+          <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
         </div>
       </div>
     </article>
