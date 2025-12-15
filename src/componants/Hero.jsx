@@ -101,7 +101,7 @@ const ContactDetails = () => (
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-gray-900 dark:text-white text-sm text-left">
-                  +91 9733132498
+                  +91 9733132___
                 </p>
               </div>
             </motion.div>
