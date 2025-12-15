@@ -11,6 +11,7 @@ import {
   BriefcaseBusiness,
   FolderRoot,
   Phone,
+  FileUser,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -52,6 +53,14 @@ const STATIC_SEARCH_ITEMS = [
     path: "#projects",
     category: "Sections",
     desc: "View my projects",
+  },
+  {
+    id: 105,
+    title: "Resume/CV",
+    icon: FileUser,
+    path: "/CV.pdf",
+    category: "Sections",
+    desc: "View my CV",
   },
 ];
 
@@ -147,6 +156,14 @@ export function PremiumSearch({ blogPosts = [] }) {
 
   const handleSelectItem = (item) => {
     setIsOpen(false);
+
+    // Special handling for PDF files
+    if (item.path.endsWith(".pdf")) {
+      // Direct window location change for PDF files
+      window.location.href = item.path;
+      return;
+    }
+
     if (item.path.startsWith("http")) {
       window.open(item.path, "_blank", "noopener,noreferrer");
     } else if (item.path.startsWith("#")) {

@@ -57,15 +57,13 @@ const Blog = () => {
   const [isClient, setIsClient] = useState(false);
   const navigate = useNavigate();
 
-  // --- STATE FOR SEARCH & SORT ---
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("newest"); // options: newest, oldest, a-z, z-a, time-asc, time-desc
+  const [sortOption, setSortOption] = useState("newest"); 
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // --- DERIVED STATE (Filter & Sort Logic) ---
   const filteredAndSortedPosts = useMemo(() => {
     let result = [...BLOG_POSTS];
 
