@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy,
@@ -8,8 +8,10 @@ import {
   Twitter,
   Linkedin,
   ArrowUpRight,
+  Download,
+  ArrowDown, // Added ArrowDown
 } from "lucide-react";
-import { useTheme } from "@/context/ThemeContext"; // Import your theme context
+import { useTheme } from "@/context/ThemeContext";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -20,8 +22,11 @@ function cn(...inputs) {
 const FooterSystem = () => {
   const [time, setTime] = useState("");
   const [copied, setCopied] = useState(false);
-  const { isDark } = useTheme(); // Use your theme context
+  const [showArrow, setShowArrow] = useState(false); // State for arrow visibility
+  const footerRef = useRef(null); // Ref for the footer
+  const { isDark } = useTheme();
 
+  // 1. Time Update Effect
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(
@@ -35,6 +40,32 @@ const FooterSystem = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // 2. Intersection Observer to trigger the arrow
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowArrow(true);
+          // Hide arrow after 3 seconds
+          const timeout = setTimeout(() => {
+            setShowArrow(false);
+          }, 7000);
+
+          // Disconnect observer so it only runs once per page load
+          observer.disconnect();
+          return () => clearTimeout(timeout);
+        }
+      },
+      { threshold: 0.5 } // Trigger when 50% of the footer is visible
+    );
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleCopy = () => {
     navigator.clipboard.writeText("dipankarbarik2002@gmail.com");
     setCopied(true);
@@ -42,7 +73,7 @@ const FooterSystem = () => {
   };
 
   const footerClasses = cn(
-    "w-full border-t mt-auto",
+    "w-full border-t mt-auto relative", // Added relative
     "transition-colors duration-300",
     isDark ? "bg-[#09090b] border-white/10" : "bg-white border-black/10"
   );
@@ -78,8 +109,9 @@ const FooterSystem = () => {
   );
 
   return (
-    <footer className={footerClasses}>
+    <footer ref={footerRef} className={footerClasses}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Left Side: System Status & Time */}
         <div className={textClasses}>
           <div className="flex items-center gap-6">
             <div
@@ -108,12 +140,15 @@ const FooterSystem = () => {
           </div>
         </div>
 
+        {/* Center: Copyright */}
         <div className={cn("hidden md:block opacity-70", textClasses)}>
           DIPANKAR_BARIK © 2024
         </div>
 
+        {/* Right Side: Copy Email & Socials */}
         <div className={textClasses}>
           <div className="flex items-center gap-6">
+            {/* Copy Email Button */}
             <button onClick={handleCopy} className={copyButtonClasses}>
               <AnimatePresence mode="wait">
                 {copied ? (
@@ -154,6 +189,7 @@ const FooterSystem = () => {
 
             <div className={separatorClasses} />
 
+            {/* Social Links */}
             <div className="flex items-center gap-4">
               <SocialLink
                 href="https://github.com/Dipankar-source"
@@ -173,6 +209,35 @@ const FooterSystem = () => {
                 label="TW"
                 isDark={isDark}
               />
+
+              {/* CV Download Button with Arrow Animation */}
+              <div className="relative">
+                <AnimatePresence>
+                  {showArrow && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.5 }}
+                      className={cn(
+                        "absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none",
+                        isDark ? "text-white" : "text-black"
+                      )}
+                    >
+                      <span className="text-[10px] font-mono mb-1 whitespace-nowrap opacity-80">
+                        Get CV
+                      </span>
+                      <ArrowDown className="w-4 h-4 animate-bounce text-emerald-500" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <SocialLink
+                  href="/CV.pdf"
+                  icon={Download}
+                  label="CV"
+                  isDark={isDark}
+                />
+              </div>
             </div>
           </div>
         </div>

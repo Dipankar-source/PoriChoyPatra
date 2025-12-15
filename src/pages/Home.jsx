@@ -7,7 +7,6 @@ const Hero = lazy(() => import("../componants/Hero"));
 const About = lazy(() => import("../componants/About"));
 const Experience = lazy(() => import("../componants/Experience"));
 const TestiMonials = lazy(() => import("../componants/TestiMonials"));
-const Projects = lazy(() => import("../componants/Projects"));
 const Thoughts = lazy(() => import("../componants/Thoughts"));
 
 // Eager imports (Load immediately)

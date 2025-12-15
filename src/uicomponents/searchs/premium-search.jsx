@@ -5,14 +5,12 @@ import {
   Search,
   ArrowRight,
   FileText,
-  Settings,
-  User,
-  CreditCard,
   Loader2,
   X,
   BookType,
   BriefcaseBusiness,
   FolderRoot,
+  Phone,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -42,7 +40,7 @@ const STATIC_SEARCH_ITEMS = [
   {
     id: 103,
     title: "Contact",
-    icon: BookType,
+    icon: Phone,
     path: "/contact",
     category: "Pages",
     desc: "Need a help?",
@@ -76,7 +74,7 @@ export function PremiumSearch({ blogPosts = [] }) {
       title: post.title,
       icon: FileText,
       path: `/blog/${post.id}`,
-      category: "Articles",
+      category: "Blogs",
       desc: post.excerpt,
     })),
   ];

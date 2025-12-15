@@ -78,67 +78,45 @@ const Navbar = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
 
-  const BLOG_POSTS = [
-    {
-      id: 1,
-      title: "A Premium Navbar Design",
-      excerpt: "Navbar design to serve a great user experience.",
-      date: "Dec 07",
-      readTime: "5m",
-      category: "Design",
-      image: assets.NavbarComponent,
-    },
-    {
-      id: 2,
-      title: "React Performance",
-      excerpt: "Deep dive into server components & memoization.",
-      date: "Dec 10",
-      readTime: "8m",
-      category: "Eng",
-      image:
-        "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2670&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Dark Mode UX",
-      excerpt: "Why users prefer dark interfaces.",
-      date: "Dec 08",
-      readTime: "6m",
-      category: "UX",
-      image:
-        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop",
-    },
-    {
-      id: 4,
-      title: "Scalable APIs",
-      excerpt: "Designing endpoints for millions of requests.",
-      date: "Dec 05",
-      readTime: "12m",
-      category: "Backend",
-      image:
-        "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2574&auto=format&fit=crop",
-    },
-    {
-      id: 5,
-      title: "AI in Web Development",
-      excerpt: "How AI tools are changing frontend development.",
-      date: "Dec 03",
-      readTime: "7m",
-      category: "AI",
-      image:
-        "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2574&auto=format&fit=crop",
-    },
-    {
-      id: 6,
-      title: "Modern CSS Techniques",
-      excerpt: "Exploring grid, flexbox, and container queries.",
-      date: "Dec 01",
-      readTime: "10m",
-      category: "Frontend",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
-    },
-  ];
+const BLOG_POSTS = [
+  {
+    id: 1,
+    title: "A Premium Navbar Design",
+    excerpt: "Navbar design to serve a great user experience.",
+    date: "Dec 07",
+    readTime: "5m",
+    category: "Design",
+    image: assets.NavbarComponent,
+  },
+  {
+    id: 2,
+    title: "IOS Bento",
+    excerpt: "Experience of IOS in your boredom.",
+    date: "Dec 10",
+    readTime: "8m",
+    category: "Design",
+    image: assets.IOSBento,
+  },
+  {
+    id: 3,
+    title: "Chronos 3D Card",
+    excerpt: "A 3D card that hits different as a ui component.",
+    date: "Dec 08",
+    readTime: "6m",
+    category: "UX",
+    image: assets.ChronosCard,
+  },
+  {
+    id: 4,
+    title: "IOS Premium Accordion",
+    excerpt:
+      "A premium vibe for the persons for those IOS means a lot and great Experience.",
+    date: "Dec 05",
+    readTime: "12m",
+    category: "Frontend",
+    image: assets.IOSAccordion,
+  },
+];
 
   const openImageModal = () => {
     setIsImageModalOpen(true);
@@ -369,7 +347,7 @@ const Navbar = () => {
               <motion.img
                 key="logo-image"
                 className="w-8 h-8 object-cover rounded-full lg:hidden cursor-pointer"
-                src="./Logo.png"
+                src="/Logo.png"
                 alt="DipFolio Logo"
                 onClick={openImageModal}
                 initial={{ opacity: 1, scale: 1 }}
