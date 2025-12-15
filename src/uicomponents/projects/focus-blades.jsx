@@ -30,7 +30,7 @@ const PROJECTS = [
     image: assets.NPMContribution,
     tech: ["React", "NPM", "Tailwind"],
     github: "https://github.com/Dipankar-source/ishani-ui",
-    demo: "hhttps://www.npmjs.com/package/ishani-ui",
+    demo: "https://www.npmjs.com/package/ishani-ui",
   },
   {
     id: 3,
@@ -70,7 +70,11 @@ export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto h-[400px] flex gap-2 px-4">
+      {/* CONTAINER:
+         - h-[400px]: Kept the original height as requested.
+         - flex-col md:flex-row: Stacks vertically on mobile (fixing 'steep' look), horizontally on desktop.
+      */}
+      <div className="max-w-4xl mx-auto h-[400px] flex flex-col md:flex-row gap-2 px-4">
         {projects.map((project, index) => (
           <Blade
             key={project.id}
@@ -102,13 +106,15 @@ function Blade({ project, isActive, onActivate }) {
   return (
     <motion.div
       layout
-      onClick={onActivate}
+      // Desktop: Hover triggers expansion
       onMouseEnter={onActivate}
+      // Mobile: Click triggers expansion (fallback since hover doesn't exist)
+      onClick={onActivate}
       className={cn(
-        "relative h-full rounded-2xl overflow-hidden cursor-pointer transition-colors duration-500 ease-out",
+        "relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ease-out border border-transparent dark:border-white/5",
         isActive
-          ? "flex-[3] border border-zinc-200 dark:border-white/10 shadow-xl"
-          : "flex-[1] border border-transparent dark:border-white/5 opacity-80 hover:opacity-100"
+          ? "flex-[3] border-zinc-200 dark:border-white/10 shadow-xl"
+          : "flex-[1] opacity-80 hover:opacity-100"
       )}
       initial={false}
       animate={{
@@ -138,71 +144,91 @@ function Blade({ project, isActive, onActivate }) {
           "absolute inset-0 transition-opacity duration-300",
           isActive
             ? "bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-100"
-            : "bg-black/60 opacity-100"
+            : "bg-black/40 opacity-100"
         )}
       />
 
-      <div className="absolute inset-0 p-6 flex flex-col justify-end overflow-hidden">
-        {!isActive && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-white/70 font-bold tracking-widest uppercase text-xs [writing-mode:vertical-rl] rotate-180 whitespace-nowrap">
-              {project.category} • {project.title}
-            </p>
-          </div>
-        )}
+      {/* Content Layer */}
+      <div className="absolute inset-0 p-4 md:p-6 flex flex-col justify-end overflow-hidden">
+        {/* INACTIVE LABEL */}
+        <AnimatePresence>
+          {!isActive && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <p
+                className="text-white/80 font-bold tracking-widest uppercase text-xs 
+                md:[writing-mode:vertical-rl] md:rotate-180 
+                whitespace-nowrap drop-shadow-md"
+              >
+                {project.category}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
+        {/* ACTIVE CONTENT */}
         <AnimatePresence>
           {isActive && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
+              exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
               transition={{ delay: 0.1, duration: 0.3 }}
-              className="relative z-10"
+              className="relative z-10 w-full"
             >
-              <span className="inline-block px-2 py-0.5 mb-3 text-[10px] font-bold uppercase tracking-wider text-white bg-indigo-500 rounded-md shadow-sm">
-                {project.category}
-              </span>
-
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-2xl font-bold text-white leading-none">
-                  {project.title}
-                </h3>
+                <div>
+                  <span className="inline-block px-2 py-0.5 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-white bg-indigo-500/80 backdrop-blur-sm rounded-md shadow-sm">
+                    {project.category}
+                  </span>
+                  <h3 className="text-lg md:text-2xl font-bold text-white leading-none drop-shadow-md">
+                    {project.title}
+                  </h3>
+                </div>
+
                 <div className="flex gap-2">
                   {project.github && (
                     <button
                       onClick={handleGithubClick}
-                      className="p-1.5 rounded-full bg-white/10 hover:bg-white hover:text-black text-white transition-colors"
-                      title="View GitHub Repository"
+                      className="p-1.5 rounded-full bg-white/20 hover:bg-white hover:text-black text-white transition-colors backdrop-blur-sm"
                     >
-                      <Github className="w-4 h-4" />
+                      <Github className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </button>
                   )}
                   {project.demo && (
                     <button
                       onClick={handleDemoClick}
-                      className="p-1.5 rounded-full bg-white/10 hover:bg-white hover:text-black text-white transition-colors"
-                      title="View Live Demo"
+                      className="p-1.5 rounded-full bg-white/20 hover:bg-white hover:text-black text-white transition-colors backdrop-blur-sm"
                     >
-                      <ArrowUpRight className="w-4 h-4" />
+                      <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </button>
                   )}
                 </div>
               </div>
 
-              <p className="text-zinc-300 text-xs md:text-sm line-clamp-2 mb-4 leading-relaxed max-w-[90%]">
+              {/* Hide description on mobile to save vertical space, show on desktop */}
+              <p className="hidden md:block text-zinc-300 text-xs line-clamp-2 mb-3 leading-relaxed max-w-[95%]">
                 {project.description}
               </p>
 
               <div className="flex flex-wrap gap-1.5">
-                {project.tech.map((t) => (
+                {project.tech.slice(0, 3).map((t) => (
                   <span
                     key={t}
-                    className="px-2 py-1 text-[10px] font-medium text-zinc-300 border border-white/10 rounded bg-black/30 backdrop-blur-sm"
+                    className="px-1.5 py-0.5 text-[9px] md:text-[10px] font-medium text-zinc-200 border border-white/10 rounded bg-black/40 backdrop-blur-sm"
                   >
                     {t}
                   </span>
                 ))}
+                {project.tech.length > 3 && (
+                  <span className="px-1.5 py-0.5 text-[9px] md:text-[10px] font-medium text-zinc-200 border border-white/10 rounded bg-black/40 backdrop-blur-sm">
+                    +{project.tech.length - 3}
+                  </span>
+                )}
               </div>
             </motion.div>
           )}

@@ -1,14 +1,27 @@
 "use client";
-import assets from "@/assets/assets";
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Clock,
+  Search,
+  LayoutGrid,
+  ListFilter,
+  ChevronDown,
+  ArrowUpDown,
+} from "lucide-react";
+import assets from "@/assets/assets"; // Ensure this path exists
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 import { useTheme } from "@/context/ThemeContext";
+// We import PremiumSearch but we will use a specific inline toolbar for the page
 import { PremiumSearch } from "@/uicomponents/searchs/premium-search";
-import { ArrowUpRight, Clock } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import PremiumSort from "@/uicomponents/dropdown/premium-sort";
 
+// --- DATA SOURCE ---
+// You can fetch this from an API later. The search/sort logic below
+// works regardless of how many items are in this array.
 const BLOG_POSTS = [
   {
     id: 1,
@@ -74,15 +87,72 @@ const BLOG_POSTS = [
 const Blog = () => {
   const { isDark } = useTheme();
   const [isClient, setIsClient] = useState(false);
-  const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
-  
+
+  // --- STATE FOR SEARCH & SORT ---
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("newest"); // options: newest, oldest, a-z, z-a, time-asc, time-desc
 
   useEffect(() => {
     setIsClient(true);
-    setPosts([...BLOG_POSTS]);
   }, []);
 
+  // --- DERIVED STATE (Filter & Sort Logic) ---
+  const filteredAndSortedPosts = useMemo(() => {
+    let result = [...BLOG_POSTS];
+
+    // 1. Search Filter
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      result = result.filter(
+        (post) =>
+          post.title.toLowerCase().includes(lowerQuery) ||
+          post.category.toLowerCase().includes(lowerQuery) ||
+          post.excerpt.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // 2. Sorting Logic
+    result.sort((a, b) => {
+      // Helper to parse "Dec 07" to Date object (assuming current year)
+      const parseDate = (dateStr) =>
+        new Date(`${dateStr} ${new Date().getFullYear()}`);
+      // Helper to parse "5m" to 5
+      const parseTime = (timeStr) => parseInt(timeStr.replace("m", ""), 10);
+
+      switch (sortOption) {
+        case "newest":
+          return parseDate(b.date) - parseDate(a.date);
+        case "oldest":
+          return parseDate(a.date) - parseDate(b.date);
+        case "a-z":
+          return a.title.localeCompare(b.title);
+        case "z-a":
+          return b.title.localeCompare(a.title);
+        case "time-short":
+          return parseTime(a.readTime) - parseTime(b.readTime);
+        case "time-long":
+          return parseTime(b.readTime) - parseTime(a.readTime);
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [searchQuery, sortOption]);
+
+  const chunkArray = (myArray, chunk_size) => {
+    const results = [];
+    const arrCopy = [...myArray];
+    while (arrCopy.length) {
+      results.push(arrCopy.splice(0, chunk_size));
+    }
+    return results;
+  };
+
+  const chunkedPosts = chunkArray([...filteredAndSortedPosts], 2);
+
+  // Styling constants
   const borderColor = isDark ? "border-white/10" : "border-black/10";
   const textColor = isDark ? "text-white" : "text-zinc-900";
   const subText = isDark ? "text-zinc-400" : "text-zinc-500";
@@ -95,43 +165,7 @@ const Blog = () => {
     navigate(`/blog/${blogId}`);
   };
 
-  if (!isClient) {
-    return (
-      <div className={`min-h-screen ${bgMain} lg:mx-92`}>
-        <Navbar />
-        <div className="max-w-5xl mx-auto px-6 lg:px-0 py-7">
-          <div className="animate-pulse space-y-6">
-            <div
-              className={`h-10 w-48 ${
-                isDark ? "bg-zinc-900" : "bg-zinc-100"
-              } rounded`}
-            ></div>
-            <div
-              className={`h-6 w-96 ${
-                isDark ? "bg-zinc-900" : "bg-zinc-100"
-              } rounded`}
-            ></div>
-            <div
-              className={`h-12 w-64 ${
-                isDark ? "bg-zinc-900" : "bg-zinc-100"
-              } rounded`}
-            ></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const chunkArray = (myArray, chunk_size) => {
-    const results = [];
-    const arrCopy = [...myArray];
-    while (arrCopy.length) {
-      results.push(arrCopy.splice(0, chunk_size));
-    }
-    return results;
-  };
-
-  const chunkedPosts = chunkArray(posts, 2);
+  if (!isClient) return null;
 
   return (
     <div
@@ -158,76 +192,113 @@ const Blog = () => {
             </p>
           </div>
 
+          {/* --- SEARCH & SORT TOOLBAR --- */}
           <div
             className={`w-full border-y transition-colors duration-300 ${borderColor} py-4 mb-8`}
           >
-            <div className="flex items-center justify-start w-full lg:px-5">
-              <PremiumSearch />
+            <div className="flex flex-col md:flex-row items-center justify-between w-full lg:px-5 gap-2">
+              {/* Left: Search Input */}
+              <div className="w-full md:w-auto flex-1 max-w-md relative group">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <Search className={`w-4 h-4 ${subText}`} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-transparent border ${borderColor} focus:border-emerald-500 focus:outline-none transition-all duration-300`}
+                />
+              </div>
+
+              {/* Right: Sort Dropdown & Global Search Trigger */}
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                {/* Sort Dropdown */}
+                <div className="relative">
+                  <PremiumSort
+                    sortOption={sortOption}
+                    setSortOption={setSortOption}
+                  />
+                </div>
+
+                
+              </div>
             </div>
           </div>
 
+          {/* --- POSTS GRID --- */}
           <div
-            className={`w-full flex flex-col border-t border-b transition-colors duration-300 ${borderColor}`}
+            className={`w-full flex flex-col border-t border-b transition-colors duration-300 ${borderColor} min-h-[400px]`}
           >
-            {chunkedPosts.map((pair, rowIndex) => (
-              <React.Fragment key={rowIndex}>
-                {rowIndex > 0 && (
-                  <div
-                    className={`w-full h-8 border-b relative overflow-hidden transition-colors duration-300 ${separatorBg}`}
-                  >
-                    <TiltedLines isDark={isDark} />
-                  </div>
-                )}
-
-                <div className="flex flex-col lg:flex-row w-full relative">
-                  <div
-                    className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
-                  >
-                    <div className="max-w-2xl mx-auto">
-                      <BlogCard
-                        post={pair[0]}
-                        cardTitleColor={cardTitleColor}
-                        cardExcerptColor={cardExcerptColor}
-                        isDark={isDark}
-                        onClick={() => handleBlogClick(pair[0].id)}
-                      />
+            {filteredAndSortedPosts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                <Search className="w-12 h-12 mb-4 text-zinc-500" />
+                <p className="text-lg font-medium">No articles found</p>
+                <p className="text-sm text-zinc-500">
+                  Try adjusting your search or sort criteria
+                </p>
+              </div>
+            ) : (
+              chunkedPosts.map((pair, rowIndex) => (
+                <React.Fragment key={rowIndex}>
+                  {rowIndex > 0 && (
+                    <div
+                      className={`w-full h-8 border-b relative overflow-hidden transition-colors duration-300 ${separatorBg}`}
+                    >
+                      <TiltedLines isDark={isDark} />
                     </div>
-                  </div>
+                  )}
 
-                  <div
-                    className={`hidden lg:block w-8 border-x relative overflow-hidden flex-shrink-0 transition-colors duration-300 ${separatorBg}`}
-                  >
-                    <TiltedLines isDark={isDark} />
-                  </div>
-
-                  <div
-                    className={`lg:hidden w-full h-8 border-y relative overflow-hidden transition-colors duration-300 ${separatorBg}`}
-                  >
-                    <TiltedLines isDark={isDark} />
-                  </div>
-
-                  {pair[1] ? (
+                  <div className="flex flex-col lg:flex-row w-full relative">
                     <div
                       className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
                     >
                       <div className="max-w-2xl mx-auto">
                         <BlogCard
-                          post={pair[1]}
+                          post={pair[0]}
                           cardTitleColor={cardTitleColor}
                           cardExcerptColor={cardExcerptColor}
                           isDark={isDark}
-                          onClick={() => handleBlogClick(pair[1].id)}
+                          onClick={() => handleBlogClick(pair[0].id)}
                         />
                       </div>
                     </div>
-                  ) : (
+
                     <div
-                      className={`hidden lg:block w-1/2 transition-colors duration-300 ${bgMain}`}
-                    />
-                  )}
-                </div>
-              </React.Fragment>
-            ))}
+                      className={`hidden lg:block w-8 border-x relative overflow-hidden flex-shrink-0 transition-colors duration-300 ${separatorBg}`}
+                    >
+                      <TiltedLines isDark={isDark} />
+                    </div>
+
+                    <div
+                      className={`lg:hidden w-full h-8 border-y relative overflow-hidden transition-colors duration-300 ${separatorBg}`}
+                    >
+                      <TiltedLines isDark={isDark} />
+                    </div>
+
+                    {pair[1] ? (
+                      <div
+                        className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
+                      >
+                        <div className="max-w-2xl mx-auto">
+                          <BlogCard
+                            post={pair[1]}
+                            cardTitleColor={cardTitleColor}
+                            cardExcerptColor={cardExcerptColor}
+                            isDark={isDark}
+                            onClick={() => handleBlogClick(pair[1].id)}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`hidden lg:block w-1/2 transition-colors duration-300 ${bgMain}`}
+                      />
+                    )}
+                  </div>
+                </React.Fragment>
+              ))
+            )}
 
             <div
               className={`w-full h-8 border-t relative overflow-hidden transition-colors duration-300 ${separatorBg}`}
@@ -236,6 +307,7 @@ const Blog = () => {
             </div>
           </div>
         </main>
+
         <div className="border-l-1 border-r-1">
           <FooterSystem />
         </div>
@@ -244,6 +316,7 @@ const Blog = () => {
   );
 };
 
+// ... BlogCard and TiltedLines remain exactly the same as your original code ...
 const BlogCard = ({
   post,
   isDark,
@@ -254,16 +327,9 @@ const BlogCard = ({
   const categoryColor = isDark ? "text-emerald-400" : "text-emerald-600";
   const borderTopColor = isDark ? "border-gray-700/30" : "border-zinc-300";
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    if (onClick) {
-      onClick();
-    }
-  };
-
   return (
     <article
-      onClick={handleClick}
+      onClick={onClick}
       className="group cursor-pointer flex flex-col h-full border-1 p-7 rounded-md hover:border-emerald-500/30 transition-all duration-300"
     >
       <div className="w-full aspect-[1.618/1] overflow-hidden border border-white/10 mb-6 relative bg-zinc-900 rounded-xl group-hover:shadow-lg group-hover:shadow-emerald-500/10 transition-all duration-300">
@@ -274,7 +340,6 @@ const BlogCard = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
-
       <div className="flex flex-col h-full justify-between">
         <div>
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest mb-3 text-zinc-500">
@@ -285,20 +350,17 @@ const BlogCard = ({
             </span>
             <span className="text-zinc-500">{post.date}</span>
           </div>
-
           <h3
             className={`text-xl md:text-2xl font-bold leading-tight mb-3 group-hover:text-emerald-500 transition-all duration-300 ${cardTitleColor}`}
           >
             {post.title}
           </h3>
-
           <p
             className={`text-sm md:text-base leading-relaxed line-clamp-3 transition-colors duration-300 ${cardExcerptColor}`}
           >
             {post.excerpt}
           </p>
         </div>
-
         <div
           className={`flex items-center gap-2 mt-6 pt-4 border-t border-dashed transition-colors duration-300 ${borderTopColor} text-xs text-zinc-500 font-mono`}
         >
@@ -313,7 +375,6 @@ const BlogCard = ({
 
 const TiltedLines = ({ isDark }) => {
   const strokeColor = isDark ? "#ffffff" : "#000000";
-
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none opacity-40">
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
