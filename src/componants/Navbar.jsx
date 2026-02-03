@@ -535,8 +535,8 @@ const BLOG_POSTS = [
                   ? "text-white"
                   : "text-black"
                 : isDark
-                ? "text-gray-300 hover:text-white"
-                : "text-gray-600 hover:text-black"
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-600 hover:text-black"
             }`}
           >
             {item.name}
@@ -620,6 +620,7 @@ const BLOG_POSTS = [
 
       <div className="flex md:hidden items-center space-x-2 relative z-50">
         <motion.button
+          onClick={() => navigate("https://github.com/Dipankar-source/")}
           variants={githubButtonVariants}
           whileHover="hover"
           whileTap="tap"
@@ -741,8 +742,8 @@ const BLOG_POSTS = [
                             ? "text-white bg-gray-800"
                             : "text-black bg-gray-100"
                           : isDark
-                          ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                            ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-black"
                       }`}
                     >
                       <span className="font-medium">{item.name}</span>

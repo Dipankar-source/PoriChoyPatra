@@ -36,7 +36,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`min-h-screen transition-colors duration-300 overflow-x-hidden lg:ml-92 lg:mr-92 ${
+        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:ml-92 lg:mr-92 ${
           isDark ? "bg-black" : "bg-white"
         }`}
       >

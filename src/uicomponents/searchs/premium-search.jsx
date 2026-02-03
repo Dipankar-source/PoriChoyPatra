@@ -58,7 +58,7 @@ const STATIC_SEARCH_ITEMS = [
     id: 105,
     title: "Resume/CV",
     icon: FileUser,
-    path: "/CV.pdf",
+    path: "/Resume_Portfolio.pdf",
     category: "Sections",
     desc: "View my CV",
   },

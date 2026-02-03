@@ -117,7 +117,7 @@ const FooterSystem = () => {
             <div
               className={cn(
                 "flex items-center gap-2 group cursor-help",
-                hoverTextClasses
+                hoverTextClasses,
               )}
             >
               <span className={statusDotClasses}>
@@ -132,7 +132,7 @@ const FooterSystem = () => {
             <div
               className={cn(
                 "hidden sm:block transition-colors",
-                hoverTextClasses
+                hoverTextClasses,
               )}
             >
               LOC_TIME: {time}
@@ -159,7 +159,7 @@ const FooterSystem = () => {
                     exit={{ opacity: 0, y: -5 }}
                     className={cn(
                       "font-bold",
-                      isDark ? "text-emerald-400" : "text-emerald-600"
+                      isDark ? "text-emerald-400" : "text-emerald-600",
                     )}
                   >
                     COPIED!
@@ -178,7 +178,7 @@ const FooterSystem = () => {
                         "group-hover:scale-110",
                         isDark
                           ? "text-zinc-500 group-hover:text-white"
-                          : "text-zinc-600 group-hover:text-black"
+                          : "text-zinc-600 group-hover:text-black",
                       )}
                     />
                     <span className="hidden sm:inline">COPY_MAIL</span>
@@ -221,7 +221,7 @@ const FooterSystem = () => {
                       transition={{ duration: 0.5 }}
                       className={cn(
                         "absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none",
-                        isDark ? "text-white" : "text-black"
+                        isDark ? "text-white" : "text-black",
                       )}
                     >
                       <span className="text-[10px] font-mono mb-1 whitespace-nowrap opacity-80">
@@ -232,7 +232,7 @@ const FooterSystem = () => {
                   )}
                 </AnimatePresence>
                 <SocialLink
-                  href="/CV.pdf"
+                  href="/Resume_Portfolio.pdf"
                   icon={Download}
                   label="CV"
                   isDark={isDark}
