@@ -70,6 +70,7 @@ const MusicWidget = () => (
       <img
         src="https://images.unsplash.com/photo-1500099817043-86d46000d58f?auto=format&fit=crop&w=400&q=80"
         alt="Album Art"
+        loading="lazy"
         className="absolute inset-0 w-full h-full object-cover"
       />
     </div>
@@ -163,6 +164,7 @@ const PhotoWidget = () => (
     <img
       src="https://images.unsplash.com/photo-1516820208784-270b250306e3?auto=format&fit=crop&w=800&q=80"
       alt="Featured"
+      loading="lazy"
       className="absolute inset-0 w-full h-full object-cover"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

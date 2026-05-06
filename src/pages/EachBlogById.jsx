@@ -579,6 +579,7 @@ const EachBlogById = () => {
                   <img
                     src="/Logo.png"
                     alt="Author"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>

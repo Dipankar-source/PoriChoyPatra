@@ -691,7 +691,7 @@ const About = ({ isDark }) => {
     <div className="w-full min-h-screen py-12 border-b-1 border-l-1 border-r-1 mt-28">
       <hr className="text-blue-100 mb-4" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 mt-8">
-        <div className="grid grid-cols-1 gap-8">
+        <ul className="grid grid-cols-1 gap-8">
           <GridItem
             area=""
             icon={<Box className="h-6 w-6 text-black dark:text-neutral-400" />}
@@ -713,7 +713,7 @@ const About = ({ isDark }) => {
               </p>
             </div>
           </GridItem>
-        </div>
+        </ul>
       </div>
       <br />
       <br />

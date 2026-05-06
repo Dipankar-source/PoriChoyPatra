@@ -149,7 +149,7 @@ const FooterSystem = () => {
         <div className={textClasses}>
           <div className="flex items-center gap-6">
             {/* Copy Email Button */}
-            <button onClick={handleCopy} className={copyButtonClasses}>
+            <button onClick={handleCopy} aria-label="Copy Email" className={copyButtonClasses}>
               <AnimatePresence mode="wait">
                 {copied ? (
                   <motion.span

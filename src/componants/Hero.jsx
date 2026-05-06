@@ -173,7 +173,11 @@ const ContactDetails = () => (
           speedScale={1}
         />
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-400">
               Hi, I'm{" "}
               <span className="font-bold dark:text-white">
@@ -183,11 +187,21 @@ const ContactDetails = () => (
                 />
               </span>
             </h2>
-            <div className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300"
+            >
               <TextGenerateEffect words={words} />
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
+            </motion.div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="flex flex-col gap-4 sm:flex-row"
+          >
             <div
               className="relative"
               onMouseEnter={() => setIsHovered(true)}
@@ -206,14 +220,19 @@ const ContactDetails = () => (
               </MagneticWrapper>
               {isHovered && <ContactDetails />}
             </div>
-          </div>
+          </motion.div>
         </div>
         <div>
-          <div className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.8, type: "spring" }}
+            className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8"
+          >
             <img
               className="lg:h-35 lg:w-35 h-32 w-32 rounded-full object-cover relative"
               src="./Logo.png"
-              alt=""
+              alt="Dipankar Barik - Logo"
             />
             <div className="absolute top-25 font-semibold text-sm bottom-0 left-29 min-w-[100px]">
               {" "}
@@ -231,13 +250,19 @@ const ContactDetails = () => (
                 ]}
               />
             </div>
-          </div>
-          <div className="absolute bottom-0 lg:top-63 top-92 h-8 w-full lg:w-xl lg:right-5 rounded-md left-28 lg:left-50">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="absolute bottom-0 lg:top-63 top-92 h-8 w-full lg:w-xl lg:right-5 rounded-md left-28 lg:left-50"
+          >
             <div className="flex items-center justify-start gap-4 mb-2">
               <a
                 className="z-50"
                 target="_blank"
                 href="https://github.com/Dipankar-source/"
+                aria-label="GitHub Profile"
               >
                 <FaGithub className="w-7 h-7 cursor-pointer z-50" />
               </a>
@@ -246,6 +271,7 @@ const ContactDetails = () => (
                 className="z-50"
                 target="_blank"
                 href="https://www.instagram.com/techandbhakti/?next=%2F"
+                aria-label="Instagram Profile"
               >
                 <FaInstagram className="w-7 h-7 cursor-pointer z-50" />
               </a>
@@ -253,6 +279,7 @@ const ContactDetails = () => (
                 className="z-50"
                 target="_blank"
                 href="https://linkedin.com/in/dipankarbarik/"
+                aria-label="LinkedIn Profile"
               >
                 <CiLinkedin className="w-7 h-7 cursor-pointer z-50" />
               </a>
@@ -260,6 +287,7 @@ const ContactDetails = () => (
                 className="z-50"
                 target="_blank"
                 href="https://x.com/_dipankarsource"
+                aria-label="Twitter Profile"
               >
                 <FaXTwitter className="w-7 h-7 cursor-pointer z-50" />
               </a>
@@ -271,7 +299,7 @@ const ContactDetails = () => (
               <FlipWords words={wordsOfShowcase} />
               websites <br className="lg:hidden" /> with Me
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

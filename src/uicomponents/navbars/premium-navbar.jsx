@@ -96,6 +96,7 @@ export default function PremiumNavbar() {
         <div className="md:hidden flex items-center z-10">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle Menu"
             className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
           >
             {mobileMenuOpen ? <X /> : <Menu />}

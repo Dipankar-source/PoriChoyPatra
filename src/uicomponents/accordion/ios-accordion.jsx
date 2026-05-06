@@ -13,6 +13,7 @@ const ToggleSwitch = ({ checked, onChange }) => (
   <button
     type="button"
     role="switch"
+    aria-label="Toggle setting"
     aria-checked={checked}
     onClick={(e) => {
       e.stopPropagation();

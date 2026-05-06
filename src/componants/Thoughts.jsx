@@ -187,6 +187,7 @@ const SkeletonFour = () => {
         <img
           src="./Logo.png"
           alt="avatar"
+          loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
         />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
@@ -201,6 +202,7 @@ const SkeletonFour = () => {
         <img
           src="./Logo.png"
           alt="avatar"
+          loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
         />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
@@ -218,6 +220,7 @@ const SkeletonFour = () => {
         <img
           src="./Logo.png"
           alt="avatar"
+          loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
         />
         <p className="sm:text-sm text-xs text-center font-semibold text-neutral-500 mt-4">
@@ -262,6 +265,7 @@ const SkeletonFive = () => {
         <img
           src="./Logo.png"
           alt="avatar"
+          loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
         />
         <p className="text-xs text-neutral-500">

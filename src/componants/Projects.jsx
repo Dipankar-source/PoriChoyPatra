@@ -52,6 +52,7 @@ const Projects = () => {
               }}
               className="flex absolute top-2 right-2 lg:hidden items-center justify-center bg-white rounded-full h-6 w-6"
               onClick={() => setActive(null)}
+              aria-label="Close Project"
             >
               <CloseIcon />
             </motion.button>
@@ -94,6 +95,7 @@ const Projects = () => {
                         href={active.gitHubLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="GitHub Repository"
                         className="px-4 py-3 text-sm rounded-full font-bold text-black dark:text-white"
                       >
                         <FaGithub className="w-4 h-4" />
@@ -104,6 +106,7 @@ const Projects = () => {
                         href={active.liveLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="Live Demo"
                         className="px-4 py-3 text-sm rounded-full hover:text-'LiveLink' font-bold text-black dark:text-white"
                       >
                         <FaRegPaperPlane className="w-4 h-4" />
@@ -152,6 +155,7 @@ const Projects = () => {
                     height={100}
                     src={card.src}
                     alt={card.title}
+                    loading="lazy"
                     className="h-40 w-40 md:h-15 md:w-15 rounded-lg object-cover object-top"
                   />
                 </motion.div>
@@ -173,6 +177,7 @@ const Projects = () => {
               <MagneticWrapper>
                 <motion.button
                   layoutId={`button-${card.title}-${id}`}
+                  aria-label="Open Project"
                   className="px-3 flex items-center py-3 text-sm rounded-full font-bold text-black mt-4 md:mt-0 transition-colors duration-200 dark:text-white"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

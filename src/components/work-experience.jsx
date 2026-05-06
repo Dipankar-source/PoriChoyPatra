@@ -51,6 +51,7 @@ export function ExperienceItem({ experience }) {
             <img
               src={experience.companyLogo}
               alt={experience.companyName}
+              loading="lazy"
               width={24}
               height={24}
               className="rounded-full object-cover"

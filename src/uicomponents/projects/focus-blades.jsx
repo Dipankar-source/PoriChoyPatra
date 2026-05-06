@@ -135,6 +135,7 @@ function Blade({ project, isActive, onActivate }) {
         <img
           src={project.image}
           alt={project.title}
+          loading="lazy"
           className="w-full h-full object-cover"
         />
       </motion.div>
@@ -194,6 +195,7 @@ function Blade({ project, isActive, onActivate }) {
                   {project.github && (
                     <button
                       onClick={handleGithubClick}
+                      aria-label="GitHub Repository"
                       className="p-1.5 rounded-full bg-white/20 hover:bg-white hover:text-black text-white transition-colors backdrop-blur-sm"
                     >
                       <Github className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -202,6 +204,7 @@ function Blade({ project, isActive, onActivate }) {
                   {project.demo && (
                     <button
                       onClick={handleDemoClick}
+                      aria-label="Live Demo"
                       className="p-1.5 rounded-full bg-white/20 hover:bg-white hover:text-black text-white transition-colors backdrop-blur-sm"
                     >
                       <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
