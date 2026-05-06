@@ -7,7 +7,7 @@ import { CiLinkedin } from "react-icons/ci";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { FlipWords } from "@/components/ui/flip-words";
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
@@ -22,7 +22,14 @@ import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const naviagte = useNavigate()
+  const [isLoaded, setIsLoaded] = useState(false);
+  const naviagte = useNavigate();
+
+  useEffect(() => {
+    // Delay rendering heavy backgrounds to prioritize LCP
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const words = `Crafting digital experiences with MERN stack
 Design-focused developer with an eye for detail
@@ -158,20 +165,29 @@ const ContactDetails = () => (
   return (
     <div>
       <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center top-5">
-        <DottedGlowBackground
-          className="pointer-events-none mask-radial-to-90% mask-radial-at-center opacity-20 dark:opacity-100"
-          opacity={1}
-          gap={10}
-          radius={1.6}
-          colorLightVar="--color-neutral-500"
-          glowColorLightVar="--color-neutral-600"
-          colorDarkVar="--color-neutral-500"
-          glowColorDarkVar="--color-sky-800"
-          backgroundOpacity={0}
-          speedMin={0.3}
-          speedMax={1.6}
-          speedScale={1}
-        />
+        {isLoaded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <DottedGlowBackground
+              className="pointer-events-none mask-radial-to-90% mask-radial-at-center opacity-20 dark:opacity-100"
+              opacity={1}
+              gap={10}
+              radius={1.6}
+              colorLightVar="--color-neutral-500"
+              glowColorLightVar="--color-neutral-600"
+              colorDarkVar="--color-neutral-500"
+              glowColorDarkVar="--color-sky-800"
+              backgroundOpacity={0}
+              speedMin={0.3}
+              speedMax={1.6}
+              speedScale={1}
+            />
+          </motion.div>
+        )}
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
