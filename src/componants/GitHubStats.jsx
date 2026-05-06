@@ -43,18 +43,20 @@ const GitHubStats = () => {
         setLoading(true);
         setError(null);
 
-        // Try GraphQL API first (most accurate)
-        try {
-          const graphqlData = await fetchWithGraphQL();
-          if (graphqlData) {
-            setContributions(graphqlData.contributions);
-            setTotalContributions(graphqlData.total);
-            calculateYesterdayActivity(graphqlData.contributions);
-            setLoading(false);
-            return;
+        // Try GraphQL API first if token exists (most accurate)
+        if (GITHUB_TOKEN) {
+          try {
+            const graphqlData = await fetchWithGraphQL();
+            if (graphqlData) {
+              setContributions(graphqlData.contributions);
+              setTotalContributions(graphqlData.total);
+              calculateYesterdayActivity(graphqlData.contributions);
+              setLoading(false);
+              return;
+            }
+          } catch (graphqlError) {
+            console.log("GraphQL failed, trying next method...", graphqlError);
           }
-        } catch (graphqlError) {
-          console.log("GraphQL failed, trying next method...", graphqlError);
         }
 
         // Fallback to Contributions API
@@ -464,7 +466,7 @@ const GitHubStats = () => {
         <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
           GitHub Activities
         </p>
-        <div className="max-w-4xl mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm ">
+        <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm min-h-[180px]">
           <div className="animate-pulse">
             <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
             <div className="flex gap-1 mb-4">
@@ -498,7 +500,7 @@ const GitHubStats = () => {
       </p>
       <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md">
         {/* Month labels */}
-        <div className="flex text-xs text-gray-500 mb-2 px-2">
+        <div className="flex text-xs text-gray-600 dark:text-gray-400 mb-2 px-2">
           {monthLabels.map((month, i) => (
             <span
               key={i}
@@ -524,7 +526,7 @@ const GitHubStats = () => {
               {["", "Mon", "", "Wed", "", "Fri", ""].map((day, i) => (
                 <span
                   key={i}
-                  className="text-xs text-gray-500 h-3 flex items-center justify-end"
+                  className="text-xs text-gray-600 dark:text-gray-400 h-3 flex items-center justify-end"
                 >
                   {day}
                 </span>
@@ -593,7 +595,7 @@ const GitHubStats = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">Less</span>
+          <span className="text-xs text-gray-600 dark:text-gray-400">Less</span>
           <div className="flex gap-[1px]">
             <div
               className={`${
@@ -621,7 +623,7 @@ const GitHubStats = () => {
               } bg-[#216e39] rounded-[2px]`}
             ></div>
           </div>
-          <span className="text-xs text-gray-500">More</span>
+          <span className="text-xs text-gray-600 dark:text-gray-400">More</span>
         </div>
       </div>
     </div>

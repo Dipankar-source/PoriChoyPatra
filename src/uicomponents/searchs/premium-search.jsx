@@ -179,7 +179,7 @@ export function PremiumSearch({ blogPosts = [] }) {
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Open Search"
-        className="group relative flex items-center gap-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm font-medium text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow-md"
+        className="group relative flex items-center gap-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow-md"
       >
         <span className="hidden sm:inline">Cmd+K</span>
         <kbd className="sm:hidden inline-flex items-center justify-center rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-bold text-zinc-500 font-mono">

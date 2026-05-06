@@ -80,7 +80,7 @@ const FooterSystem = () => {
 
   const textClasses = cn(
     "text-xs font-sans transition-colors duration-300",
-    isDark ? "text-zinc-500" : "text-zinc-600"
+    isDark ? "text-zinc-400" : "text-zinc-700"
   );
 
   const separatorClasses = cn(
@@ -105,7 +105,7 @@ const FooterSystem = () => {
 
   const copyButtonClasses = cn(
     "flex items-center gap-2 transition-colors duration-200 group relative",
-    isDark ? "hover:text-white text-zinc-500" : "hover:text-black text-zinc-600"
+    isDark ? "hover:text-white text-zinc-400" : "hover:text-black text-zinc-700"
   );
 
   return (
@@ -177,8 +177,8 @@ const FooterSystem = () => {
                         "w-3 h-3 transition-transform duration-200",
                         "group-hover:scale-110",
                         isDark
-                          ? "text-zinc-500 group-hover:text-white"
-                          : "text-zinc-600 group-hover:text-black",
+                          ? "text-zinc-400 group-hover:text-white"
+                          : "text-zinc-700 group-hover:text-black",
                       )}
                     />
                     <span className="hidden sm:inline">COPY_MAIL</span>
@@ -249,14 +249,14 @@ const FooterSystem = () => {
 const SocialLink = ({ href, icon: Icon, label, isDark }) => {
   const linkClasses = cn(
     "group flex items-center gap-1 transition-colors duration-200",
-    isDark ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
+    isDark ? "text-zinc-400 hover:text-white" : "text-zinc-700 hover:text-black"
   );
 
   const iconClasses = cn(
     "w-3.5 h-3.5 transition-colors duration-200",
     isDark
-      ? "text-zinc-500 group-hover:text-white"
-      : "text-zinc-600 group-hover:text-black"
+      ? "text-zinc-400 group-hover:text-white"
+      : "text-zinc-700 group-hover:text-black"
   );
 
   const labelClasses = cn(

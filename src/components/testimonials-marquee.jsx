@@ -74,7 +74,8 @@ export function TestimonialAvatarImg({
       data-slot="avatar-img"
       className={cn("size-8 rounded-full select-none", className)}
       src={src}
-      alt={alt}
+      alt={alt || "Avatar"}
+      loading="lazy"
       {...props} />
   );
 }
