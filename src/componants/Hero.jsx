@@ -27,7 +27,7 @@ const Hero = () => {
 
   useEffect(() => {
     // Delay rendering heavy backgrounds to prioritize LCP
-    const timer = setTimeout(() => setIsLoaded(true), 100);
+    const timer = setTimeout(() => setIsLoaded(true), 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -189,11 +189,7 @@ const ContactDetails = () => (
           </motion.div>
         )}
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <div className="flex-1">
             <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-400">
               Hi, I'm{" "}
               <span className="font-bold dark:text-white">
@@ -203,15 +199,10 @@ const ContactDetails = () => (
                 />
               </span>
             </h2>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300"
-            >
+            <div className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
               <TextGenerateEffect words={words} />
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -239,12 +230,7 @@ const ContactDetails = () => (
           </motion.div>
         </div>
         <div>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.8, type: "spring" }}
-            className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8"
-          >
+          <div className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8">
             <img
               className="lg:h-35 lg:w-35 h-32 w-32 rounded-full object-cover relative"
               src="./Logo.png"
@@ -266,7 +252,7 @@ const ContactDetails = () => (
                 ]}
               />
             </div>
-          </motion.div>
+          </div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

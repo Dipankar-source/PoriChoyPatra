@@ -48,14 +48,14 @@ export function ExperienceItem({ experience }) {
           aria-hidden
         >
           {experience.companyLogo ? (
-            <img
-              src={experience.companyLogo}
-              alt={experience.companyName}
-              loading="lazy"
-              width={24}
-              height={24}
-              className="rounded-full object-cover"
-            />
+              <img
+                src={experience.companyLogo}
+                alt={experience.companyName}
+                loading="lazy"
+                width={24}
+                height={24}
+                className="w-6 h-6 rounded-full object-cover"
+              />
           ) : (
             <span className="flex size-2 rounded-full bg-gray-300 dark:bg-gray-600" />
           )}

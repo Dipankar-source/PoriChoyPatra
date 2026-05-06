@@ -466,7 +466,7 @@ const GitHubStats = () => {
         <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
           GitHub Activities
         </p>
-        <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm min-h-[180px]">
+        <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm min-h-[220px]">
           <div className="animate-pulse">
             <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
             <div className="flex gap-1 mb-4">
@@ -498,7 +498,7 @@ const GitHubStats = () => {
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
-      <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md">
+      <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md min-h-[220px]">
         {/* Month labels */}
         <div className="flex text-xs text-gray-600 dark:text-gray-400 mb-2 px-2">
           {monthLabels.map((month, i) => (

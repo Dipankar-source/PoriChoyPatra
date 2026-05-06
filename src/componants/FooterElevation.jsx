@@ -20,6 +20,7 @@ const Elevation = ({ isDark }) => {
       {/* 1. Background Image: Grayscale to Color Transition */}
       <img
         src={assets.Nature}
+        loading="lazy"
         className="absolute inset-0 h-full w-full object-cover 
         transition-all duration-700 ease-in-out
         grayscale group-hover:grayscale-0 group-hover:scale-110"
