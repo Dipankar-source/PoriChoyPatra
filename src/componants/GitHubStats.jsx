@@ -380,8 +380,17 @@ const GitHubStats = () => {
     const weeks = [];
     let currentWeek = [];
 
-    displayContributions.forEach((contribution, index) => {
-      if (index % 7 === 0 && currentWeek.length > 0) {
+    // Find what day of the week the first contribution is
+    const firstDate = displayContributions[0].date;
+    const firstDayOfWeek = firstDate.getDay(); // 0 is Sunday
+
+    // Pad the first week with empty days if needed
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      currentWeek.push(null);
+    }
+
+    displayContributions.forEach((contribution) => {
+      if (currentWeek.length === 7) {
         weeks.push(currentWeek);
         currentWeek = [];
       }
@@ -389,6 +398,10 @@ const GitHubStats = () => {
     });
 
     if (currentWeek.length > 0) {
+      // Pad the last week with empty days if needed
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
       weeks.push(currentWeek);
     }
 
@@ -397,42 +410,34 @@ const GitHubStats = () => {
 
   // Get month labels for the chart
   const getMonthLabels = () => {
-    const displayContributions = getDisplayContributions();
-    if (!displayContributions.length) return [];
-
+    const weeksData = groupByWeek();
     const months = [];
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ];
 
     let currentMonth = -1;
 
-    displayContributions.forEach((contribution, index) => {
-      const month = contribution.date.getMonth();
-      // Only show labels at reasonable intervals based on screen size
-      const labelInterval = isMobile ? 10 : 30;
-
-      if (month !== currentMonth && index % labelInterval === 0) {
-        months.push({
-          month: monthNames[month],
-          position: index,
-        });
-        currentMonth = month;
+    weeksData.forEach((week, index) => {
+      const firstValidDay = week.find((day) => day !== null);
+      if (firstValidDay) {
+        const month = firstValidDay.date.getMonth();
+        if (month !== currentMonth) {
+          months.push({
+            month: monthNames[month],
+            weekIndex: index,
+          });
+          currentMonth = month;
+        }
       }
     });
 
-    return months;
+    // Filter out month labels that are too close to each other
+    return months.filter((m, i) => {
+      if (i === 0) return true;
+      return m.weekIndex - months[i - 1].weekIndex > 2;
+    });
   };
 
   const displayContributions = getDisplayContributions();
@@ -498,35 +503,22 @@ const GitHubStats = () => {
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
-      <div className="max-w-4xl mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md min-h-[220px]">
-        {/* Month labels */}
-        <div className="flex text-xs text-gray-600 dark:text-gray-400 mb-2 px-2">
-          {monthLabels.map((month, i) => (
-            <span
-              key={i}
-              className="flex-1 text-center"
-              style={{ minWidth: isMobile ? "20%" : "8%" }}
-            >
-              {month.month}
-            </span>
-          ))}
-        </div>
-
+      <div className="max-w-4xl  mt-7 mx-4 px-3 py-1 border-1 rounded-md shadow-md min-h-[120px]">
         {/* Contribution grid */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex gap-1 mb-4 px-2"
+          className="flex gap-2 mb-4 px-2 overflow-hidden"
         >
           {/* Day labels */}
           {!isMobile && (
-            <div className="flex flex-col gap-1 mr-2 pt-6">
-              {["", "Mon", "", "Wed", "", "Fri", ""].map((day, i) => (
+            <div className="flex flex-col gap-1 pt-[28px] shrink-0 mt-5">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
                 <span
                   key={i}
-                  className="text-xs text-gray-600 dark:text-gray-400 h-3 flex items-center justify-end"
+                  className="text-xs text-gray-600 dark:text-gray-400 h-3 flex items-center justify-end pr-1"
                 >
                   {day}
                 </span>
@@ -534,31 +526,59 @@ const GitHubStats = () => {
             </div>
           )}
 
-          {/* Contribution squares */}
-          <div className="flex-1 overflow-x-auto">
-            <div className="flex gap-1">
-              {weeks.map((week, weekIndex) => (
-                <div key={weekIndex} className="flex flex-col gap-1">
-                  {week.map((day, dayIndex) => (
-                    <motion.div
-                      key={`${weekIndex}-${dayIndex}`}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{
-                        delay: (weekIndex * 7 + dayIndex) * 0.002,
-                        duration: 0.3,
-                      }}
-                      className={`${
-                        isMobile ? "w-2 h-2" : "w-3 h-3"
-                      } rounded-sm cursor-pointer`}
-                      style={{ backgroundColor: day.color }}
-                      title={`${
-                        day.count
-                      } contributions on ${day.date.toLocaleDateString()}`}
-                    />
-                  ))}
-                </div>
-              ))}
+          {/* Contribution squares with month labels */}
+          <div className="flex-1 overflow-x-auto pb-4 mt-7">
+            <div className="min-w-max">
+              {/* Month labels */}
+              <div className="flex relative h-6">
+                {monthLabels.map((month, i) => (
+                  <span
+                    key={i}
+                    className="absolute text-xs text-gray-600 dark:text-gray-400"
+                    style={{
+                      left: `${month.weekIndex * (isMobile ? 12 : 16)}px`,
+                    }}
+                  >
+                    {month.month}
+                  </span>
+                ))}
+              </div>
+
+              {/* Grid */}
+              <div className="flex gap-1">
+                {weeks.map((week, weekIndex) => (
+                  <div key={weekIndex} className="flex flex-col gap-1">
+                    {week.map((day, dayIndex) => (
+                      day ? (
+                        <motion.div
+                          key={`${weekIndex}-${dayIndex}`}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{
+                            delay: (weekIndex * 7 + dayIndex) * 0.002,
+                            duration: 0.3,
+                          }}
+                          className={`${
+                            isMobile ? "w-2 h-2" : "w-3 h-3"
+                          } rounded-sm cursor-pointer`}
+                          style={{ backgroundColor: day.color }}
+                          title={`${
+                            day.count
+                          } contributions on ${day.date.toLocaleDateString()}`}
+                        />
+                      ) : (
+                        <div
+                          key={`${weekIndex}-${dayIndex}`}
+                          className={`${
+                            isMobile ? "w-2 h-2" : "w-3 h-3"
+                          } rounded-sm`}
+                          style={{ backgroundColor: "transparent" }}
+                        />
+                      )
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>

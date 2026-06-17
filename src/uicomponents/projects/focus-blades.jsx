@@ -4,6 +4,7 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import assets from "@/assets/assets";
+import { useNavigate } from "react-router-dom";
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -58,6 +59,7 @@ const PROJECTS = [
 
 export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
   const [active, setActive] = useState(defaultActive);
+  const navigate = useNavigate()
 
   return (
     <div className="w-full py-12 bg-white dark:bg-zinc-950 transition-colors duration-500 border-l-1 border-r-1">
@@ -68,6 +70,14 @@ export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
           </h2>
           <p className="text-sm text-zinc-500 mt-1">Hover to expand details.</p>
         </div>
+        <motion.button
+          onClick={() => navigate('/projects')}
+          whileHover={{ scale: 1.05 }}
+          className="px-2 py-1 rounded-sm text-sm cursor-pointer font-semibold transition-all duration-300"
+        >
+          View All
+        </motion.button>
+
       </div>
 
       {/* CONTAINER:

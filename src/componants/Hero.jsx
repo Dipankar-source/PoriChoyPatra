@@ -56,111 +56,111 @@ Turning complex problems into elegant solutions`;
     "refined",
   ];
 
-const ContactDetails = () => (
-  <AnimatePresence>
-    <motion.div
-      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className="absolute top-full hidden lg:block right-0 mt-3 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-xl z-50"
+  const ContactDetails = () => (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="absolute top-full hidden lg:block right-0 mt-3 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-xl z-50"
 
-    >
-      {/* Triangle/Pointer pointing to the button */}
-      <div className="absolute -top-2 right-4 w-4 h-4 transform rotate-45 bg-white dark:bg-black border-t border-l border-gray-200 dark:border-gray-700 z-10"></div>
+      >
+        {/* Triangle/Pointer pointing to the button */}
+        <div className="absolute -top-2 right-4 w-4 h-4 transform rotate-45 bg-white dark:bg-black border-t border-l border-gray-200 dark:border-gray-700 z-10"></div>
 
-      <CardSpotlight >
-        <div className="relative z-20 space-y-3 ">
-          <motion.h3
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-md font-semibold text-gray-900 dark:text-white border-b pb-2 text-left"
-          >
-            Contact Info
-          </motion.h3>
-
-          <div className="space-y-2">
-            <motion.div
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 }}
-              className="flex items-center space-x-2"
+        <CardSpotlight >
+          <div className="relative z-20 space-y-3 ">
+            <motion.h3
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-md font-semibold text-gray-900 dark:text-white border-b pb-2 text-left"
             >
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
-                <BiLogoGmail className="h-4 w-4 text-red-500" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-900 dark:text-white text-sm truncate text-left">
-                  dipankarbarik2002@gmail.com
-                </p>
-              </div>
-            </motion.div>
+              Contact Info
+            </motion.h3>
+
+            <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
+                  <BiLogoGmail className="h-4 w-4 text-red-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-gray-900 dark:text-white text-sm truncate text-left">
+                    dipankarbarik2002@gmail.com
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                  <FaPhone className="h-4 w-4 text-green-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-gray-900 dark:text-white text-sm text-left">
+                    +91 9733132___
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
+                  <CgGenderMale className="h-4 w-4 text-blue-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-gray-900 dark:text-white text-sm text-left">
+                    Male
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center space-x-2"
+              >
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
+                  <IoLocationSharp className="h-4 w-4 text-purple-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-gray-900 dark:text-white text-sm truncate text-left">
+                    Barasat, West Bengal, India
+                  </p>
+                </div>
+              </motion.div>
+            </div>
 
             <motion.div
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center space-x-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.35 }}
+              className="pt-2 border-t border-gray-200 dark:border-gray-700"
             >
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
-                <FaPhone className="h-4 w-4 text-green-500" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-900 dark:text-white text-sm text-left">
-                  +91 9733132___
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 }}
-              className="flex items-center space-x-2"
-            >
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
-                <CgGenderMale className="h-4 w-4 text-blue-500" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-900 dark:text-white text-sm text-left">
-                  Male
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center space-x-2"
-            >
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ">
-                <IoLocationSharp className="h-4 w-4 text-purple-500" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-gray-900 dark:text-white text-sm truncate text-left">
-                  Barasat, West Bengal, India
-                </p>
-              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                Available for new projects
+              </p>
             </motion.div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="pt-2 border-t border-gray-200 dark:border-gray-700"
-          >
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Available for new projects
-            </p>
-          </motion.div>
-        </div>
-      </CardSpotlight>
-    </motion.div>
-  </AnimatePresence>
-);
+        </CardSpotlight>
+      </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <div>
@@ -203,7 +203,7 @@ const ContactDetails = () => (
               <TextGenerateEffect words={words} />
             </div>
           </div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
@@ -253,7 +253,7 @@ const ContactDetails = () => (
               />
             </div>
           </div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.8 }}

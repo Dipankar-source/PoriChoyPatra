@@ -166,20 +166,12 @@ const BLOG_POSTS = [
 
   const navItems = [
     { name: "Portfolio", path: "/" },
+    { name: "Projects", path: "/projects" },
     { name: "Blog", path: "/blog" },
-    { name: "Projects", path: "#projects" },
   ];
 
   const handleNavigation = (path) => {
     if (path.startsWith("#")) {
-      if (path === "#projects") {
-        const currentPath = location.pathname;
-        if (currentPath === "/" || currentPath === "/blog") {
-          navigate(`${currentPath}${path}`);
-        } else {
-          navigate(`/${path}`);
-        }
-      }
       const element = document.querySelector(path);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
@@ -336,8 +328,8 @@ const BLOG_POSTS = [
         damping: 20,
         duration: 0.6,
       }}
-      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 border-b transition-colors duration-300 z-70 sticky top-0 border-l-1 border-r-1 ${
-        isDark ? "bg-black border-gray-800" : "bg-white border-gray-200"
+      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 border-b-none transition-colors duration-300 z-[9990] sticky top-0 border-l-1 border-r-1 ${
+        isDark ? "bg-transparent backdrop-blur-sm border-gray-800" : "bg-transparent backdrop-blur-sm border-gray-200"
       } relative overflow-hidden`}
     >
       <div className="flex items-center justify-center relative z-20">
@@ -416,7 +408,7 @@ const BLOG_POSTS = [
                   />
                   <div
                     className={`absolute inset-0 w-full h-full ${
-                      isDark ? "bg-black" : "bg-white"
+                      isDark ? "bg-none" : "bg-none"
                     } [mask-image:radial-gradient(120px_80px_at_top,transparent_20%,white)]`}
                   ></div>
                 </motion.div>
@@ -571,7 +563,7 @@ const BLOG_POSTS = [
         >
           <MagneticWrapper>
             <div
-              onClick={() => navigate("https://github.com/Dipankar-source/")}
+              onClick={() => window.open("https://github.com/Dipankar-source/", "_blank")}
               className="flex items-center gap-2"
             >
               <motion.div
@@ -620,7 +612,7 @@ const BLOG_POSTS = [
 
       <div className="flex md:hidden items-center space-x-2 relative z-50">
         <motion.button
-          onClick={() => navigate("https://github.com/Dipankar-source/")}
+          onClick={() => window.open("https://github.com/Dipankar-source/", "_blank")}
           variants={githubButtonVariants}
           whileHover="hover"
           whileTap="tap"

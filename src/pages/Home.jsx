@@ -25,9 +25,8 @@ const Home = () => {
   const { isDark } = useTheme();
   const LoadingScreen = () => (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-300 ${
-        isDark ? "bg-black" : "bg-white"
-      }`}
+      className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-300 ${isDark ? "bg-black" : "bg-white"
+        }`}
     >
       <LoaderFive text="Loading..." />
     </div>
@@ -36,9 +35,8 @@ const Home = () => {
   return (
     <>
       <div
-        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:ml-92 lg:mr-92 ${
-          isDark ? "bg-black" : "bg-white"
-        }`}
+        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:ml-92 lg:mr-92 ${isDark ? "bg-black" : "bg-white"
+          }`}
       >
         {/* Spotlights and Backgrounds load immediately */}
         <Spotlight
@@ -79,7 +77,7 @@ const Home = () => {
               </section>
 
               <section id="projects" className="w-full">
-                <FocusBlades/>
+                <FocusBlades />
               </section>
 
               <section id="namehover" className="w-full">
@@ -95,7 +93,7 @@ const Home = () => {
               </section>
 
               <section id="contact" className="w-full">
-                <Footer/>
+                <Footer />
               </section>
             </div>
           </div>
