@@ -1,14 +1,14 @@
-import careerNexusFullDetail from './Images/Projects/full-detailed-profile.png'
-import NPMContribution from './Images/Projects/npm-contribution.png'
-import BranuBot from './Images/Projects/brainu-bot.png'
-import Portfolio from './Images/Projects/portfolio.png'
+import careerNexusFullDetail from './Images/Projects/full-detailed-profile.webp'
+import NPMContribution from './Images/Projects/npm-contribution.webp'
+import BranuBot from './Images/Projects/brainu-bot.webp'
+import Portfolio from './Images/Projects/portfolio.webp'
 
 // Extra Assets
-import Nature from './Images/Extra/Nature.png'
-import NavbarComponent from './Images/Extra/navbar-component.png'
-import IOSBento from './Images/Extra/ios-bento-component.png'
-import ChronosCard from './Images/Extra/chronos-card-component.png'
-import IOSAccordion from './Images/Extra/ios-accordion-component.png'
+import Nature from './Images/Extra/Nature.webp'
+import NavbarComponent from './Images/Extra/navbar-component.webp'
+import IOSBento from './Images/Extra/ios-bento-component.webp'
+import ChronosCard from './Images/Extra/chronos-card-component.webp'
+import IOSAccordion from './Images/Extra/ios-accordion-component.webp'
 
 
 const assets = {

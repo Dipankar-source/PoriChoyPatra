@@ -23,11 +23,11 @@ const App = () => {
       <ScrollToTop />
       <ThemeProvider>
         <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/blog" element={<Blog/>} />
-          <Route path="/projects" element={<Projects/>} />
-          <Route path="/contact" element={<Contact/>} />
-          <Route path="/blog/:id" element={<EachBlogById />}/>
+          <Route path="/" element={<Home />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog/:id" element={<EachBlogById />} />
         </Routes>
       </ThemeProvider>
     </div>

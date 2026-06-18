@@ -339,7 +339,7 @@ const BLOG_POSTS = [
               <motion.img
                 key="logo-image"
                 className="w-8 h-8 object-cover rounded-full lg:hidden cursor-pointer"
-                src="/Logo.png"
+                src="/Logo.webp"
                 alt="DipFolio Logo"
                 onClick={openImageModal}
                 initial={{ opacity: 1, scale: 1 }}
@@ -483,7 +483,7 @@ const BLOG_POSTS = [
                 <div className="relative">
                   <motion.img
                     className="w-full h-auto max-h-[70vh] object-contain"
-                    src="./Logo.png"
+                    src="./Logo.webp"
                     alt="DipFolio Logo"
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}

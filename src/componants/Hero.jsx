@@ -233,7 +233,7 @@ Turning complex problems into elegant solutions`;
           <div className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8">
             <img
               className="lg:h-35 lg:w-35 h-32 w-32 rounded-full object-cover relative"
-              src="./Logo.png"
+              src="./Logo.webp"
               alt="Dipankar Barik - Logo"
             />
             <div className="absolute top-25 font-semibold text-sm bottom-0 left-29 min-w-[100px]">

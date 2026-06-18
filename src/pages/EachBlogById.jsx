@@ -577,7 +577,7 @@ const EachBlogById = () => {
               >
                 <div className="w-10 h-10 rounded-full bg-zinc-200 overflow-hidden">
                   <img
-                    src="/Logo.png"
+                    src="/Logo.webp"
                     alt="Author"
                     loading="lazy"
                     className="w-full h-full object-cover"

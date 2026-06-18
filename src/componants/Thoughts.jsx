@@ -138,7 +138,7 @@ const SkeletonThree = () => {
       className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] rounded-lg bg-dot-black/[0.2] flex-col space-y-2"
     >
       <PixelatedCanvas
-        src="./Logo.png"
+        src="./Logo.webp"
         width={213}
         height={190}
         cellSize={3}
@@ -185,7 +185,7 @@ const SkeletonFour = () => {
         className="h-full w-1/3 rounded-2xl bg-white p-4 dark:bg-black dark:border-white/[0.1] border border-neutral-200 flex flex-col items-center justify-center"
       >
         <img
-          src="./Logo.png"
+          src="./Logo.webp"
           alt="avatar"
           loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
@@ -200,7 +200,7 @@ const SkeletonFour = () => {
 
       <motion.div className="h-full relative z-20 w-1/3 rounded-2xl bg-white p-4 dark:bg-black dark:border-white/[0.1] border border-neutral-200 flex flex-col items-center justify-center">
         <img
-          src="./Logo.png"
+          src="./Logo.webp"
           alt="avatar"
           loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
@@ -218,7 +218,7 @@ const SkeletonFour = () => {
         className="h-full w-1/3 rounded-2xl bg-white p-4 dark:bg-black dark:border-white/[0.1] border border-neutral-200 flex flex-col items-center justify-center"
       >
         <img
-          src="./Logo.png"
+          src="./Logo.webp"
           alt="avatar"
           loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
@@ -263,7 +263,7 @@ const SkeletonFive = () => {
         className="flex flex-row rounded-2xl border border-neutral-100 dark:border-white/[0.2] p-2 items-start space-x-2 bg-white dark:bg-black"
       >
         <img
-          src="./Logo.png"
+          src="./Logo.webp"
           alt="avatar"
           loading="lazy"
           className="rounded-full h-10 w-10 object-cover"
