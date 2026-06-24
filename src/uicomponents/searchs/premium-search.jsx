@@ -180,12 +180,12 @@ export function PremiumSearch({ blogPosts = [] }) {
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Open Search"
-        className="group relative flex items-center gap-3 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all shadow-sm hover:shadow-md"
+        className="group relative flex w-auto sm:w-12 items-center justify-between gap-2 text-sm text-zinc-900 dark:text-white transition-all"
       >
-        <span className="hidden sm:inline">Cmd+K</span>
-        {/* <kbd className="sm:hidden inline-flex items-center justify-center rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-bold text-zinc-500 font-mono">
-          K
-        </kbd> */}
+        <Search className="h-4 w-4 shrink-0" />
+        <kbd className="hidden sm:flex items-center justify-center text-[10px] font-medium text-zinc-900 shadow-sm dark:text-zinc-400 font-mono">
+          ⌘ K
+        </kbd>
       </button>
 
       {createPortal(
@@ -205,7 +205,7 @@ export function PremiumSearch({ blogPosts = [] }) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -20 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white dark:bg-[#09090b] shadow-2xl border border-zinc-200 dark:border-white/10 pointer-events-auto z-50"
+                className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-white dark:bg-[#09090b] shadow-2xl border border-zinc-200 dark:border-white/10 pointer-events-auto z-50"
               >
                 {/* Search Input Section */}
                 <div className="relative flex items-center border-b border-zinc-200 dark:border-white/5 px-4 py-4">

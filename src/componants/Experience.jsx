@@ -81,7 +81,7 @@ const Experience = () => {
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300 border-1">
+    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300 border-1">
       <hr className="border-gray-200 dark:border-gray-800" />
       <br />
       <br />

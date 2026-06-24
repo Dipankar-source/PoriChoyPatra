@@ -1,11 +1,20 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import Home from "./pages/Home";
+import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
-import Blog from "./pages/Blog";
-import Projects from "./pages/Projects";
-import { useEffect } from "react";
-import Contact from "./componants/Contact";
-import EachBlogById from "./pages/EachBlogById";
+import { LoaderFive } from "@/components/ui/loader";
+
+// Lazy-loaded pages
+const Home = lazy(() => import("./pages/Home"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Projects = lazy(() => import("./pages/Projects"));
+const Contact = lazy(() => import("./componants/Contact"));
+const EachBlogById = lazy(() => import("./pages/EachBlogById"));
+
+const GlobalLoader = () => (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black transition-colors duration-300">
+    <LoaderFive text="Loading..." />
+  </div>
+);
 
 const App = () => {
   // Scroll to top component
@@ -22,13 +31,15 @@ const App = () => {
     <div>
       <ScrollToTop />
       <ThemeProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blog/:id" element={<EachBlogById />} />
-        </Routes>
+        <Suspense fallback={<GlobalLoader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog/:id" element={<EachBlogById />} />
+          </Routes>
+        </Suspense>
       </ThemeProvider>
     </div>
   );

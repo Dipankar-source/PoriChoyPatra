@@ -12,6 +12,7 @@ import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 import { useTheme } from "@/context/ThemeContext";
 import PremiumSort from "@/uicomponents/dropdown/premium-sort";
+import BlogHeader from "@/componants/BlogHeader";
 
 const BLOG_POSTS = [
   {
@@ -58,7 +59,7 @@ const Blog = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState("newest"); 
+  const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
     setIsClient(true);
@@ -145,6 +146,10 @@ const Blog = () => {
         </div>
 
         <main className="w-full px-4 sm:px-6 md:px-8 lg:px-0 py-8 border-1 mt-15">
+          {/* <div className="mb-12">
+            <BlogHeader />
+          </div> */}
+
           <div className="mb-8">
             <h2
               className={`text-3xl md:text-4xl font-medium tracking-tight py-4 flex items-center border-t border-b transition-colors duration-300 lg:px-5 ${borderColor}`}
@@ -187,7 +192,7 @@ const Blog = () => {
                   />
                 </div>
 
-                
+
               </div>
             </div>
           </div>
@@ -219,7 +224,7 @@ const Blog = () => {
                     <div
                       className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
                     >
-                      <div className="max-w-2xl mx-auto">
+                      <div className="max-w-4xl mx-auto">
                         <BlogCard
                           post={pair[0]}
                           cardTitleColor={cardTitleColor}
@@ -246,7 +251,7 @@ const Blog = () => {
                       <div
                         className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
                       >
-                        <div className="max-w-2xl mx-auto">
+                        <div className="max-w-4xl mx-auto">
                           <BlogCard
                             post={pair[1]}
                             cardTitleColor={cardTitleColor}

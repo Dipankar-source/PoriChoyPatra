@@ -19,9 +19,9 @@ import {
 
 const TestiMonials = () => {
   return (
-    <div className=" w-full border-1">
+    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300 border-1">
       <div className="mt-13">
-        <div className="w-full space-y-4 bg-background [&_.rfm-initial-child-container]:items-stretch! [&_.rfm-marquee]:items-stretch!">
+        <div className="w-full space-y-4 [&_.rfm-initial-child-container]:items-stretch! [&_.rfm-marquee]:items-stretch!">
           {[TESTIMONIALS_1, TESTIMONIALS_2].map((list, index) => (
             <Marquee key={index} className="border-y border-edge">
               <MarqueeFade side="left" />
@@ -31,7 +31,7 @@ const TestiMonials = () => {
                 {list.map((item) => (
                   <MarqueeItem
                     key={item.url}
-                    className="mx-0 h-full w-xs border-r border-edge"
+                    className="mx-0 h-full w-[280px] sm:w-xs border-r border-edge"
                   >
                     <a
                       href={item.url}

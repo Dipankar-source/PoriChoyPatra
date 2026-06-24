@@ -28,7 +28,7 @@ export function WorkExperience({ className, experiences }) {
   return (
     <div
       className={cn(
-        "bg-white dark:bg-[#0a0a0a] px-4 text-gray-900 dark:text-gray-100",
+        "bg-white dark:bg-black px-4 text-gray-900 dark:text-gray-100",
         className
       )}
     >

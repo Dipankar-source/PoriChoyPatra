@@ -261,11 +261,10 @@ const TiltedDivider = () => {
     <div className="w-full h-8 my-10 relative overflow-hidden flex items-center justify-center">
       {/* Mask fade out at edges */}
       <div
-        className={`absolute inset-0 z-10 bg-gradient-to-r ${
-          isDark
-            ? "from-[#050505] via-transparent to-[#050505]"
-            : "from-white via-transparent to-white"
-        }`}
+        className={`absolute inset-0 z-10 bg-gradient-to-r ${isDark
+          ? "from-[#050505] via-transparent to-[#050505]"
+          : "from-white via-transparent to-white"
+          }`}
       />
 
       {/* The Tilted Pattern */}
@@ -379,11 +378,10 @@ const EachBlogById = () => {
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
               <span
-                className={`flex-shrink-0 w-5 h-5 rounded flex items-center justify-center mt-0.5 ${
-                  isDark
-                    ? "bg-zinc-800 text-zinc-300"
-                    : "bg-zinc-100 text-zinc-600"
-                }`}
+                className={`flex-shrink-0 w-5 h-5 rounded flex items-center justify-center mt-0.5 ${isDark
+                  ? "bg-zinc-800 text-zinc-300"
+                  : "bg-zinc-100 text-zinc-600"
+                  }`}
               >
                 {getIconComponent(icons[index] || "Check")}
               </span>
@@ -402,9 +400,8 @@ const EachBlogById = () => {
     return (
       <div className="mb-12">
         <div
-          className={`flex flex-col gap-0 rounded-2xl border ${borderColor} ${
-            isDark ? "bg-zinc-900/20" : "bg-zinc-50"
-          } overflow-hidden`}
+          className={`flex flex-col gap-0 rounded-2xl border ${borderColor} ${isDark ? "bg-zinc-900/20" : "bg-zinc-50"
+            } overflow-hidden`}
         >
           {/* Top: Component Preview */}
           <div className="w-full flex flex-col">
@@ -415,11 +412,10 @@ const EachBlogById = () => {
                 Live Preview
               </span>
               <span
-                className={`text-xs font-mono px-2 py-1 rounded ${
-                  isDark
-                    ? "bg-zinc-800 text-zinc-400"
-                    : "bg-zinc-200 text-zinc-600"
-                }`}
+                className={`text-xs font-mono px-2 py-1 rounded ${isDark
+                  ? "bg-zinc-800 text-zinc-400"
+                  : "bg-zinc-200 text-zinc-600"
+                  }`}
               >
                 {blog.componentType}.jsx
               </span>
@@ -428,11 +424,10 @@ const EachBlogById = () => {
             <div className="relative min-h-[350px] flex items-center justify-center p-8 overflow-hidden">
               {/* Background Pattern */}
               <div
-                className={`absolute inset-0 ${
-                  isDark
-                    ? "bg-[radial-gradient(#ffffff05_1px,transparent_1px)]"
-                    : "bg-[radial-gradient(#00000005_1px,transparent_1px)]"
-                } [background-size:16px_16px]`}
+                className={`absolute inset-0 ${isDark
+                  ? "bg-[radial-gradient(#ffffff05_1px,transparent_1px)]"
+                  : "bg-[radial-gradient(#00000005_1px,transparent_1px)]"
+                  } [background-size:16px_16px]`}
               ></div>
 
               <div className="relative z-10 w-full w-full">
@@ -443,9 +438,8 @@ const EachBlogById = () => {
 
           {/* Bottom: Info Side (Full Width) */}
           <div
-            className={`w-full p-6 border-t ${borderColor} ${
-              isDark ? "bg-zinc-900/40" : "bg-white"
-            }`}
+            className={`w-full p-6 border-t ${borderColor} ${isDark ? "bg-zinc-900/40" : "bg-white"
+              }`}
           >
             <h3 className={`font-semibold mb-2 ${textColor}`}>
               About Component
@@ -467,24 +461,20 @@ const EachBlogById = () => {
         <Navbar />
         <div className="max-w-4xl mx-auto px-6 lg:px-0 py-20 animate-pulse">
           <div
-            className={`h-8 w-32 mb-6 rounded ${
-              isDark ? "bg-zinc-800" : "bg-zinc-200"
-            }`}
+            className={`h-8 w-32 mb-6 rounded ${isDark ? "bg-zinc-800" : "bg-zinc-200"
+              }`}
           ></div>
           <div
-            className={`h-16 w-3/4 mb-4 rounded ${
-              isDark ? "bg-zinc-800" : "bg-zinc-200"
-            }`}
+            className={`h-16 w-3/4 mb-4 rounded ${isDark ? "bg-zinc-800" : "bg-zinc-200"
+              }`}
           ></div>
           <div
-            className={`h-6 w-1/2 mb-12 rounded ${
-              isDark ? "bg-zinc-800" : "bg-zinc-200"
-            }`}
+            className={`h-6 w-1/2 mb-12 rounded ${isDark ? "bg-zinc-800" : "bg-zinc-200"
+              }`}
           ></div>
           <div
-            className={`h-96 w-full rounded-xl ${
-              isDark ? "bg-zinc-900" : "bg-zinc-100"
-            }`}
+            className={`h-96 w-full rounded-xl ${isDark ? "bg-zinc-900" : "bg-zinc-100"
+              }`}
           ></div>
         </div>
       </div>
@@ -545,11 +535,10 @@ const EachBlogById = () => {
                 className={`flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-mono uppercase tracking-widest mb-6 ${subText}`}
               >
                 <span
-                  className={`px-3 py-1 rounded-full ${
-                    isDark
-                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  }`}
+                  className={`px-3 py-1 rounded-full ${isDark
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    }`}
                 >
                   {blog.category}
                 </span>
@@ -600,20 +589,18 @@ const EachBlogById = () => {
               {renderDynamicComponent()}
 
               <div
-                className={`prose prose-lg max-w-none ${contentTextColor} ${
-                  isDark ? "prose-invert" : ""
-                } prose-headings:font-bold prose-a:text-emerald-500 hover:prose-a:text-emerald-400`}
+                className={`prose prose-lg max-w-none ${contentTextColor} ${isDark ? "prose-invert" : ""
+                  } prose-headings:font-bold prose-a:text-emerald-500 hover:prose-a:text-emerald-400`}
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
             </div>
 
             {/* Call to Action */}
             <div
-              className={`mt-16 p-8 rounded-2xl border ${borderColor} ${
-                isDark
-                  ? "bg-gradient-to-br from-zinc-900 to-zinc-950"
-                  : "bg-gradient-to-br from-zinc-50 to-white"
-              }`}
+              className={`mt-16 p-8 rounded-2xl border ${borderColor} ${isDark
+                ? "bg-gradient-to-br from-zinc-900 to-zinc-950"
+                : "bg-gradient-to-br from-zinc-50 to-white"
+                }`}
             >
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
@@ -652,11 +639,10 @@ const EachBlogById = () => {
                   <div
                     key={relatedPost.id}
                     onClick={() => navigate(`/blog/${relatedPost.id}`)}
-                    className={`group cursor-pointer p-6 rounded-2xl border ${borderColor} ${
-                      isDark
-                        ? "bg-zinc-900/40 hover:bg-zinc-900"
-                        : "bg-white hover:bg-zinc-50"
-                    } transition-all duration-300 hover:scale-[1.02]`}
+                    className={`group cursor-pointer p-6 rounded-2xl border ${borderColor} ${isDark
+                      ? "bg-zinc-900/40 hover:bg-zinc-900"
+                      : "bg-white hover:bg-zinc-50"
+                      } transition-all duration-300 hover:scale-[1.02]`}
                   >
                     <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest mb-4">
                       <span className="text-emerald-500">

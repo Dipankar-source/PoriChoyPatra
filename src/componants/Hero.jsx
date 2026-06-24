@@ -23,13 +23,19 @@ import { useNavigate } from "react-router-dom";
 const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const hasVisited = sessionStorage.getItem("hasVisitedHome") === "true";
   const naviagte = useNavigate();
 
   useEffect(() => {
     // Delay rendering heavy backgrounds to prioritize LCP
     const timer = setTimeout(() => setIsLoaded(true), 1500);
+    
+    if (!hasVisited) {
+      sessionStorage.setItem("hasVisitedHome", "true");
+    }
+    
     return () => clearTimeout(timer);
-  }, []);
+  }, [hasVisited]);
 
   const words = `Crafting digital experiences with MERN stack
 Design-focused developer with an eye for detail
@@ -165,7 +171,7 @@ Turning complex problems into elegant solutions`;
   return (
     <div>
       <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center top-5">
-        {isLoaded && (
+        {/* {isLoaded && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -187,7 +193,7 @@ Turning complex problems into elegant solutions`;
               speedScale={1}
             />
           </motion.div>
-        )}
+        )} */}
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
           <div className="flex-1">
             <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-400">
@@ -200,13 +206,13 @@ Turning complex problems into elegant solutions`;
               </span>
             </h2>
             <div className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
-              <TextGenerateEffect words={words} />
+              <TextGenerateEffect words={words} skipAnimation={hasVisited} />
             </div>
           </div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={hasVisited ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
+            transition={{ delay: hasVisited ? 0 : 1, duration: hasVisited ? 0 : 0.8 }}
             className="flex flex-col gap-4 sm:flex-row"
           >
             <div
@@ -254,12 +260,12 @@ Turning complex problems into elegant solutions`;
             </div>
           </div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={hasVisited ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="absolute bottom-0 lg:top-63 top-92 h-8 w-full lg:w-xl lg:right-5 rounded-md left-28 lg:left-50"
+            transition={{ delay: hasVisited ? 0 : 1.2, duration: hasVisited ? 0 : 0.8 }}
+            className="absolute lg:bottom-0 lg:top-63 top-[100%] mt-8 lg:mt-0 lg:h-8 w-full lg:w-xl lg:right-5 rounded-md left-0 lg:left-50 flex flex-col items-center lg:block px-4 lg:px-0"
           >
-            <div className="flex items-center justify-start gap-4 mb-2">
+            <div className="flex items-center justify-center lg:justify-start gap-4 mb-2">
               <a
                 className="z-50"
                 target="_blank"

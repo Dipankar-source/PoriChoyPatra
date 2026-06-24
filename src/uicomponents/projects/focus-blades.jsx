@@ -62,7 +62,7 @@ export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full py-12 bg-white dark:bg-zinc-950 transition-colors duration-500 border-l-1 border-r-1">
+    <div className="w-full py-12 bg-white dark:bg-black transition-colors duration-500 border-l-1 border-r-1">
       <div className="max-w-4xl mx-auto px-4 mb-8 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -84,7 +84,7 @@ export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
          - h-[400px]: Kept the original height as requested.
          - flex-col md:flex-row: Stacks vertically on mobile (fixing 'steep' look), horizontally on desktop.
       */}
-      <div className="max-w-4xl mx-auto h-[400px] flex flex-col md:flex-row gap-2 px-4">
+      <div className="max-w-4xl mx-auto h-[600px] md:h-[400px] flex flex-col md:flex-row gap-2 px-4">
         {projects.map((project, index) => (
           <Blade
             key={project.id}

@@ -182,7 +182,7 @@ const Contact = () => {
             <span className="text-emerald-500">something iconic.</span>
           </h1>
           <p
-            className={`text-lg md:text-xl font-light ${theme.subText} max-w-2xl relative z-10`}
+            className={`text-lg md:text-xl font-light ${theme.subText} max-w-4xl relative z-10`}
           >
             Have a project in mind or just want to chat? I'm currently open to
             new opportunities and collaborations.
@@ -259,7 +259,7 @@ const Contact = () => {
                       className={`w-6 h-6 mb-3 ${social.color} transition-transform group-hover:scale-110`}
                     />
                     <span className="text-sm font-medium">{social.name}</span>
-                   
+
                   </a>
                 ))}
               </div>
@@ -377,11 +377,10 @@ const Contact = () => {
                       disabled={isSubmitting}
                       className={`w-full py-4 px-6 rounded-xl font-medium text-white transition-all duration-300
                             flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20
-                            ${
-                              isSubmitting
-                                ? "bg-zinc-400 cursor-not-allowed"
-                                : "bg-emerald-600 hover:bg-emerald-500 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
-                            }`}
+                            ${isSubmitting
+                          ? "bg-zinc-400 cursor-not-allowed"
+                          : "bg-emerald-600 hover:bg-emerald-500 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                        }`}
                     >
                       {isSubmitting ? (
                         <>

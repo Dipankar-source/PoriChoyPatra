@@ -138,7 +138,7 @@ const HoverDetailPanel = ({ project, isDark, position, visible }) => {
             pointerEvents: "none",
           }}
           className={`rounded-2xl border ${border} ${bg} overflow-hidden`}
-          /* Subtle box shadow using Tailwind — no blur flicker */
+        /* Subtle box shadow using Tailwind — no blur flicker */
         >
           {/* Image */}
           <div className="h-44 overflow-hidden">
@@ -152,11 +152,10 @@ const HoverDetailPanel = ({ project, isDark, position, visible }) => {
           <div className="p-4 space-y-3">
             {/* Category badge */}
             <span
-              className={`inline-block text-[10px] font-semibold tracking-widest uppercase px-2.5 py-0.5 rounded-full ${
-                isDark
+              className={`inline-block text-[10px] font-semibold tracking-widest uppercase px-2.5 py-0.5 rounded-full ${isDark
                   ? "bg-blue-500/20 text-blue-300"
                   : "bg-blue-100 text-blue-700"
-              }`}
+                }`}
             >
               {project.category}
             </span>
@@ -190,11 +189,10 @@ const HoverDetailPanel = ({ project, isDark, position, visible }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ pointerEvents: "auto" }}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
-                  isDark
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${isDark
                     ? "border-white/10 text-white hover:bg-white/10"
                     : "border-black/10 text-gray-800 hover:bg-black/5"
-                }`}
+                  }`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <Github className="w-3 h-3" /> GitHub
@@ -331,22 +329,20 @@ const ProjectCard = ({
         {project.tech.slice(0, 2).map((tech) => (
           <span
             key={tech}
-            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
-              isDark
+            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${isDark
                 ? "bg-white/8 text-zinc-300 border-white/10"
                 : "bg-black/5 text-zinc-700 border-black/8"
-            }`}
+              }`}
           >
             {tech}
           </span>
         ))}
         {project.tech.length > 2 && (
           <span
-            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
-              isDark
+            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${isDark
                 ? "bg-white/8 text-zinc-300 border-white/10"
                 : "bg-black/5 text-zinc-700 border-black/8"
-            }`}
+              }`}
           >
             +{project.tech.length - 2}
           </span>
@@ -365,11 +361,10 @@ const ProjectCard = ({
             onClick={(e) => e.stopPropagation()}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-2 rounded-lg transition-all ${
-              isDark
+            className={`p-2 rounded-lg transition-all ${isDark
                 ? "hover:bg-blue-500/20 text-zinc-400 hover:text-blue-400"
                 : "hover:bg-blue-100 text-zinc-500 hover:text-blue-600"
-            }`}
+              }`}
             title="GitHub Repository"
           >
             <Github className="w-4 h-4" />
@@ -381,11 +376,10 @@ const ProjectCard = ({
             onClick={(e) => e.stopPropagation()}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-2 rounded-lg transition-all ${
-              isDark
+            className={`p-2 rounded-lg transition-all ${isDark
                 ? "hover:bg-blue-500/20 text-zinc-400 hover:text-blue-400"
                 : "hover:bg-blue-100 text-zinc-500 hover:text-blue-600"
-            }`}
+              }`}
             title="Live Demo"
           >
             <ExternalLink className="w-4 h-4" />
@@ -398,11 +392,10 @@ const ProjectCard = ({
           }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`p-2 rounded-lg transition-all group/btn ${
-            isDark
+          className={`p-2 rounded-lg transition-all group/btn ${isDark
               ? "hover:bg-blue-500/20 text-zinc-400 hover:text-blue-400"
               : "hover:bg-blue-100 text-zinc-500 hover:text-blue-600"
-          }`}
+            }`}
           title="View Details"
         >
           <ArrowUpRight className="w-4 h-4 group-hover/btn:rotate-45 transition-transform duration-300" />
@@ -430,17 +423,15 @@ const ProjectModal = ({ project, isDark, onClose }) => {
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
         transition={{ type: "spring", stiffness: 350, damping: 35 }}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl border backdrop-blur-xl ${
-          isDark
+        className={`relative w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-3xl border backdrop-blur-xl ${isDark
             ? "border-white/10 bg-zinc-900/50 shadow-2xl"
             : "border-white/20 bg-white/40 shadow-2xl"
-        }`}
+          }`}
       >
         {/* Progressive blur background layers */}
         <div
-          className={`absolute inset-0 rounded-3xl -z-10 ${
-            isDark ? "bg-zinc-950/40" : "bg-white/30"
-          } blur-2xl`}
+          className={`absolute inset-0 rounded-3xl -z-10 ${isDark ? "bg-zinc-950/40" : "bg-white/30"
+            } blur-2xl`}
         />
 
         {/* Close Button */}
@@ -448,11 +439,10 @@ const ProjectModal = ({ project, isDark, onClose }) => {
           whileHover={{ scale: 1.08, backgroundColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)" }}
           whileTap={{ scale: 0.95 }}
           onClick={onClose}
-          className={`absolute top-6 right-6 z-50 p-2.5 rounded-full backdrop-blur-md transition-all ${
-            isDark
+          className={`absolute top-6 right-6 z-50 p-2.5 rounded-full backdrop-blur-md transition-all ${isDark
               ? "bg-white/8 hover:bg-white/15 text-white/80 hover:text-white"
               : "bg-black/5 hover:bg-black/10 text-black/60 hover:text-black"
-          }`}
+            }`}
         >
           <svg
             className="w-5 h-5"
@@ -475,18 +465,16 @@ const ProjectModal = ({ project, isDark, onClose }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className={`relative rounded-2xl overflow-hidden h-72 ${
-              isDark ? "bg-zinc-800/40" : "bg-white/40"
-            } border backdrop-blur-md ${isDark ? "border-white/10" : "border-white/20"}`}
+            className={`relative rounded-2xl overflow-hidden h-72 ${isDark ? "bg-zinc-800/40" : "bg-white/40"
+              } border backdrop-blur-md ${isDark ? "border-white/10" : "border-white/20"}`}
           >
             <img
               src={project.image}
               alt={project.title}
               className="w-full h-full object-cover"
             />
-            <div className={`absolute inset-0 bg-gradient-to-t ${
-              isDark ? "from-zinc-900/60 to-transparent" : "from-black/20 to-transparent"
-            }`} />
+            <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? "from-zinc-900/60 to-transparent" : "from-black/20 to-transparent"
+              }`} />
           </motion.div>
 
           {/* Header Section */}
@@ -498,26 +486,23 @@ const ProjectModal = ({ project, isDark, onClose }) => {
           >
             <div className="flex items-center gap-3">
               <span
-                className={`text-xs font-semibold tracking-widest uppercase px-3 py-1.5 rounded-lg backdrop-blur-md border ${
-                  isDark
+                className={`text-xs font-semibold tracking-widest uppercase px-3 py-1.5 rounded-lg backdrop-blur-md border ${isDark
                     ? "bg-white/8 text-white/80 border-white/10"
                     : "bg-black/5 text-black/70 border-white/20"
-                }`}
+                  }`}
               >
                 {project.category}
               </span>
             </div>
             <h2
-              className={`text-3xl font-bold leading-tight ${
-                isDark ? "text-white" : "text-gray-900"
-              }`}
+              className={`text-3xl font-bold leading-tight ${isDark ? "text-white" : "text-gray-900"
+                }`}
             >
               {project.title}
             </h2>
             <p
-              className={`text-base leading-relaxed ${
-                isDark ? "text-zinc-300" : "text-gray-700"
-              }`}
+              className={`text-base leading-relaxed ${isDark ? "text-zinc-300" : "text-gray-700"
+                }`}
             >
               {project.description}
             </p>
@@ -528,18 +513,16 @@ const ProjectModal = ({ project, isDark, onClose }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className={`text-sm leading-relaxed ${
-              isDark ? "text-zinc-400" : "text-gray-600"
-            }`}
+            className={`text-sm leading-relaxed ${isDark ? "text-zinc-400" : "text-gray-600"
+              }`}
           >
             {project.longDescription}
           </motion.p>
 
           {/* Divider */}
           <div
-            className={`h-px ${
-              isDark ? "bg-white/8" : "bg-black/10"
-            }`}
+            className={`h-px ${isDark ? "bg-white/8" : "bg-black/10"
+              }`}
           />
 
           {/* Technologies Section */}
@@ -550,9 +533,8 @@ const ProjectModal = ({ project, isDark, onClose }) => {
             className="space-y-3"
           >
             <h3
-              className={`text-sm font-semibold ${
-                isDark ? "text-white" : "text-gray-900"
-              }`}
+              className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"
+                }`}
             >
               Technologies
             </h3>
@@ -560,11 +542,10 @@ const ProjectModal = ({ project, isDark, onClose }) => {
               {project.tech.map((tech) => (
                 <span
                   key={tech}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium backdrop-blur-sm border transition-all ${
-                    isDark
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium backdrop-blur-sm border transition-all ${isDark
                       ? "bg-white/8 text-white/80 border-white/10 hover:bg-white/12"
                       : "bg-black/5 text-black/70 border-white/20 hover:bg-black/8"
-                  }`}
+                    }`}
                 >
                   {tech}
                 </span>
@@ -582,23 +563,20 @@ const ProjectModal = ({ project, isDark, onClose }) => {
             {Object.entries(project.stats).map(([key, value]) => (
               <div
                 key={key}
-                className={`p-4 rounded-xl backdrop-blur-md border transition-all ${
-                  isDark
+                className={`p-4 rounded-xl backdrop-blur-md border transition-all ${isDark
                     ? "bg-white/8 border-white/10 hover:bg-white/12"
                     : "bg-black/5 border-white/20 hover:bg-black/8"
-                }`}
+                  }`}
               >
                 <p
-                  className={`text-[10px] font-medium uppercase tracking-widest mb-2 ${
-                    isDark ? "text-white/60" : "text-black/50"
-                  }`}
+                  className={`text-[10px] font-medium uppercase tracking-widest mb-2 ${isDark ? "text-white/60" : "text-black/50"
+                    }`}
                 >
                   {key.replace(/([A-Z])/g, " $1").trim()}
                 </p>
                 <p
-                  className={`text-xl font-bold ${
-                    isDark ? "text-white" : "text-gray-900"
-                  }`}
+                  className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"
+                    }`}
                 >
                   {value}
                 </p>
@@ -619,11 +597,10 @@ const ProjectModal = ({ project, isDark, onClose }) => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium backdrop-blur-md border transition-all ${
-                isDark
+              className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium backdrop-blur-md border transition-all ${isDark
                   ? "bg-white/8 border-white/10 text-white/80 hover:bg-white/12 hover:text-white"
                   : "bg-black/5 border-white/20 text-black/70 hover:bg-black/8 hover:text-black"
-              }`}
+                }`}
             >
               <Github className="w-4 h-4" />
               <span>Repository</span>
@@ -634,11 +611,10 @@ const ProjectModal = ({ project, isDark, onClose }) => {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium backdrop-blur-md border transition-all ${
-                isDark
+              className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium backdrop-blur-md border transition-all ${isDark
                   ? "bg-white/12 border-white/20 text-white hover:bg-white/16"
                   : "bg-blue-500/10 border-blue-300/20 text-blue-600 hover:bg-blue-500/15"
-              }`}
+                }`}
             >
               <ExternalLink className="w-4 h-4" />
               <span>Live Demo</span>
@@ -816,15 +792,14 @@ const Projects = () => {
                         onClick={() => setSelectedCategory(category)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
-                          selectedCategory === category
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${selectedCategory === category
                             ? isDark
                               ? "bg-blue-600 text-white"
                               : "bg-blue-500 text-white"
                             : isDark
                               ? "border border-zinc-700 text-zinc-300 hover:border-zinc-600"
                               : "border border-zinc-300 text-zinc-600 hover:border-zinc-400"
-                        }`}
+                          }`}
                       >
                         {category}
                       </motion.button>
@@ -861,7 +836,7 @@ const Projects = () => {
                       <div
                         className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
                       >
-                        <div className="max-w-2xl mx-auto">
+                        <div className="max-w-4xl mx-auto">
                           <ProjectCard
                             project={pair[0]}
                             cardTitleColor={cardTitleColor}
@@ -888,7 +863,7 @@ const Projects = () => {
                         <div
                           className={`w-full lg:w-1/2 py-8 lg:py-10 px-4 lg:px-8 transition-colors duration-300 ${borderColor}`}
                         >
-                          <div className="max-w-2xl mx-auto">
+                          <div className="max-w-4xl mx-auto">
                             <ProjectCard
                               project={pair[1]}
                               cardTitleColor={cardTitleColor}

@@ -12,7 +12,7 @@ import { motion } from "motion/react";
 
 const Thoughts = () => {
   return (
-    <div className="mb-9 p-4 border-1">
+    <div className=" p-4 border-1 pb-12">
       <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">Thoughts... </p>
       <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
         {items.map((item, i) => (

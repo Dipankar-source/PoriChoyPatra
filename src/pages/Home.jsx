@@ -14,12 +14,16 @@ import Navbar from "../componants/Navbar";
 import { useTheme } from "../context/ThemeContext";
 import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
-import GitHubStats from "@/componants/GitHubStats";
-import NameHover from "@/componants/NameHover";
 import { LoaderFive } from "@/components/ui/loader";
-import { FocusBlades } from "@/uicomponents/projects/focus-blades";
-import Elevation from "@/componants/FooterElevation";
-import Footer from "@/componants/Footer";
+
+// Lazy imports for below-the-fold components
+const FocusBlades = lazy(() => import("@/uicomponents/projects/focus-blades").then(module => ({ default: module.FocusBlades })));
+const Elevation = lazy(() => import("@/componants/FooterElevation"));
+const Footer = lazy(() => import("@/componants/Footer"));
+const AchieveMents = lazy(() => import("@/componants/AchieveMents"));
+const IsometricBg = lazy(() => import("@/componants/IsometricBg"));
+const GitHubStats = lazy(() => import("@/componants/GitHubStats"));
+const NameHover = lazy(() => import("@/componants/NameHover"));
 
 const Home = () => {
   const { isDark } = useTheme();
@@ -35,16 +39,16 @@ const Home = () => {
   return (
     <>
       <div
-        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:ml-92 lg:mr-92 ${isDark ? "bg-black" : "bg-white"
+        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:mx-92 ${isDark ? "bg-black" : "bg-white"
           }`}
       >
-        {/* Spotlights and Backgrounds load immediately */}
+        {/* Spotlights and Backgrounds load immediately
         <Spotlight
           className="-top-20 left-0 md:-top-10 md:left-40"
           fill="white"
-        />
+        /> */}
         <CustomMouseFollower className="hidden lg:block" />
-        <BackgroundRippleEffect />
+        {/* <BackgroundRippleEffect /> */}
 
         {/* Navbar */}
         <div className="fixed top-0 left-0 right-0 z-50 lg:ml-92 lg:mr-92">
@@ -55,8 +59,10 @@ const Home = () => {
         {/* The fallback is what shows while the lazy components below are downloading */}
         <Suspense fallback={<LoadingScreen />}>
           <div className="relative pt-16">
-            <div className="relative z-10 w-full sm:px-6 lg:px-0">
-              <section id="hero" className="w-full">
+            <div className="relative z-10 w-full px-4 sm:px-6 lg:px-0">
+
+              <section id="hero" className="w-full relative">
+                <IsometricBg />
                 <Hero />
               </section>
 
@@ -87,6 +93,10 @@ const Home = () => {
               <section id="thoughts" className="w-full">
                 <Thoughts />
               </section>
+{/* 
+              <section id="achivements" className="w-full">
+                <AchieveMents />
+              </section> */}
 
               <section id="contact" className="w-full">
                 <Elevation isDark={isDark} />

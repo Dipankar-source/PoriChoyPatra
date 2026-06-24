@@ -499,7 +499,7 @@ const GitHubStats = () => {
   }
 
   return (
-    <div className="w-full px-4 py-10 border-l-1 border-r-1">
+    <div className="w-full px-4 py-10 border-l-1 border-r-1 ">
       <p className="text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-4 pr-4">
         GitHub Activities
       </p>
@@ -558,20 +558,17 @@ const GitHubStats = () => {
                             delay: (weekIndex * 7 + dayIndex) * 0.002,
                             duration: 0.3,
                           }}
-                          className={`${
-                            isMobile ? "w-2 h-2" : "w-3 h-3"
-                          } rounded-sm cursor-pointer`}
+                          className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                            } rounded-sm cursor-pointer`}
                           style={{ backgroundColor: day.color }}
-                          title={`${
-                            day.count
-                          } contributions on ${day.date.toLocaleDateString()}`}
+                          title={`${day.count
+                            } contributions on ${day.date.toLocaleDateString()}`}
                         />
                       ) : (
                         <div
                           key={`${weekIndex}-${dayIndex}`}
-                          className={`${
-                            isMobile ? "w-2 h-2" : "w-3 h-3"
-                          } rounded-sm`}
+                          className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                            } rounded-sm`}
                           style={{ backgroundColor: "transparent" }}
                         />
                       )
@@ -586,9 +583,8 @@ const GitHubStats = () => {
 
       {/* Legend and Stats */}
       <div
-        className={`flex ${
-          isMobile ? "flex-col" : "items-center justify-between"
-        } mt-4 px-5 max-w-4xl mx-1 gap-3`}
+        className={`flex ${isMobile ? "flex-col" : "items-center justify-between"
+          } mt-4 px-5 max-w-4xl mx-1 gap-3`}
       >
         <div className="flex flex-col">
           <h2 className="text-sm font-medium text-gray-900 dark:text-white">
@@ -618,29 +614,24 @@ const GitHubStats = () => {
           <span className="text-xs text-gray-600 dark:text-gray-400">Less</span>
           <div className="flex gap-[1px]">
             <div
-              className={`${
-                isMobile ? "w-2 h-2" : "w-3 h-3"
-              } bg-[#ebedf0] dark:bg-[#161b22] rounded-[2px]`}
+              className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                } bg-[#ebedf0] dark:bg-[#161b22] rounded-[2px]`}
             ></div>
             <div
-              className={`${
-                isMobile ? "w-2 h-2" : "w-3 h-3"
-              } bg-[#9be9a8] rounded-[2px]`}
+              className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                } bg-[#9be9a8] rounded-[2px]`}
             ></div>
             <div
-              className={`${
-                isMobile ? "w-2 h-2" : "w-3 h-3"
-              } bg-[#40c463] rounded-[2px]`}
+              className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                } bg-[#40c463] rounded-[2px]`}
             ></div>
             <div
-              className={`${
-                isMobile ? "w-2 h-2" : "w-3 h-3"
-              } bg-[#30a14e] rounded-[2px]`}
+              className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                } bg-[#30a14e] rounded-[2px]`}
             ></div>
             <div
-              className={`${
-                isMobile ? "w-2 h-2" : "w-3 h-3"
-              } bg-[#216e39] rounded-[2px]`}
+              className={`${isMobile ? "w-2 h-2" : "w-3 h-3"
+                } bg-[#216e39] rounded-[2px]`}
             ></div>
           </div>
           <span className="text-xs text-gray-600 dark:text-gray-400">More</span>
