@@ -32,11 +32,11 @@ export default defineConfig({
             if (id.includes("framer-motion") || id.includes("motion")) {
               return "vendor-framer";
             }
-            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router-dom")) {
-              return "vendor-react";
-            }
             if (id.includes("lucide-react") || id.includes("react-icons") || id.includes("@tabler/icons-react")) {
               return "vendor-icons";
+            }
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/react-router-dom/")) {
+              return "vendor-react";
             }
             return "vendor";
           }
