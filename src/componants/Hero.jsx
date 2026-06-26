@@ -15,6 +15,7 @@ import { BiLogoGmail } from "react-icons/bi";
 import { FaPhone } from "react-icons/fa6";
 import { CgGenderMale } from "react-icons/cg";
 import { IoLocationSharp } from "react-icons/io5";
+import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
 import { ShimmeringText } from "@/components/shimmering-text";
 import { MagneticWrapper } from "./CustomMouseFollower";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
@@ -29,19 +30,17 @@ const Hero = () => {
   useEffect(() => {
     // Delay rendering heavy backgrounds to prioritize LCP
     const timer = setTimeout(() => setIsLoaded(true), 1500);
-    
+
     if (!hasVisited) {
       sessionStorage.setItem("hasVisitedHome", "true");
     }
-    
+
     return () => clearTimeout(timer);
   }, [hasVisited]);
 
-  const words = `Crafting digital experiences with MERN stack
-Design-focused developer with an eye for detail
-Building scalable solutions with clean code
-Passionate about modern web technologies
-Turning complex problems into elegant solutions`;
+  const words = `Building fast, scalable web applications with MERN.
+
+Passionate about performance, clean architecture, and intuitive user experiences.`;
 
   const wordsOfShowcase = [
     "better",
@@ -196,13 +195,17 @@ Turning complex problems into elegant solutions`;
         )} */}
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
           <div className="flex-1">
-            <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-400">
-              Hi, I'm{" "}
+            <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-200">
+              <ScrollFountain particleCount={15}>
+                Hi, I'm{" "}
+              </ScrollFountain>
               <span className="font-bold dark:text-white">
-                <ShimmeringText
-                  className="text-3xl lg:text-5xl font-semibold"
-                  text="Dipankar Barik"
-                />
+                <ScrollFountain particleCount={25}>
+                  <ShimmeringText
+                    className="text-3xl lg:text-5xl font-semibold"
+                    text=" Dipankar Barik"
+                  />
+                </ScrollFountain>
               </span>
             </h2>
             <div className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
@@ -242,7 +245,7 @@ Turning complex problems into elegant solutions`;
               src="./Logo.webp"
               alt="Dipankar Barik - Logo"
             />
-            <div className="absolute top-25 font-semibold text-sm bottom-0 left-29 min-w-[100px]">
+            <div className="absolute top-26 font-semibold text-sm bottom-0 left-26 min-w-[100px]">
               {" "}
               {/* Add min-width */}
               <LayoutTextFlip
@@ -263,7 +266,7 @@ Turning complex problems into elegant solutions`;
             initial={hasVisited ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: hasVisited ? 0 : 1.2, duration: hasVisited ? 0 : 0.8 }}
-            className="absolute lg:bottom-0 lg:top-63 top-[100%] mt-8 lg:mt-0 lg:h-8 w-full lg:w-xl lg:right-5 rounded-md left-0 lg:left-50 flex flex-col items-center lg:block px-4 lg:px-0"
+            className="absolute lg:bottom-0 lg:top-63 top-[100%] -mt-4 lg:mt-0 lg:h-8 w-full lg:w-xl lg:right-5 rounded-md left-0 lg:left-50 flex flex-col items-center lg:block px-4 lg:px-0"
           >
             <div className="flex items-center justify-center lg:justify-start gap-4 mb-2">
               <a

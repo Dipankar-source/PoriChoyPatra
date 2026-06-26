@@ -73,7 +73,7 @@ const FooterSystem = () => {
   };
 
   const footerClasses = cn(
-    "w-full border-t mt-auto relative", // Added relative
+    "w-full border-t relative", 
     "transition-colors duration-300",
     isDark ? "bg-[#09090b] border-white/10" : "bg-white border-black/10"
   );

@@ -62,8 +62,8 @@ export function FocusBlades({ projects = PROJECTS, defaultActive = 0 }) {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full py-12 bg-white dark:bg-black transition-colors duration-500 border-l-1 border-r-1">
-      <div className="max-w-4xl mx-auto px-4 mb-8 flex items-center justify-between">
+    <div className="w-full bg-white dark:bg-black transition-colors duration-500">
+      <div className="max-w-4xl mx-auto px-4 mb-8 flex items-center justify-between mt-4">
         <div>
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
             Projects

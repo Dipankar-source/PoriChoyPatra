@@ -12,20 +12,23 @@ import { motion } from "motion/react";
 
 const Thoughts = () => {
   return (
-    <div className=" p-4 border-1 pb-12">
-      <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">Thoughts... </p>
-      <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
-        {items.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            header={item.header}
-            className={cn("[&>p:text-lg]", item.className)}
-            icon={item.icon}
-          />
-        ))}
-      </BentoGrid>
+    <div>
+      <hr className="text-blue-100 mt-3" />
+      <div className=" p-4 pb-12">
+        <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">Thoughts... </p>
+        <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
+          {items.map((item, i) => (
+            <BentoGridItem
+              key={i}
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              className={cn("[&>p:text-lg]", item.className)}
+              icon={item.icon}
+            />
+          ))}
+        </BentoGrid>
+      </div>
     </div>
   );
 };

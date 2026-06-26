@@ -12,8 +12,8 @@ const Elevation = ({ isDark }) => {
         transition-all duration-500 ease-in-out
         ${
           isDark
-            ? "shadow-[0_10px_40px_-10px_rgba(0,0,0,1)] border border-gray-800"
-            : "shadow-2xl border-4 border-white"
+            ? "shadow-[0_10px_40px_-10px_rgba(0,0,0,1)] "
+            : "shadow-2xl "
         }
       `}
     >

@@ -1,337 +1,359 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useOutsideClick } from "@/hooks/use-outside-click";
-import React, { useEffect, useState, useRef, useId } from "react";
-import assets from "../assets/assets";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MdOutlineKeyboardArrowRight, MdCode } from "react-icons/md";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
-import { MagneticWrapper } from "./CustomMouseFollower";
+import assets from "../assets/assets";
+import icons from '../assets/icons';
+import { useTheme } from '../context/ThemeContext';
 
-const Projects = () => {
-  const [active, setActive] = useState(null);
-  const ref = useRef(null);
-  const id = useId();
+// ─── Data ────────────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    function onKeyDown(event) {
-      if (event.key === "Escape") {
-        setActive(null);
-      }
-    }
+const PROJECTS = [
+  {
+    id: "1",
+    title: "Career Nexus",
+    category: "Full Stack",
+    description:
+      "A scalable MERN-based platform connecting job seekers, recruiters, and mentors through an integrated ecosystem with AI-powered matching.",
+    tech: ["Node.js", "React.js", "TailwindCSS", "MongoDB"],
+    github: "https://github.com/Dipankar-source/CareerNexus",
+    demo: "https://career-nexus-demo.vercel.app",
+    image: assets.careerNexusFullDetail,
+  },
+  {
+    id: "2",
+    title: "Ishani-UI",
+    category: "Frontend / NPM",
+    description:
+      "A React component library published on NPM, designed for developers to drop in and reuse polished UI primitives with zero friction.",
+    tech: ["React", "NPM", "Tailwind"],
+    github: "https://github.com/Dipankar-source/ishani-ui",
+    demo: "https://www.npmjs.com/package/ishani-ui",
+    image: assets.NPMContribution,
+  },
+  {
+    id: "3",
+    title: "Brainu Bot",
+    category: "Full Stack",
+    description:
+      "A helpdesk chatbot built for Brainware University students, powered by Gemini API with Firebase backend and a clean conversational UI.",
+    tech: ["React", "Firebase", "Gemini API"],
+    github: "https://github.com/Dipankar-source/Student-HelpDesk-ChatBot",
+    demo: "https://student-helpdesk-chatbot-0do3.onrender.com/dashboard",
+    image: assets.BranuBot,
+  },
+  {
+    id: "4",
+    title: "AI Portfolio",
+    category: "Design / Frontend",
+    description:
+      "A minimalist developer portfolio with smooth motion design, custom cursor interactions, and AI-assisted content generation.",
+    tech: ["React.js", "ishani-ui", "Aceternity.ui", "Framer Motion"],
+    github: "https://github.com/Dipankar-source/PoriChoyPatra",
+    demo: "https://porichoypatra.onrender.com/",
+    image: assets.Portfolio,
+  },
+];
 
-    if (active && typeof active === "object") {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+// ─── Tech chip ────────────────────────────────────────────────────────────────
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active]);
+const getIconForTech = (techName) => {
+  const normalizedMap = {
+    "node.js": icons.NodeJSIcon,
+    "react.js": icons.ReactIcon,
+    "react": icons.ReactIcon,
+    "tailwindcss": icons.TailwindIcon,
+    "tailwind": icons.TailwindIcon,
+    "mongodb": icons.MongoDBIcon,
+    "firebase": icons.FirebaseIcon,
+    "aceternity.ui": icons.AceternityUIIcon,
+    "framer motion": icons.FramerMotionIcon,
+    "next.js": icons.NextJSIcon,
+    "express": icons.ExpressIcon,
+    "npm": icons.NPMIcon,
+    "claude": icons.ClaudeIcon,
+    "antigravity": icons.AntigravityIcon,
+    "openai": icons.OpenAIIcon,
+    "gemini api": icons.GeminiIcon,
+  };
 
-  useOutsideClick(ref, () => setActive(null));
+  const Icon = normalizedMap[techName.toLowerCase()];
+  if (Icon) return Icon;
+
+  // Fallback icon
+  return ({ isDark }) => <MdCode size={26} color={isDark ? '#fff' : '#000'} />;
+};
+
+const TechChip = ({ name }) => {
+  const { isDark } = useTheme();
+  const IconComponent = getIconForTech(name);
 
   return (
-    <div className="py-9 border-1 ">
-      <AnimatePresence>
-        {active && typeof active === "object" ? (
-          <div className="fixed inset-0 grid place-items-center z-[100] mt-15">
-            <motion.button
-              key={`button-${active.title}-${id}`}
-              layout
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-                transition: {
-                  duration: 0.05,
-                },
-              }}
-              className="flex absolute top-2 right-2 lg:hidden items-center justify-center bg-white rounded-full h-6 w-6"
-              onClick={() => setActive(null)}
-              aria-label="Close Project"
-            >
-              <CloseIcon />
-            </motion.button>
-            <motion.div
-              layoutId={`card-${active.title}-${id}`}
-              ref={ref}
-              className="w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
-            >
-              <motion.div layoutId={`image-${active.title}-${id}`}>
-                <img
-                  width={200}
-                  height={200}
-                  src={active.src}
-                  alt={active.title}
-                  className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
-                />
-              </motion.div>
-
-              <div>
-                <div className="flex justify-between items-start p-4">
-                  <div className="">
-                    <motion.h3
-                      layoutId={`title-${active.title}-${id}`}
-                      className="font-bold text-neutral-700 dark:text-neutral-200"
-                    >
-                      {active.title}
-                    </motion.h3>
-                    <motion.p
-                      layoutId={`description-${active.description}-${id}`}
-                      className="text-neutral-600 dark:text-neutral-400"
-                    >
-                      {active.description}
-                    </motion.p>
-                  </div>
-
-                  <MagneticWrapper>
-                    <div className="flex ">
-                      <motion.a
-                        layoutId={`button-${active.title}-${id}`}
-                        href={active.gitHubLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub Repository"
-                        className="px-4 py-3 text-sm rounded-full font-bold text-black dark:text-white"
-                      >
-                        <FaGithub className="w-4 h-4" />
-                      </motion.a>
-
-                      <motion.a
-                        layoutId={`live-button-${active.title}-${id}`}
-                        href={active.liveLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Live Demo"
-                        className="px-4 py-3 text-sm rounded-full hover:text-'LiveLink' font-bold text-black dark:text-white"
-                      >
-                        <FaRegPaperPlane className="w-4 h-4" />
-                      </motion.a>
-                    </div>
-                  </MagneticWrapper>
-                </div>
-                <div className="pt-4 relative px-4">
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400 [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
-                  >
-                    {typeof active.content === "function"
-                      ? active.content()
-                      : active.content}
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        ) : null}
-      </AnimatePresence>
-
-      {/* Projects List */}
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-xl lg:text-2xl font-medium  my-auto mb-4 text-neutral-800 dark:text-neutral-200 px-4">
-          Projects
-        </h2>
-        <ul className="grid gap-4 p-4">
-          {cards.map((card, index) => (
-            <motion.div
-              layoutId={`card-${card.title}-${id}`}
-              key={`card-${card.title}-${id}`}
-              onClick={() => setActive(card)}
-              className="p-3 flex flex-col md:flex-row justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-700"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex gap-4 flex-col md:flex-row items-center md:items-start">
-                <motion.div layoutId={`image-${card.title}-${id}`}>
-                  <img
-                    width={100}
-                    height={100}
-                    src={card.src}
-                    alt={card.title}
-                    loading="lazy"
-                    className="h-40 w-40 md:h-15 md:w-15 rounded-lg object-cover object-top"
-                  />
-                </motion.div>
-                <div className="text-center md:text-left">
-                  <motion.h3
-                    layoutId={`title-${card.title}-${id}`}
-                    className="font-medium text-neutral-800 dark:text-neutral-200 text-lg"
-                  >
-                    {card.title}
-                  </motion.h3>
-                  <motion.p
-                    layoutId={`description-${card.description}-${id}`}
-                    className="text-neutral-600 dark:text-neutral-400 mt-2"
-                  >
-                    {card.description}
-                  </motion.p>
-                </div>
-              </div>
-              <MagneticWrapper>
-                <motion.button
-                  layoutId={`button-${card.title}-${id}`}
-                  aria-label="Open Project"
-                  className="px-3 flex items-center py-3 text-sm rounded-full font-bold text-black mt-4 md:mt-0 transition-colors duration-200 dark:text-white"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <FaRegPaperPlane className=" hidden lg:block w-4 h-4" />
-                </motion.button>
-              </MagneticWrapper>
-            </motion.div>
-          ))}
-        </ul>
+    <div
+      title={name}
+      className="flex items-center justify-center transition-transform duration-200 hover:scale-110 cursor-pointer p-0.5"
+    >
+      <div className="scale-[0.85] sm:scale-80">
+        <IconComponent isDark={isDark} />
       </div>
     </div>
   );
 };
 
-export const CloseIcon = () => {
+// ─── Single project row ───────────────────────────────────────────────────────
+
+const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  // When another item is open: blur + dim this one
+  const shouldDim = isAnyOpen && !isOpen;
+
   return (
-    <motion.svg
-      initial={{
-        opacity: 0,
-      }}
+    <motion.div
+      className="relative flex flex-col w-full rounded-md cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onToggle}
       animate={{
-        opacity: 1,
+        filter: shouldDim ? "blur(1.5px)" : "blur(0px)",
+        opacity: shouldDim ? 0.38 : 1,
       }}
-      exit={{
-        opacity: 0,
-        transition: {
-          duration: 0.05,
-        },
-      }}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-4 w-4 text-black"
+      transition={{ duration: 0.25, ease: "easeOut" }}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M18 6l-12 12" />
-      <path d="M6 6l12 12" />
-    </motion.svg>
+      {/* ── Row header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-2 group">
+
+        {/* Left: title + category */}
+        <div className="sm:w-1/2 flex flex-col gap-1.5 w-full">
+          <div className="flex items-center justify-between sm:justify-start gap-3 w-full">
+            <div className="flex items-center gap-3">
+              <span
+                className="font-semibold text-gray-700 dark:text-white/95 leading-snug tracking-tight"
+                style={{ fontSize: "clamp(15px, 2.6vw, 18px)" }}
+              >
+                {project.title}
+              </span>
+
+              {/* GitHub (Desktop) */}
+              {project.github && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className={`hidden sm:flex group/gh items-center flex-shrink-0 transition-opacity duration-200 ${isOpen || isHovered ? "opacity-100" : "opacity-0"}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <FaGithub
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400 group-hover/gh:text-gray-900 dark:group-hover/gh:text-white transition-colors"
+                  />
+                  <span className="overflow-hidden max-w-0 opacity-0 group-hover/gh:max-w-[50px] group-hover/gh:opacity-100 group-hover/gh:ml-1.5 transition-all duration-200 text-[12px] font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
+                    GitHub
+                  </span>
+                </a>
+              )}
+
+              {/* Live (Desktop) */}
+              {project.demo && (
+                <a
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Live demo"
+                  className={`hidden sm:flex group/live items-center flex-shrink-0 transition-opacity duration-200 ${isOpen || isHovered ? "opacity-100" : "opacity-0"}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <FaRegPaperPlane
+                    size={14}
+                    className="text-gray-500 dark:text-gray-400 group-hover/live:text-gray-900 dark:group-hover/live:text-white transition-colors"
+                  />
+                  <span className="overflow-hidden max-w-0 opacity-0 group-hover/live:max-w-[40px] group-hover/live:opacity-100 group-hover/live:ml-1.5 transition-all duration-200 text-[12px] font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
+                    Live
+                  </span>
+                </a>
+              )}
+            </div>
+
+            {/* Chevron */}
+            <motion.span
+              animate={{ rotate: isOpen ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className={`flex-shrink-0 transition-opacity duration-200 ${isOpen ? "opacity-100" : "opacity-100 sm:opacity-0 group-hover:opacity-100"}`}
+            >
+              <MdOutlineKeyboardArrowRight
+                size={22}
+                className="text-gray-500 dark:text-gray-400"
+              />
+            </motion.span>
+          </div>
+
+          <p
+            className="font-medium text-gray-400 dark:text-gray-500 leading-snug"
+            style={{ fontSize: "clamp(10px, 1.4vw, 12px)" }}
+          >
+            {project.category}
+          </p>
+        </div>
+
+        {/* Right: thumbnail on hover (collapsed state only) */}
+        <div className="hidden sm:grid sm:w-1/2 items-center justify-items-end min-h-[64px]">
+          {/* Tech chips preview — hidden when image thumbnail is showing */}
+          <AnimatePresence>
+            {!isHovered && !isOpen && (
+              <motion.div
+                key="chips"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="col-start-1 row-start-1 flex flex-wrap gap-1.5 justify-end"
+              >
+                {project.tech.map((t) => (
+                  <TechChip key={t} name={t} />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Hover thumbnail — only shows when collapsed + hovered */}
+          <AnimatePresence>
+            {isHovered && !isOpen && (
+              <motion.div
+                key="thumb"
+                initial={{ opacity: 0, scale: 0.92, x: 12 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.92, x: 12 }}
+                transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="col-start-1 row-start-1 relative flex-shrink-0 w-28 h-16 rounded-lg overflow-hidden shadow-lg border border-neutral-200 dark:border-neutral-700"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover object-top"
+                />
+                {/* subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── Expanded body ── */}
+      <motion.div
+        initial={false}
+        animate={
+          isOpen
+            ? { height: "auto", opacity: 1, marginTop: 8 }
+            : { height: 0, opacity: 0, marginTop: 0 }
+        }
+        transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
+        style={{ overflow: "hidden" }}
+      >
+        <div className="pb-4">
+          {/* Image + text side by side */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Image */}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, delay: 0.08 }}
+              className="flex-shrink-0 w-full sm:w-44 h-28 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-md"
+            >
+              <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover object-top"
+              />
+            </motion.div>
+
+            {/* Description + full tech */}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, delay: 0.12 }}
+              className="flex flex-col justify-between gap-3"
+            >
+              <p
+                className="text-gray-600 dark:text-gray-300 leading-relaxed"
+                style={{ fontSize: "clamp(12px, 1.9vw, 13.5px)" }}
+              >
+                {project.description}
+              </p>
+
+              {/* Mobile GitHub & Live Links */}
+              <div className="flex sm:hidden flex-wrap gap-4 mt-1">
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <FaGithub size={16} /> GitHub
+                  </a>
+                )}
+                {project.demo && (
+                  <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <FaRegPaperPlane size={14} /> Live Demo
+                  </a>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {project.tech.map((t) => (
+                  <TechChip key={t} name={t} />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Hairline divider */}
+      <div className={`w-full h-px bg-neutral-100 dark:bg-neutral-800 hidden ${isOpen ? "block" : "hidden"}`} />
+    </motion.div>
   );
 };
 
-const cards = [
-  {
-    description: "A Bridge Between Education to Work",
-    title: "Career Nexus",
-    src: assets.careerNexusFullDetail,
-    gitHubLink: "https://github.com/Dipankar-source/CareerNexus",
-    liveLink: "https://unsplash.com/",
-    content: () => {
-      return (
-        <p className="mb-2">
-          Gained solid hands-on experience in full-stack development and AI
-          while building CareerNexus, an AI-powered professional networking
-          platform. It connects job seekers, recruiters, and mentors through an
-          integrated ecosystem. This project strengthened my technical,
-          analytical, and problem-solving skills.
-        </p>
-      );
-    },
-  },
-  {
-    description: "Babbu Maan",
-    title: "Mitran Di Chhatri",
-    src: "https://assets.aceternity.com/demos/babbu-maan.jpeg",
-    ctaText: "Play",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p className="mb-2">
-          Babu Maan, a legendary Punjabi singer, is renowned for his soulful
-          voice and profound lyrics that resonate deeply with his audience. Born
-          in the village of Khant Maanpur in Punjab, India, he has become a
-          cultural icon in the Punjabi music industry. <br /> <br /> His songs
-          often reflect the struggles and triumphs of everyday life, capturing
-          the essence of Punjabi culture and traditions. With a career spanning
-          over two decades, Babu Maan has released numerous hit albums and
-          singles that have garnered him a massive fan following both in India
-          and abroad.
-        </p>
-      );
-    },
-  },
-  {
-    description: "Metallica",
-    title: "For Whom The Bell Tolls",
-    src: "https://assets.aceternity.com/demos/metallica.jpeg",
-    ctaText: "Play",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p className="mb-2">
-          Metallica, an iconic American heavy metal band, is renowned for their
-          powerful sound and intense performances that resonate deeply with
-          their audience. Formed in Los Angeles, California, they have become a
-          cultural icon in the heavy metal music industry. <br /> <br /> Their
-          songs often reflect themes of aggression, social issues, and personal
-          struggles, capturing the essence of the heavy metal genre. With a
-          career spanning over four decades, Metallica has released numerous hit
-          albums and singles that have garnered them a massive fan following
-          both in the United States and abroad.
-        </p>
-      );
-    },
-  },
-  {
-    description: "Led Zeppelin",
-    title: "Stairway To Heaven",
-    src: "https://assets.aceternity.com/demos/led-zeppelin.jpeg",
-    ctaText: "Play",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p className="mb-2">
-          Led Zeppelin, a legendary British rock band, is renowned for their
-          innovative sound and profound impact on the music industry. Formed in
-          London in 1968, they have become a cultural icon in the rock music
-          world. <br /> <br /> Their songs often reflect a blend of blues, hard
-          rock, and folk music, capturing the essence of the 1970s rock era.
-          With a career spanning over a decade, Led Zeppelin has released
-          numerous hit albums and singles that have garnered them a massive fan
-          following both in the United Kingdom and abroad.
-        </p>
-      );
-    },
-  },
-  {
-    description: "Mustafa Zahid",
-    title: "Toh Phir Aao",
-    src: "https://assets.aceternity.com/demos/toh-phir-aao.jpeg",
-    ctaText: "Play",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p className="mb-2">
-          &quot;Aawarapan&quot;, a Bollywood movie starring Emraan Hashmi, is
-          renowned for its intense storyline and powerful performances. Directed
-          by Mohit Suri, the film has become a significant work in the Indian
-          film industry. <br /> <br /> The movie explores themes of love,
-          redemption, and sacrifice, capturing the essence of human emotions and
-          relationships. With a gripping narrative and memorable music,
-          &quot;Aawarapan&quot; has garnered a massive fan following both in
-          India and abroad, solidifying Emraan Hashmi&apos;s status as a
-          versatile actor.
-        </p>
-      );
-    },
-  },
-];
+// ─── Section ──────────────────────────────────────────────────────────────────
+
+const Projects = () => {
+  const [openId, setOpenId] = useState(null);
+
+  return (
+    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+
+      <p
+        className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
+        style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
+      >
+        Projects
+      </p>
+
+      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
+        <div className="px-4 flex flex-col">
+          {PROJECTS.map((project) => (
+            <ProjectItem
+              key={project.id}
+              project={project}
+              isOpen={openId === project.id}
+              isAnyOpen={openId !== null}
+              onToggle={() => setOpenId(openId === project.id ? null : project.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Projects;

@@ -1,37 +1,187 @@
-import { WorkExperience } from "@/components/work-experience";
+import React, { useState } from "react";
+import { MdOutlineKeyboardArrowRight, MdCode } from "react-icons/md";
+import { AiOutlineCloudDownload } from "react-icons/ai";
+import icons from '../assets/icons';
+import { useTheme } from '../context/ThemeContext';
+
+const getIconForSkill = (skillName) => {
+  const normalizedMap = {
+    "python": icons.PythonIcon,
+    "kaggle": icons.KaggleIcon,
+    "numpy": icons.NumPyIcon,
+    "pandas": icons.PandasIcon,
+    "matplotlib": icons.MatplotlibIcon,
+    "scikit-learn": icons.ScikitLearnIcon,
+    "javascript": icons.JavaScriptIcon,
+    "react": icons.ReactIcon,
+    "tailwindcss": icons.TailwindIcon,
+    "framer-motion": icons.FramerMotionIcon,
+    "lucide-react": icons.LucideReactIcon,
+    "html": icons.HTMLIcon,
+    "css": icons.CSSIcon,
+    "lucide-icons": icons.LucideReactIcon,
+    "react-icons": icons.ReactIconsIcon,
+    "tabular icons": icons.TablerIconsIcon,
+  };
+
+  const Icon = normalizedMap[skillName.toLowerCase()];
+  if (Icon) return Icon;
+
+  return ({ isDark }) => <MdCode size={26} color={isDark ? '#fff' : '#000'} />;
+};
+
+const StackItem = ({ name }) => {
+  const { isDark } = useTheme();
+  const IconComponent = getIconForSkill(name);
+
+  return (
+    <div className="group flex items-center h-8 px-2 border border-transparent hover:border-neutral-500 hover:border-dotted cursor-pointer overflow-hidden backdrop-blur-md rounded-sm hover:bg-neutral-200 dark:hover:bg-[#26262680] transition-colors duration-300 ease-out">
+      <div className="flex items-center justify-center transition-all duration-300">
+        <IconComponent isDark={isDark} />
+      </div>
+      <div className="flex items-center overflow-hidden transition-all duration-300 max-w-0 opacity-0 group-hover:max-w-[150px] group-hover:opacity-100 group-hover:ml-2">
+        {/* Skill label: fluid between 11px (mobile) and 13px (desktop) */}
+        <span
+          className="font-medium text-neutral-800 dark:text-neutral-200 whitespace-nowrap"
+          style={{ fontSize: 'clamp(11px, 1.8vw, 13px)', lineHeight: '1.4' }}
+        >
+          {name}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const ExperienceItem = ({ company, position }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className="group flex flex-col py-2 w-full rounded-md transition-colors gap-2 cursor-pointer"
+      onClick={() => setIsOpen(!isOpen)}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+        {/* Left: company + title */}
+        <div className="sm:w-2/3">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-3">
+              {/* Company name: fluid 16px → 20px */}
+              <span
+                className="font-semibold text-gray-700 dark:text-white/95 leading-snug tracking-tight"
+                style={{ fontSize: 'clamp(16px, 3vw, 18px)' }}
+              >
+                {company.companyName}
+              </span>
+              <button
+                className={`flex-shrink-0 transition-all duration-300 ${isOpen ? "rotate-90 opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+                aria-label={isOpen ? "Collapse" : "Expand"}
+              >
+                <MdOutlineKeyboardArrowRight
+                  size={20}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+              </button>
+              <a
+                href={position.certificateLink || "#"}
+                target={position.certificateLink ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className={`group/cert flex items-center flex-shrink-0 transition-all duration-300 ${isOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                onClick={(e) => { e.stopPropagation(); }}
+                title="Certificate"
+              >
+                <AiOutlineCloudDownload
+                  size={20}
+                  className="text-gray-600 dark:text-gray-300 group-hover/cert:text-slate-800 dark:group-hover/cert:text-slate-100 transition-colors"
+                />
+                <div className="flex items-center overflow-hidden transition-all duration-300 max-w-0 opacity-0 group-hover/cert:max-w-[100px] group-hover/cert:opacity-100 group-hover/cert:ml-1.5">
+                  <span className="text-[13px] font-medium text-slate-800 dark:text-slate-100 whitespace-nowrap">
+                    Certificate
+                  </span>
+                </div>
+              </a>
+            </div>
+
+            {/* Job title: fluid 13px → 15px */}
+            <p
+              className="font-medium text-gray-500 dark:text-gray-400 leading-snug"
+              style={{ fontSize: 'clamp(9px, 1vw, 15px)' }}
+            >
+              {position.title}
+            </p>
+          </div>
+        </div>
+
+        {/* Right: period + location */}
+        <div className="sm:w-1/3 sm:text-right flex flex-col gap-0.5">
+          {/* Employment period: fluid 12px → 14px */}
+          <p
+            className="font-medium text-gray-700 dark:text-white/95 leading-snug"
+            style={{ fontSize: 'clamp(12px, 2vw, 14px)' }}
+          >
+            {position.employmentPeriod}
+          </p>
+          {/* Location: fluid 11px → 13px, muted */}
+          <p
+            className="text-gray-500 dark:text-gray-400 leading-snug"
+            style={{ fontSize: 'clamp(11px, 1.8vw, 13px)' }}
+          >
+            {position.Location}
+          </p>
+        </div>
+      </div>
+
+      {/* Expandable body */}
+      <div
+        className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0 mt-0"
+          }`}
+      >
+        <div className="overflow-hidden">
+          <ul className="list-disc list-inside space-y-1 mb-3 ml-1">
+            {/* Description: fluid 12px → 14px */}
+            <li
+              className="text-gray-600 dark:text-gray-300 leading-relaxed"
+              style={{ fontSize: 'clamp(12px, 2vw, 14px)' }}
+            >
+              {position.description}
+            </li>
+          </ul>
+          {position.skills && position.skills.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {position.skills.map((skill, index) => (
+                <StackItem key={index} name={skill} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Experience = () => {
   const WORK_EXPERIENCE = [
     {
       id: "3",
       companyName: "Samsung Innovation Campus",
-      companyLogo: "https://assets.chanhdai.com/images/companies/quaric.svg",
       isCurrentEmployer: false,
       positions: [
         {
           id: "3-1",
-          title: "Machine Learning & Artificial Intelligence",
+          title: "Machine Learning & Artificial Intelligence Trainee",
           employmentPeriod: "Sept 2025 - Nov 2025",
-          employmentType: "Full-Time",
-          description:
-            "Working on face recognition project with traditional algorithms",
-          icon: "code",
-          skills: [
-            "Python",
-            "Kaggle",
-            "NumPy",
-            "Pandas",
-            "Matplotlib",
-            "scikit-learn",
-          ],
-          isExpanded: true,
+          employmentType: "Part-Time",
+          Location: "BWU, Kolkata (Onsite)",
+          description: "Working on face recognition project with traditional algorithms",
+          skills: ["Python", "Kaggle", "NumPy", "Pandas", "Matplotlib", "scikit-learn"],
+          certificateLink: "", // Add your Google Drive link here
         },
       ],
     },
     {
       id: "1",
-      companyName: "Gamonix",
-      companyLogo: "https://assets.chanhdai.com/images/companies/quaric.svg",
+      companyName: "Gamonix Esports & Gamming",
       isCurrentEmployer: false,
       positions: [
         {
@@ -39,24 +189,16 @@ const Experience = () => {
           title: "Web Frontend Developer",
           employmentPeriod: "Jul 2025 - Oct 2025",
           employmentType: "Part-Time",
+          Location: "BWU, Kolkata (Remote)",
           description: "Building an analytic portal for the company",
-          icon: "code",
-          skills: [
-            "JavaScript",
-            "React",
-            "tailwindcss",
-            "framer-motion",
-            "lucide-react",
-            "react-icons",
-          ],
-          isExpanded: true,
+          skills: ["JavaScript", "React", "tailwindcss", "framer-motion", "lucide-react", "react-icons"],
+          certificateLink: "https://drive.google.com/file/d/1mlBM5N0pkXPcXqS11A1Kzcp8U2z8-a0k/view?usp=drive_link", // Add your Google Drive link here
         },
       ],
     },
     {
       id: "2",
       companyName: "EuphoriaGenX",
-      companyLogo: "https://assets.chanhdai.com/images/companies/quaric.svg",
       isCurrentEmployer: false,
       positions: [
         {
@@ -64,36 +206,35 @@ const Experience = () => {
           title: "Web Frontend Developer",
           employmentPeriod: "Jul 2025 - Oct 2025",
           employmentType: "Part-Time",
+          Location: "Kolkata, Salt Lake (Remote)",
           description: "Building an analytic portal for the company",
-          icon: "code",
-          skills: [
-            "JavaScript",
-            "React",
-            "tailwindcss",
-            "framer-motion",
-            "lucide-react",
-            "react-icons",
-          ],
-          isExpanded: true,
+          skills: ["JavaScript", "React", "tailwindcss", "framer-motion", "lucide-react", "react-icons"],
+          certificateLink: "https://drive.google.com/file/d/1Sf9HZd-41Z2Uu-T8lU6fEgVbTXT2dud7/view?usp=drive_link",
         },
       ],
     },
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300 border-1">
-      <hr className="border-gray-200 dark:border-gray-800" />
-      <br />
-      <br />
-      <p className="ml-4 text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-2 pr-4">
-        Work Experience
+    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+
+      {/* Section heading: fluid 18px → 24px */}
+      <p
+        className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
+        style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
+      >
+        Experiences
       </p>
-      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans ">
-        <WorkExperience experiences={WORK_EXPERIENCE} />
+
+      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
+        <div className="px-4 flex flex-col gap-2">
+          {WORK_EXPERIENCE.map((company) =>
+            company.positions.map((position) => (
+              <ExperienceItem key={position.id} company={company} position={position} />
+            ))
+          )}
+        </div>
       </div>
-      <br />
-      <br />
-      {/* <hr className="border-gray-200 dark:border-gray-800" /> */}
     </div>
   );
 };

@@ -15,6 +15,7 @@ import { useTheme } from "../context/ThemeContext";
 import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import { LoaderFive } from "@/components/ui/loader";
+import Projects from "@/componants/Projects";
 
 // Lazy imports for below-the-fold components
 const FocusBlades = lazy(() => import("@/uicomponents/projects/focus-blades").then(module => ({ default: module.FocusBlades })));
@@ -39,7 +40,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`min-h-screen transition-colors duration-300 overflow-x-hidden  lg:mx-92 ${isDark ? "bg-black" : "bg-white"
+        className={`transition-colors duration-300 overflow-x-hidden max-w-3xl mx-auto ${isDark ? "bg-black" : "bg-white"
           }`}
       >
         {/* Spotlights and Backgrounds load immediately
@@ -47,11 +48,11 @@ const Home = () => {
           className="-top-20 left-0 md:-top-10 md:left-40"
           fill="white"
         /> */}
-        <CustomMouseFollower className="hidden lg:block" />
+        {/* <CustomMouseFollower className="hidden lg:block" /> */}
         {/* <BackgroundRippleEffect /> */}
 
         {/* Navbar */}
-        <div className="fixed top-0 left-0 right-0 z-50 lg:ml-92 lg:mr-92">
+        <div className="fixed top-0 left-0 right-0 z-50 max-w-3xl mx-auto">
           <Navbar />
         </div>
 
@@ -70,12 +71,12 @@ const Home = () => {
                 <About isDark={isDark} />
               </section>
 
-              <section id="github" className="w-full">
-                <GitHubStats />
-              </section>
-
               <section id="experience" className="w-full">
                 <Experience />
+              </section>
+
+              <section id="github" className="w-full">
+                <GitHubStats />
               </section>
 
               <section id="testimonials" className="w-full">
@@ -83,7 +84,7 @@ const Home = () => {
               </section>
 
               <section id="projects" className="w-full">
-                <FocusBlades />
+                <Projects />
               </section>
 
               <section id="namehover" className="w-full">

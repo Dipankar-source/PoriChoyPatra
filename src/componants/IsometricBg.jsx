@@ -2,9 +2,9 @@ import React from 'react';
 
 export const IsometricBg = ({ className = "" }) => {
     return (
-        <div className={`absolute lg:border inset-0 pt-7 w-full h-[436px] dark:bg-transparent bg-transparent flex items-center justify-center overflow-hidden -z-10 pointer-events-none transition-colors duration-300 ${className}`}>
+        <div className={`absolute inset-0 pt-7 w-full h-[436px] dark:bg-transparent bg-transparent flex items-center justify-center overflow-hidden -z-10 pointer-events-none transition-colors duration-300 ${className}`}>
             <svg
-                className="h-auto w-full max-w-[556px] touch-manipulation overflow-visible select-none transition-colors duration-300"
+                className="h-auto opacity-50 w-full max-w-[556px] touch-manipulation overflow-visible select-none transition-colors duration-300"
                 viewBox="0 0 556 354"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +20,7 @@ export const IsometricBg = ({ className = "" }) => {
                     </g>
                 </defs>
 
-                <g className="stroke-black/5 dark:stroke-white/10 transition-colors duration-300" strokeWidth="1" strokeDasharray="4 2">
+                <g className="stroke-black/20 dark:stroke-white/20 transition-colors duration-300" strokeWidth="1" strokeDasharray="4 2">
                     <path d="M-477.55 756.57L1254.51 -243.41" />
                     <path d="M977.37 788.58L-754.67 -211.42" />
                     <path d="M1143.65 692.58L-588.39 -307.42" />

@@ -17,7 +17,7 @@ const NameHover = ({ isDark }) => {
   };
 
   return (
-    <div className="border hidden lg:block">
+    <div className="hidden lg:block">
       <div
         className="h-64 flex items-center justify-center relative"
         onMouseEnter={handleMouseEnter}

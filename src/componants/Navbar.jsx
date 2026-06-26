@@ -329,7 +329,7 @@ const Navbar = () => {
         damping: 20,
         duration: 0.6,
       }}
-      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 border-b-none transition-colors duration-300 z-[9990] sticky top-0 border-l-1 border-r-1 ${isDark ? "bg-transparent backdrop-blur-sm border-gray-800" : "bg-transparent backdrop-blur-sm border-gray-200"
+      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 transition-colors duration-300 z-[9990] sticky top-0 ${isDark ? "bg-transparent backdrop-blur-sm" : "bg-transparent backdrop-blur-sm"
         } relative`}
     >
       <div className="flex items-center justify-center relative z-20">
