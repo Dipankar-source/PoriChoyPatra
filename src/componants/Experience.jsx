@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { MdOutlineKeyboardArrowRight, MdCode } from "react-icons/md";
 import { AiOutlineCloudDownload } from "react-icons/ai";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import icons from '../assets/icons';
 import { useTheme } from '../context/ThemeContext';
+import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
 
 const getIconForSkill = (skillName) => {
   const normalizedMap = {
@@ -52,13 +55,30 @@ const StackItem = ({ name }) => {
   );
 };
 
-const ExperienceItem = ({ company, position }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const ExperienceItem = ({ 
+  company, 
+  position,
+  isOpen,
+  isAnyOpen,
+  onToggle,
+  isHoveredOuter,
+  isAnyHoveredOuter,
+  onHoverStart,
+  onHoverEnd 
+}) => {
+  const shouldDim = (isAnyOpen && !isOpen) || (!isAnyOpen && isAnyHoveredOuter && !isHoveredOuter);
 
   return (
-    <div
-      className="group flex flex-col py-2 w-full rounded-md transition-colors gap-2 cursor-pointer"
-      onClick={() => setIsOpen(!isOpen)}
+    <motion.div
+      className="group flex flex-col py-2 w-full rounded-md transition-colors gap-2 cursor-pointer relative"
+      onClick={onToggle}
+      onMouseEnter={onHoverStart}
+      onMouseLeave={onHoverEnd}
+      animate={{
+        filter: shouldDim ? "blur(1.5px)" : "blur(0px)",
+        opacity: shouldDim ? 0.38 : 1,
+      }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
@@ -75,7 +95,7 @@ const ExperienceItem = ({ company, position }) => {
               </span>
               <button
                 className={`flex-shrink-0 transition-all duration-300 ${isOpen ? "rotate-90 opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-                onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+                onClick={(e) => { e.stopPropagation(); onToggle(); }}
                 aria-label={isOpen ? "Collapse" : "Expand"}
               >
                 <MdOutlineKeyboardArrowRight
@@ -156,11 +176,15 @@ const ExperienceItem = ({ company, position }) => {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const Experience = () => {
+  const [openId, setOpenId] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  const navigate = useNavigate();
+
   const WORK_EXPERIENCE = [
     {
       id: "3",
@@ -219,18 +243,37 @@ const Experience = () => {
     <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
 
       {/* Section heading: fluid 18px → 24px */}
-      <p
-        className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
-        style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
-      >
-        Experiences
-      </p>
+      <div className="flex justify-between items-center">
+        <p
+          className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
+          style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
+        >
+          <ScrollFountain particleCount={20}>
+            Experiences
+          </ScrollFountain>
+        </p>
+        <p className="mr-4 mt-4 hover:underline text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tighter cursor-pointer"
+          onClick={() => navigate('/experience')}>
+          View All
+        </p>
+      </div>
 
       <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
         <div className="px-4 flex flex-col gap-2">
           {WORK_EXPERIENCE.map((company) =>
             company.positions.map((position) => (
-              <ExperienceItem key={position.id} company={company} position={position} />
+              <ExperienceItem 
+                key={position.id} 
+                company={company} 
+                position={position}
+                isOpen={openId === position.id}
+                isAnyOpen={openId !== null}
+                onToggle={() => setOpenId(openId === position.id ? null : position.id)}
+                isHoveredOuter={hoveredId === position.id}
+                isAnyHoveredOuter={hoveredId !== null}
+                onHoverStart={() => setHoveredId(position.id)}
+                onHoverEnd={() => setHoveredId(null)}
+              />
             ))
           )}
         </div>

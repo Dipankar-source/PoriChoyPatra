@@ -1,5 +1,6 @@
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
+import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
 import { cn } from "@/lib/utils";
 import {
   IconBoxAlignRightFilled,
@@ -15,7 +16,11 @@ const Thoughts = () => {
     <div>
       <hr className="text-blue-100 mt-3" />
       <div className=" p-4 pb-12">
-        <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">Thoughts... </p>
+        <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">
+          <ScrollFountain particleCount={36}>
+            Thoughts...
+          </ScrollFountain>
+        </p>
         <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
           {items.map((item, i) => (
             <BentoGridItem

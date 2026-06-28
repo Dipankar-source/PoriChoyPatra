@@ -1,6 +1,7 @@
 import React from 'react'
 import icons from '../assets/icons'
 import { useTheme } from '../context/ThemeContext'
+import { ScrollFountain } from '@/components/ui/scroll-fountain-text';
 const StackItem = ({ item }) => {
   const { isDark } = useTheme();
 
@@ -49,15 +50,15 @@ const AboutMe = () => {
     { name: 'shadcn-ui', type: 'Tooling', Icon: icons.ShadcnUIIcon },
     { name: 'C', type: 'Tooling', Icon: icons.CIcon },
     { name: 'lucide-react', type: 'Tooling', Icon: icons.LucideReactIcon },
-    { name: 'Kaggle', type: 'Tooling', Icon: icons.KaggleIcon},
-    { name: 'pandas', type: 'Tooling', Icon: icons.PandasIcon},
-    { name: 'numpy', type: 'Tooling', Icon: icons.NumPyIcon},
-    { name: 'matplotlib', type: 'Tooling', Icon: icons.MatplotlibIcon},
-    { name: 'Postman', type: 'Tooling', Icon: icons.PostmanIcon},
-    { name: 'Gemini', type: 'Tooling', Icon: icons.GeminiIcon},
-    { name: 'Claude', type: 'Tooling', Icon: icons.ClaudeIcon},
-    { name: 'Antigravity', type: 'Tooling', Icon: icons.AntigravityIcon},
-    { name: 'VS', type: 'Tooling', Icon: icons.VSCodeIcon},
+    { name: 'Kaggle', type: 'Tooling', Icon: icons.KaggleIcon },
+    { name: 'pandas', type: 'Tooling', Icon: icons.PandasIcon },
+    { name: 'numpy', type: 'Tooling', Icon: icons.NumPyIcon },
+    { name: 'matplotlib', type: 'Tooling', Icon: icons.MatplotlibIcon },
+    { name: 'Postman', type: 'Tooling', Icon: icons.PostmanIcon },
+    { name: 'Gemini', type: 'Tooling', Icon: icons.GeminiIcon },
+    { name: 'Claude', type: 'Tooling', Icon: icons.ClaudeIcon },
+    { name: 'Antigravity', type: 'Tooling', Icon: icons.AntigravityIcon },
+    { name: 'VS', type: 'Tooling', Icon: icons.VSCodeIcon },
 
 
   ];
@@ -65,21 +66,31 @@ const AboutMe = () => {
   return (
     <div className='relative w-full'>
       <div className='px-4'>
-        <p className="text-2xl font-medium text-gray-900 dark:text-white mb-6 mt-1 ">
-          About
+        <p className="text-xl md:text-2xl  font-medium text-gray-900 dark:text-white mb-6 mt-1 ">
+          <ScrollFountain particleCount={25}>
+            About
+          </ScrollFountain>
+
         </p>
-        <div className='relative w-full'>
-          <p className="font-sans text-sm text-black md:text-base dark:text-neutral-400 leading-relaxed">
-            I am a full-stack developer with hands-on experience working on
-            production-ready web applications. I enjoy building clean,
-            efficient, and user-focused solutions.
-          </p>
-          <p className="font-sans text-sm text-black md:text-base dark:text-neutral-400 leading-relaxed">
-            Through industry internships, I have collaborated with teams to
-            improve application usability, performance, and overall
-            stability. I value clean code, problem-solving, and continuous
-            learning.
-          </p>
+        <div className='relative w-full flex flex-col gap-3'>
+          <div className='flex gap-3 items-start'>
+            <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
+            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+              I'm a <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">full-stack developer</span> building real-world web apps.
+            </p>
+          </div>
+          <div className='flex gap-3 items-start'>
+            <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
+            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+              I focus on writing <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">clean code</span> and solving problems efficiently.
+            </p>
+          </div>
+          <div className='flex gap-3 items-start'>
+            <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
+            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+              I am dedicated to <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">continuous learning</span> and improving my skills.
+            </p>
+          </div>
         </div>
 
 

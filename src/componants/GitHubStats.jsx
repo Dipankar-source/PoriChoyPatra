@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
 
 const GitHubStats = () => {
   const [contributions, setContributions] = useState([]);
@@ -365,7 +366,9 @@ const GitHubStats = () => {
     return (
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
         <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-3 sm:mb-4">
-          GitHub
+          <ScrollFountain particleCount={25}>
+            GitHub
+          </ScrollFountain>
         </p>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
@@ -446,7 +449,9 @@ const GitHubStats = () => {
     return (
       <div className="w-full px-2 sm:px-4 py-6 sm:py-10">
         <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-3 sm:mb-4">
-          GitHub Activities
+          <ScrollFountain particleCount={25}>
+            GitHub
+          </ScrollFountain>
         </p>
         <div className="w-full px-2 sm:px-3 py-4 sm:py-6 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
           <div className="text-center text-black dark:text-white py-1 sm:py-2 text-xs sm:text-sm">
@@ -465,7 +470,9 @@ const GitHubStats = () => {
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
 
         <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
-          GitHub
+          <ScrollFountain particleCount={25}>
+            GitHub
+          </ScrollFountain>
         </p>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">

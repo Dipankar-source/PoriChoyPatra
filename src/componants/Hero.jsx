@@ -8,6 +8,7 @@ import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect } from "react";
+import { FcLike } from "react-icons/fc";
 
 import { FlipWords } from "@/components/ui/flip-words";
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
@@ -20,6 +21,138 @@ import { ShimmeringText } from "@/components/shimmering-text";
 import { MagneticWrapper } from "./CustomMouseFollower";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineHeart } from "react-icons/ai";
+import loveSoundPath from "../assets/sounds/love.mp3";
+
+const LikeButton = () => {
+  // Initialize state from localStorage
+  const [isLiked, setIsLiked] = useState(() => {
+    return localStorage.getItem("portfolioIsLiked") === "true";
+  });
+  const BASE_LIKES = 2136;
+  const [likes, setLikes] = useState(() => {
+    const savedGlobalDelta = localStorage.getItem("portfolioGlobalDelta");
+    return savedGlobalDelta ? BASE_LIKES + parseInt(savedGlobalDelta, 10) : BASE_LIKES;
+  });
+  const [showArrow, setShowArrow] = useState(true);
+
+  // Hide arrow after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowArrow(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Fetch real global likes on mount, fallback to local storage
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const res = await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.count === 'number') {
+            const trueCount = BASE_LIKES + data.count;
+            setLikes(trueCount);
+            localStorage.setItem("portfolioGlobalDelta", data.count.toString());
+          }
+        }
+      } catch (err) {
+        // Silent fail, just use the local state we already initialized
+      }
+    };
+    fetchLikes();
+  }, []);
+
+  const playLoveSound = () => {
+    try {
+      const audio = new Audio(loveSoundPath);
+      audio.volume = 0.5;
+      audio.play().catch(e => console.error("Audio playback failed", e));
+    } catch (e) {
+      console.error("Audio playback failed", e);
+    }
+  };
+
+  const handleLike = async () => {
+    const newIsLiked = !isLiked;
+    setIsLiked(newIsLiked);
+    localStorage.setItem("portfolioIsLiked", newIsLiked.toString());
+    
+    if (newIsLiked) {
+      playLoveSound();
+      setLikes(prev => prev + 1);
+      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/up"); } catch (e) {}
+    } else {
+      setLikes(prev => prev - 1);
+      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/down"); } catch (e) {}
+    }
+  };
+
+  return (
+    <div className="absolute -bottom-32 sm:-bottom-40 right-4 sm:right-8 flex flex-col items-end z-50">
+      {/* Arrow */}
+      <AnimatePresence>
+        {showArrow && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            className="absolute bottom-7 right-4 pointer-events-none"
+          >
+            <svg width="60" height="80" viewBox="0 0 100 100" className="text-gray-400 dark:text-gray-500">
+              <motion.path
+                d="M 10 10 Q 80 10 50 80"
+                fill="transparent"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+              />
+              <motion.path
+                d="M 35 65 L 50 80 L 70 65"
+                fill="transparent"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.3, delay: 1 }}
+              />
+            </svg>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hover Text and Button */}
+      <div className="group relative flex items-center justify-end">
+        {/* Hover Text */}
+        <div className="absolute right-full mr-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+          <span className="text-sm text-gray-600 dark:text-gray-300 font-medium  border-neutral-200 dark:border-neutral-700">
+            Do you love the work?
+          </span>
+        </div>
+
+        <button 
+          onClick={handleLike}
+          className="flex justify-center items-center gap-2 cursor-pointer border-neutral-200 dark:border-neutral-800 hover:scale-105 transition-all duration-300"
+        >
+          <motion.div
+            key={isLiked ? "liked" : "unliked"}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          >
+            {isLiked ? <FcLike size={24} /> : <AiOutlineHeart size={24} className="text-gray-400" />}
+          </motion.div>
+          <span className={`text-sm font-semibold w-8 text-left transition-colors ${isLiked ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            {likes}
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -170,45 +303,24 @@ Passionate about performance, clean architecture, and intuitive user experiences
   return (
     <div>
       <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center top-5">
-        {/* {isLoaded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            <DottedGlowBackground
-              className="pointer-events-none mask-radial-to-90% mask-radial-at-center opacity-20 dark:opacity-100"
-              opacity={1}
-              gap={10}
-              radius={1.6}
-              colorLightVar="--color-neutral-500"
-              glowColorLightVar="--color-neutral-600"
-              colorDarkVar="--color-neutral-500"
-              glowColorDarkVar="--color-sky-800"
-              backgroundOpacity={0}
-              speedMin={0.3}
-              speedMax={1.6}
-              speedScale={1}
-            />
-          </motion.div>
-        )} */}
+        <LikeButton />
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
           <div className="flex-1">
             <h2 className="text-center text-4xl font-normal tracking-tight text-neutral-900 sm:text-5xl md:text-left dark:text-neutral-200">
               <ScrollFountain particleCount={15}>
-                Hi, I'm{" "}
+                <motion.span
+                  className="md:inline-block hidden -translate-y-7 text-xl ml-0.5 origin-[70%_70%]"
+                  animate={{ rotate: [0, 15, -10, 15, -10, 15, 0, 0, 0, 0, 0, 0, 0, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >👋</motion.span>Hi, I'm{" "}
               </ScrollFountain>
-              <span className="font-bold dark:text-white">
+              <span className="font-semibold dark:text-white text-3xl lg:text-5xl ml-2">
                 <ScrollFountain particleCount={25}>
-                  <ShimmeringText
-                    className="text-3xl lg:text-5xl font-semibold"
-                    text=" Dipankar Barik"
-                  />
+                 Dipankar Barik
                 </ScrollFountain>
               </span>
             </h2>
-            <div className="mt-4 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
+            <div className="mt-4 md:pl-2 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
               <TextGenerateEffect words={words} skipAnimation={hasVisited} />
             </div>
           </div>

@@ -16,6 +16,7 @@ import { Spotlight } from "@/components/ui/spotlight";
 import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import { LoaderFive } from "@/components/ui/loader";
 import Projects from "@/componants/Projects";
+import Paperwork from "@/componants/Paperwork";
 
 // Lazy imports for below-the-fold components
 const FocusBlades = lazy(() => import("@/uicomponents/projects/focus-blades").then(module => ({ default: module.FocusBlades })));
@@ -40,7 +41,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`transition-colors duration-300 overflow-x-hidden max-w-3xl mx-auto ${isDark ? "bg-black" : "bg-white"
+        className={`transition-colors duration-300 overflow-hidden max-w-3xl mx-auto ${isDark ? "bg-black" : "bg-white"
           }`}
       >
         {/* Spotlights and Backgrounds load immediately
@@ -90,14 +91,18 @@ const Home = () => {
               <section id="namehover" className="w-full">
                 <NameHover isDark={isDark} />
               </section>
+              <section id="paperwork" className="w-full">
+                <Paperwork />
+              </section>
 
               <section id="thoughts" className="w-full">
                 <Thoughts />
               </section>
-{/* 
+              {/* 
               <section id="achivements" className="w-full">
                 <AchieveMents />
               </section> */}
+
 
               <section id="contact" className="w-full">
                 <Elevation isDark={isDark} />

@@ -93,10 +93,15 @@ export const ScrollFountain = ({ children, className, navbarHeight, particleCoun
       setTriggerScroll(absoluteTop - navHeight);
     };
 
+    updateTrigger();
     const timer = setTimeout(updateTrigger, 100);
+    const observer = new ResizeObserver(updateTrigger);
+    observer.observe(document.body);
+
     window.addEventListener("resize", updateTrigger);
     return () => {
       clearTimeout(timer);
+      observer.disconnect();
       window.removeEventListener("resize", updateTrigger);
     };
   }, [navbarHeight]);
@@ -156,10 +161,15 @@ const ScrollFountainWord = ({ word, scrollY, navbarHeight, isDark }) => {
       setTriggerScroll(absoluteTop - navHeight);
     };
 
+    updateTrigger();
     const timer = setTimeout(updateTrigger, 100);
+    const observer = new ResizeObserver(updateTrigger);
+    observer.observe(document.body);
+
     window.addEventListener("resize", updateTrigger);
     return () => {
       clearTimeout(timer);
+      observer.disconnect();
       window.removeEventListener("resize", updateTrigger);
     };
   }, [navbarHeight]);

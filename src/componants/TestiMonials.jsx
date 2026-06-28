@@ -30,11 +30,11 @@ const TestiMonials = () => {
                   </a>
                 </MarqueeItem>
               ))}
-      </MarqueeContent>
-    </Marquee>
-  ))
-}
-    </div >
+            </MarqueeContent>
+          </Marquee>
+        ))
+        }
+      </div >
     </div >
   );
 };

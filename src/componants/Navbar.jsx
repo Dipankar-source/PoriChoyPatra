@@ -11,6 +11,7 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Target, Download, FileText } from "lucide-react";
 import { PremiumSearch } from "@/uicomponents/searchs/premium-search";
 import assets from "@/assets/assets";
+import clickSoundPath from "../assets/sounds/click.mp3";
 
 const MoonIcon = ({ size = 15, className = "" }) => {
   return (
@@ -70,6 +71,17 @@ const SunIcon = ({ size = 15, className = "" }) => {
 
 const Navbar = () => {
   const { theme, toggleTheme, isDark } = useTheme();
+
+  const handleThemeToggle = () => {
+    try {
+      const audio = new Audio(clickSoundPath);
+      audio.volume = 0.5;
+      audio.play().catch(e => console.error("Audio playback failed", e));
+    } catch (e) {
+      console.error("Audio playback failed", e);
+    }
+    toggleTheme();
+  };
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -524,7 +536,7 @@ const Navbar = () => {
             variants={themeToggleVariants}
             whileHover="hover"
             whileTap="tap"
-            onClick={toggleTheme}
+            onClick={handleThemeToggle}
             className={
               "p-2 rounded-lg cursor-pointer transition-colors duration-300"
             }
@@ -558,7 +570,7 @@ const Navbar = () => {
           variants={themeToggleVariants}
           whileHover="hover"
           whileTap="tap"
-          onClick={toggleTheme}
+          onClick={handleThemeToggle}
           className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
             }`}
           aria-label="Toggle theme"

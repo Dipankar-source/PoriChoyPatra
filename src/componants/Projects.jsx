@@ -6,6 +6,8 @@ import { FaGithub } from "react-icons/fa";
 import assets from "../assets/assets";
 import icons from '../assets/icons';
 import { useTheme } from '../context/ThemeContext';
+import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
+import { useNavigate } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -45,7 +47,7 @@ const PROJECTS = [
   },
   {
     id: "4",
-    title: "AI Portfolio",
+    title: "Portfolio",
     category: "Design / Frontend",
     description:
       "A minimalist developer portfolio with smooth motion design, custom cursor interactions, and AI-assisted content generation.",
@@ -103,17 +105,33 @@ const TechChip = ({ name }) => {
 
 // ─── Single project row ───────────────────────────────────────────────────────
 
-const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
+const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle, isHoveredOuter, isAnyHoveredOuter, onHoverStart, onHoverEnd }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [fountainProps, setFountainProps] = useState({ x: 0, y: 50, rotate: 0 });
 
-  // When another item is open: blur + dim this one
-  const shouldDim = isAnyOpen && !isOpen;
+  // When another item is open OR hovered: blur + dim this one
+  const shouldDim = (isAnyOpen && !isOpen) || (!isAnyOpen && isAnyHoveredOuter && !isHoveredOuter);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    onHoverStart?.();
+    setFountainProps({
+      x: (Math.random() - 0.5) * 100, // random x between -50 and 50
+      y: 60 + Math.random() * 60,     // random y between 60 and 120 (coming from bottom)
+      rotate: (Math.random() - 0.5) * 30, // random rotation
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    onHoverEnd?.();
+  };
 
   return (
     <motion.div
       className="relative flex flex-col w-full rounded-md cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={onToggle}
       animate={{
         filter: shouldDim ? "blur(1.5px)" : "blur(0px)",
@@ -188,6 +206,7 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
               />
             </motion.span>
           </div>
+          <p className="font-medium text-gray-400 dark:text-gray-500 leading-snug" style={{ fontSize: "clamp(10px, 1.4vw, 12px)" }}>{project.description.split(",")[0] + "..."}</p>
 
           <p
             className="font-medium text-gray-400 dark:text-gray-500 leading-snug"
@@ -198,7 +217,7 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
         </div>
 
         {/* Right: thumbnail on hover (collapsed state only) */}
-        <div className="hidden sm:grid sm:w-1/2 items-center justify-items-end min-h-[64px]">
+        <div className="hidden sm:flex sm:w-1/2 items-center justify-end min-h-[64px] relative">
           {/* Tech chips preview — hidden when image thumbnail is showing */}
           <AnimatePresence>
             {!isHovered && !isOpen && (
@@ -208,7 +227,7 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.18 }}
-                className="col-start-1 row-start-1 flex flex-wrap gap-1.5 justify-end"
+                className="flex flex-wrap gap-1.5 justify-end"
               >
                 {project.tech.map((t) => (
                   <TechChip key={t} name={t} />
@@ -219,23 +238,30 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
 
           {/* Hover thumbnail — only shows when collapsed + hovered */}
           <AnimatePresence>
-            {isHovered && !isOpen && (
+            {isHovered && (
               <motion.div
-                key="thumb"
-                initial={{ opacity: 0, scale: 0.92, x: 12 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.92, x: 12 }}
-                transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="col-start-1 row-start-1 relative flex-shrink-0 w-28 h-16 rounded-lg overflow-hidden shadow-lg border border-neutral-200 dark:border-neutral-700"
-                onClick={(e) => e.stopPropagation()}
+                key="thumb-wrapper"
+                initial={{ opacity: 0, scale: 0.3, x: fountainProps.x, y: fountainProps.y, rotate: fountainProps.rotate }}
+                animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.3, x: fountainProps.x, y: fountainProps.y, rotate: fountainProps.rotate }}
+                transition={{ type: "spring", damping: 14, stiffness: 250 }}
+                className="absolute right-0 top-1/2 -mt-16 z-[60] flex-shrink-0 w-36 h-24 sm:w-48 sm:h-32 pointer-events-none origin-center"
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover object-top"
-                />
-                {/* subtle gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                {!isOpen && (
+                  <motion.div
+                    layoutId={`project-image-${project.id}`}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="w-full h-full rounded-xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-700"
+                  >
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover object-top"
+                    />
+                    {/* subtle gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -244,6 +270,7 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
 
       {/* ── Expanded body ── */}
       <motion.div
+        layout
         initial={false}
         animate={
           isOpen
@@ -257,18 +284,23 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
           {/* Image + text side by side */}
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Image */}
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-              transition={{ duration: 0.3, delay: 0.08 }}
-              className="flex-shrink-0 w-full sm:w-44 h-28 rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-md"
-            >
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover object-top"
-              />
-            </motion.div>
+            <div className="flex-shrink-0 w-full sm:w-44 h-28">
+              {isOpen && (
+                <motion.div
+                  layoutId={`project-image-${project.id}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="w-full h-full rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-md"
+                >
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover object-top"
+                  />
+                </motion.div>
+              )}
+            </div>
 
             {/* Description + full tech */}
             <motion.div
@@ -328,16 +360,27 @@ const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle }) => {
 
 const Projects = () => {
   const [openId, setOpenId] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  const navigate = useNavigate()
 
   return (
     <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
 
-      <p
-        className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
-        style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
-      >
-        Projects
-      </p>
+      <div className="flex items-center justify-between">
+        <p
+          className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
+          style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
+        >
+          <ScrollFountain particleCount={30}>
+            Projects
+          </ScrollFountain>
+        </p>
+        <p className="mr-4 mt-4 hover:underline text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tighter cursor-pointer"
+          onClick={() => navigate('/projects')}
+        >
+          View All
+        </p>
+      </div>
 
       <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
         <div className="px-4 flex flex-col">
@@ -348,6 +391,10 @@ const Projects = () => {
               isOpen={openId === project.id}
               isAnyOpen={openId !== null}
               onToggle={() => setOpenId(openId === project.id ? null : project.id)}
+              isHoveredOuter={hoveredId === project.id}
+              isAnyHoveredOuter={hoveredId !== null}
+              onHoverStart={() => setHoveredId(project.id)}
+              onHoverEnd={() => setHoveredId(null)}
             />
           ))}
         </div>
