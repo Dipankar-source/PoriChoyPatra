@@ -2,6 +2,7 @@ import React from 'react'
 import icons from '../assets/icons'
 import { useTheme } from '../context/ThemeContext'
 import { ScrollFountain } from '@/components/ui/scroll-fountain-text';
+import { AnimatedParagraph } from '@/components/ui/animated-paragraph';
 const StackItem = ({ item }) => {
   const { isDark } = useTheme();
 
@@ -66,36 +67,39 @@ const AboutMe = () => {
   return (
     <div className='relative w-full'>
       <div className='px-4'>
-        <p className="text-xl md:text-2xl  font-medium text-gray-900 dark:text-white mb-6 mt-1 ">
-          <ScrollFountain particleCount={25}>
-            About
-          </ScrollFountain>
+        <div className='flex flex-col mb-6 mt-1'>
+          <p className="text-xl md:text-2xl  font-medium text-gray-900 dark:text-white mb-1">
+            <ScrollFountain particleCount={25}>
+              About
+            </ScrollFountain>
 
-        </p>
+          </p>
+          <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>Why hire me?</AnimatedParagraph>
+        </div>
         <div className='relative w-full flex flex-col gap-3'>
           <div className='flex gap-3 items-start'>
             <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
-            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+            <AnimatedParagraph className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed" delay={0.1}>
               I'm a <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">full-stack developer</span> building real-world web apps.
-            </p>
+            </AnimatedParagraph>
           </div>
           <div className='flex gap-3 items-start'>
             <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
-            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+            <AnimatedParagraph className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed" delay={0.2}>
               I focus on writing <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">clean code</span> and solving problems efficiently.
-            </p>
+            </AnimatedParagraph>
           </div>
           <div className='flex gap-3 items-start'>
             <div className='w-2 h-2 rounded-full bg-neutral-800 dark:bg-neutral-300 mt-1.5 flex-shrink-0'></div>
-            <p className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed">
+            <AnimatedParagraph className="font-sans text-sm text-neutral-700 md:text-base dark:text-neutral-400 leading-relaxed" delay={0.3}>
               I am dedicated to <span className="underline decoration-neutral-400 dark:decoration-neutral-500 text-neutral-950 dark:text-neutral-200 font-medium">continuous learning</span> and improving my skills.
-            </p>
+            </AnimatedParagraph>
           </div>
         </div>
 
 
         <div>
-          <p className='text-md font-semibold text-neutral-900 dark:text-neutral-300 mt-5'>Stacks</p>
+          <p className='text-md font-semibold text-neutral-900 dark:text-neutral-300 mt-5'>My Toolkit</p>
           <div className='w-full flex flex-wrap gap-1 mt-4'>
             {stackIcons.map((item, index) => (
               <StackItem key={index} item={item} />

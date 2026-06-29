@@ -27,7 +27,7 @@ const FooterSystem = () => {
   };
 
   return (
-    <footer className="w-full bg-white dark:bg-black transition-colors duration-300 py-6 border-t border-neutral-100 dark:border-white/5">
+    <footer className="w-full mb-20 bg-white dark:bg-black transition-colors duration-300 py-6 border-t border-neutral-100 dark:border-white/5">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
         
         {/* Left: Status & Time */}

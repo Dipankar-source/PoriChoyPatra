@@ -77,6 +77,7 @@ export const ScrollFountain = ({ children, className, navbarHeight, particleCoun
   const { isDark } = useTheme();
   const ref = useRef(null);
   const [triggerScroll, setTriggerScroll] = useState(999999);
+  const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -93,16 +94,23 @@ export const ScrollFountain = ({ children, className, navbarHeight, particleCoun
       setTriggerScroll(absoluteTop - navHeight);
     };
 
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
     updateTrigger();
+    checkMobile();
     const timer = setTimeout(updateTrigger, 100);
     const observer = new ResizeObserver(updateTrigger);
     observer.observe(document.body);
 
     window.addEventListener("resize", updateTrigger);
+    window.addEventListener("resize", checkMobile);
     return () => {
       clearTimeout(timer);
       observer.disconnect();
       window.removeEventListener("resize", updateTrigger);
+      window.removeEventListener("resize", checkMobile);
     };
   }, [navbarHeight]);
 
@@ -113,7 +121,7 @@ export const ScrollFountain = ({ children, className, navbarHeight, particleCoun
 
   const particles = useMemo(() => Array.from({ length: particleCount }), [particleCount]);
 
-  if (shouldReduceMotion) {
+  if (shouldReduceMotion || isMobile) {
     return <span className={className}>{children}</span>;
   }
 
@@ -145,6 +153,7 @@ export const ScrollFountain = ({ children, className, navbarHeight, particleCoun
 const ScrollFountainWord = ({ word, scrollY, navbarHeight, isDark }) => {
   const ref = useRef(null);
   const [triggerScroll, setTriggerScroll] = useState(999999);
+  const [isMobile, setIsMobile] = useState(false);
   const isSpace = word.trim() === "";
 
   useEffect(() => {
@@ -161,16 +170,23 @@ const ScrollFountainWord = ({ word, scrollY, navbarHeight, isDark }) => {
       setTriggerScroll(absoluteTop - navHeight);
     };
 
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
     updateTrigger();
+    checkMobile();
     const timer = setTimeout(updateTrigger, 100);
     const observer = new ResizeObserver(updateTrigger);
     observer.observe(document.body);
 
     window.addEventListener("resize", updateTrigger);
+    window.addEventListener("resize", checkMobile);
     return () => {
       clearTimeout(timer);
       observer.disconnect();
       window.removeEventListener("resize", updateTrigger);
+      window.removeEventListener("resize", checkMobile);
     };
   }, [navbarHeight]);
 
@@ -180,10 +196,10 @@ const ScrollFountainWord = ({ word, scrollY, navbarHeight, isDark }) => {
   });
 
   const particles = useMemo(() => {
-    if (isSpace) return [];
+    if (isSpace || isMobile) return [];
     const count = 5 + Math.floor(Math.random() * 5); // 5 to 10
     return Array.from({ length: count });
-  }, [isSpace]);
+  }, [isSpace, isMobile]);
 
   return (
     <span
@@ -214,8 +230,16 @@ export const ScrollFountainText = ({ text, className, navbarHeight }) => {
   const { scrollY } = useScroll();
   const { isDark } = useTheme();
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  if (shouldReduceMotion || isMobile) {
     return <span className={className}>{text}</span>;
   }
 

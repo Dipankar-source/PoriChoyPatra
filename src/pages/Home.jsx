@@ -17,6 +17,7 @@ import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import { LoaderFive } from "@/components/ui/loader";
 import Projects from "@/componants/Projects";
 import Paperwork from "@/componants/Paperwork";
+import TableOfContents from "@/componants/TableOfContents";
 
 // Lazy imports for below-the-fold components
 const FocusBlades = lazy(() => import("@/uicomponents/projects/focus-blades").then(module => ({ default: module.FocusBlades })));
@@ -80,9 +81,9 @@ const Home = () => {
                 <GitHubStats />
               </section>
 
-              <section id="testimonials" className="w-full">
+              {/* <section id="testimonials" className="w-full">
                 <TestiMonials />
-              </section>
+              </section> */}
 
               <section id="projects" className="w-full">
                 <Projects />
@@ -108,11 +109,12 @@ const Home = () => {
                 <Elevation isDark={isDark} />
               </section>
 
-              <section id="contact" className="w-full">
+              <section id="footer" className="w-full">
                 <Footer />
               </section>
             </div>
           </div>
+          <TableOfContents />
         </Suspense>
       </div>
     </>

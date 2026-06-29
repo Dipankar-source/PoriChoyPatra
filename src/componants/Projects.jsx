@@ -7,6 +7,7 @@ import assets from "../assets/assets";
 import icons from '../assets/icons';
 import { useTheme } from '../context/ThemeContext';
 import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
+import { AnimatedParagraph } from '@/components/ui/animated-paragraph';
 import { useNavigate } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -365,16 +366,21 @@ const Projects = () => {
 
   return (
     <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+      <hr className="text-blue-100 mt-8" />
 
       <div className="flex items-center justify-between">
-        <p
-          className="ml-4 mt-4 font-medium text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tight"
-          style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
-        >
-          <ScrollFountain particleCount={30}>
-            Projects
-          </ScrollFountain>
-        </p>
+
+        <div className="ml-4 mt-4 pr-4 ">
+          <p
+            className="font-medium text-gray-900 dark:text-white mb-1 leading-tight tracking-tight"
+            style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
+          >
+            <ScrollFountain particleCount={30}>
+              Projects
+            </ScrollFountain>
+          </p>
+          <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>What have I built?</AnimatedParagraph>
+        </div>
         <p className="mr-4 mt-4 hover:underline text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tighter cursor-pointer"
           onClick={() => navigate('/projects')}
         >

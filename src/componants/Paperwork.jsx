@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { ScrollFountain } from '@/components/ui/scroll-fountain-text';
+import { AnimatedParagraph } from '@/components/ui/animated-paragraph';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -234,14 +235,17 @@ const Paperwork = () => {
             <hr className="border-blue-100 dark:border-white/10 md:-mt-4 mt-4" />
 
             <div className='flex justify-between items-center'>
-                <p
-                    className="ml-4 mt-8 font-medium text-gray-900 dark:text-white mb-4 pr-4 leading-tight tracking-tight"
-                    style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
-                >
-                    <ScrollFountain particleCount={40}>
-                        Research Papers
-                    </ScrollFountain>
-                </p>
+                <div className='ml-4 mt-8 pr-4 '>
+                    <p
+                        className="font-medium text-gray-900 dark:text-white mb-2 leading-tight tracking-tight"
+                        style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
+                    >
+                        <ScrollFountain particleCount={40}>
+                            Research
+                        </ScrollFountain>
+                    </p>
+                    <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>What have I explored?</AnimatedParagraph>
+                </div>
                 <p className="ml-4 mt-8 text-gray-900 dark:text-white mb-4 pr-4 leading-tight tracking-tight">ORCID ID: <a className='text-sm cursor-pointer hover:underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors' href="https://orcid.org/0009-0004-6235-8523">0009-0004-6235-8523</a></p>
             </div>
 

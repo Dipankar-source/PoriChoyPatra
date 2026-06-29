@@ -10,17 +10,21 @@ import {
   IconTableColumn,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
+import { AnimatedParagraph, AnimatedSpan } from "@/components/ui/animated-paragraph";
 
 const Thoughts = () => {
   return (
     <div>
-      <hr className="text-blue-100 mt-3" />
+      <hr className="text-blue-100 mt-1" />
       <div className=" p-4 pb-12">
-        <p className="mb-8 text-xl lg:text-2xl font-medium mt-4">
-          <ScrollFountain particleCount={36}>
-            Thoughts...
-          </ScrollFountain>
-        </p>
+        <div className="mt-4 mb-8">
+          <p className=" text-xl lg:text-2xl font-medium mb-1">
+            <ScrollFountain particleCount={36}>
+              Thoughts...
+            </ScrollFountain>
+          </p>
+          <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>What do I believe?</AnimatedParagraph>
+        </div>
         <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
           {items.map((item, i) => (
             <BentoGridItem
@@ -299,10 +303,10 @@ const items = [
   {
     title: "Frontend Engineering",
     description: (
-      <span className="text-sm">
+      <AnimatedSpan className="text-sm">
         Crafting responsive, modern UI using React, Tailwind CSS, and Shadcn —
         with precision, performance, and clean design.
-      </span>
+      </AnimatedSpan>
     ),
     header: <SkeletonOne />,
     className: "md:col-span-1",
@@ -311,10 +315,10 @@ const items = [
   {
     title: "Clean & Scalable Code",
     description: (
-      <span className="text-sm">
+      <AnimatedSpan className="text-sm">
         Writing structured, maintainable JavaScript and TypeScript code
         following best industry practices.
-      </span>
+      </AnimatedSpan>
     ),
     header: <SkeletonTwo />,
     className: "md:col-span-1",
@@ -323,10 +327,10 @@ const items = [
   {
     title: "Smooth UI/UX Animations",
     description: (
-      <span className="text-sm">
+      <AnimatedSpan className="text-sm">
         Enhancing user experience with seamless, fluid animations using Framer
         Motion.
-      </span>
+      </AnimatedSpan>
     ),
     header: <SkeletonThree />,
     className: "md:col-span-1",
@@ -335,10 +339,10 @@ const items = [
   {
     title: "Full-Stack Development",
     description: (
-      <span className="text-sm">
+      <AnimatedSpan className="text-sm">
         Building MERN applications with clean APIs, reusable components, and
         optimized backend logic.
-      </span>
+      </AnimatedSpan>
     ),
     header: <SkeletonFour />,
     className: "md:col-span-2",
@@ -347,10 +351,10 @@ const items = [
   {
     title: "Problem Solving",
     description: (
-      <span className="text-sm">
+      <AnimatedSpan className="text-sm">
         A logical, structured approach to debugging, performance optimization,
         and shipping quality features.
-      </span>
+      </AnimatedSpan>
     ),
     header: <SkeletonFive />,
     className: "md:col-span-1",

@@ -365,11 +365,14 @@ const GitHubStats = () => {
 
     return (
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
-        <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-3 sm:mb-4">
-          <ScrollFountain particleCount={25}>
-            GitHub
-          </ScrollFountain>
-        </p>
+        <div>
+          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
+            <ScrollFountain particleCount={25}>
+              GitHub
+            </ScrollFountain>
+          </p>
+          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+        </div>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
           <div className="animate-pulse flex gap-1 sm:gap-2 mb-3 sm:mb-4 px-1 sm:px-2 overflow-hidden mt-5 sm:mt-7">
@@ -448,11 +451,14 @@ const GitHubStats = () => {
   if (error) {
     return (
       <div className="w-full px-2 sm:px-4 py-6 sm:py-10">
-        <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white mb-3 sm:mb-4">
-          <ScrollFountain particleCount={25}>
-            GitHub
-          </ScrollFountain>
-        </p>
+        <div>
+          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
+            <ScrollFountain particleCount={25}>
+              GitHub
+            </ScrollFountain>
+          </p>
+          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+        </div>
         <div className="w-full px-2 sm:px-3 py-4 sm:py-6 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
           <div className="text-center text-black dark:text-white py-1 sm:py-2 text-xs sm:text-sm">
             {error}
@@ -469,11 +475,14 @@ const GitHubStats = () => {
 
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
 
-        <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
-          <ScrollFountain particleCount={25}>
-            GitHub
-          </ScrollFountain>
-        </p>
+        <div>
+          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
+            <ScrollFountain particleCount={25}>
+              GitHub
+            </ScrollFountain>
+          </p>
+          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+        </div>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
           <motion.div
