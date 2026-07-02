@@ -11,7 +11,7 @@ const Contact = lazy(() => import("./componants/Contact"));
 const EachBlogById = lazy(() => import("./pages/EachBlogById"));
 
 const GlobalLoader = () => (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black transition-colors duration-300">
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#09090B] transition-colors duration-300">
     <LoaderFive text="Loading..." />
   </div>
 );
@@ -28,7 +28,7 @@ const App = () => {
     return null;
   }
   return (
-    <div>
+    <div className="bg-[#FFFFFF] dark:bg-[#09090B] transition-colors duration-300">
       <ScrollToTop />
       <ThemeProvider>
         <Suspense fallback={<GlobalLoader />}>

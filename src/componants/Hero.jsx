@@ -201,11 +201,11 @@ Passionate about performance, clean architecture, and intuitive user experiences
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -10, scale: 0.95 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="absolute top-full hidden lg:block right-0 mt-3 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-xl z-50"
+        className="absolute top-full hidden lg:block right-0 mt-3 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-[#FFFFFF] dark:bg-[#09090B] shadow-xl z-50"
 
       >
         {/* Triangle/Pointer pointing to the button */}
-        <div className="absolute -top-2 right-4 w-4 h-4 transform rotate-45 bg-white dark:bg-black border-t border-l border-gray-200 dark:border-gray-700 z-10"></div>
+        <div className="absolute -top-2 right-4 w-4 h-4 transform rotate-45 bg-[#FFFFFF] dark:bg-[#09090B] border-t border-l border-gray-200 dark:border-gray-700 z-10"></div>
 
         <CardSpotlight >
           <div className="relative z-20 space-y-3 ">
@@ -340,7 +340,7 @@ Passionate about performance, clean architecture, and intuitive user experiences
                   containerClassName="rounded-sm"
                   as="button"
                   onClick={() => naviagte("/contact")}
-                  className="dark:bg-black cursor-pointer bg-white text-black dark:text-white flex items-center space-x-2 relative z-10"
+                  className="dark:bg-[#09090B] cursor-pointer bg-[#FFFFFF] text-black dark:text-white flex items-center space-x-2 relative z-10"
                 >
                   <span>Hire Me</span>
                   <IoMdPaperPlane />

@@ -56,7 +56,7 @@ export const IsometricBg = ({ className = "" }) => {
                     <path d="M1143.65 692.58L-588.39 -307.42" style={{ animationDelay: '1.8s' }} />
                 </g>
 
-                <g className="fill-[#f8fafc] dark:fill-[#000000] transition-colors duration-300" fillRule="evenodd" clipRule="evenodd">
+                <g className="bg-[#FFFFFF] dark:bg-[#09090B] transition-colors duration-300" fillRule="evenodd" clipRule="evenodd">
                     <path d="M388.48 224.58L166.78 96.58V128.58L388.48 256.58L554.76 160.58V128.58L388.48 224.58Z" />
                     <path d="M388.48 32.58L277.63 96.58V128.58L388.48 64.58L499.33 128.58L554.75 96.58V64.58L499.33 96.58L388.48 32.58Z" />
                 </g>

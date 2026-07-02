@@ -13,7 +13,7 @@ const Thoughts = lazy(() => import("../componants/Thoughts"));
 import Navbar from "../componants/Navbar";
 import { useTheme } from "../context/ThemeContext";
 import { Spotlight } from "@/components/ui/spotlight";
-import CustomMouseFollower from "@/componants/CustomMouseFollower";
+// import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import { LoaderFive } from "@/components/ui/loader";
 import Projects from "@/componants/Projects";
 import Paperwork from "@/componants/Paperwork";
@@ -32,7 +32,7 @@ const Home = () => {
   const { isDark } = useTheme();
   const LoadingScreen = () => (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-300 ${isDark ? "bg-black" : "bg-white"
+      className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-300 ${isDark ? "bg-[#09090B]" : "bg-[#FFFFFF]"
         }`}
     >
       <LoaderFive text="Loading..." />
@@ -42,7 +42,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`transition-colors duration-300 overflow-hidden max-w-3xl mx-auto ${isDark ? "bg-black" : "bg-white"
+        className={`transition-colors duration-300 overflow-hidden max-w-3xl mx-auto ${isDark ? "bg-[#09090B]" : "bg-[#FFFFFF]"
           }`}
       >
         {/* Spotlights and Backgrounds load immediately

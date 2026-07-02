@@ -7,7 +7,7 @@ import {
 
 const TestiMonials = () => {
   return (
-    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+    <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300">
       <div className="mt-8 w-full space-y-0 [&_.rfm-initial-child-container]:items-stretch! [&_.rfm-marquee]:items-stretch!">
         {[TESTIMONIALS_1, TESTIMONIALS_2].map((list, index) => (
           <Marquee key={index} className="border-y border-edge">
@@ -40,7 +40,7 @@ const TestiMonials = () => {
 };
 
 const TestimonialCard = ({ item }) => (
-  <div className="group flex flex-col justify-between gap-3 px-4 py-3 h-full bg-white dark:bg-black hover:bg-neutral-50 dark:hover:bg-[#0f0f0f] transition-colors duration-300 ease-out">
+  <div className="group flex flex-col justify-between gap-3 px-4 py-3 h-full bg-[#FFFFFF] dark:bg-[#09090B] hover:bg-neutral-50 dark:hover:bg-[#0f0f0f] transition-colors duration-300 ease-out">
     {/* Quote */}
     <p
       className="text-gray-700 dark:text-gray-300 leading-relaxed"

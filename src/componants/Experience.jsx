@@ -241,7 +241,7 @@ const Experience = () => {
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+    <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300">
 
       {/* Section heading: fluid 18px → 24px */}
       <div className="flex justify-between items-center ">
@@ -262,7 +262,7 @@ const Experience = () => {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
+      <div className="bg-[#FFFFFF] dark:bg-[#09090B] text-gray-900 dark:text-gray-100 mt-5 font-sans">
         <div className="px-4 flex flex-col gap-2">
           {WORK_EXPERIENCE.map((company) =>
             company.positions.map((position) => (

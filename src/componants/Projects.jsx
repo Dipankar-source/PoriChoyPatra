@@ -365,7 +365,7 @@ const Projects = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+    <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300">
       <hr className="text-blue-100 mt-8" />
 
       <div className="flex items-center justify-between">
@@ -388,7 +388,7 @@ const Projects = () => {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-5 font-sans">
+      <div className="bg-[#FFFFFF] dark:bg-[#09090B] text-gray-900 dark:text-gray-100 mt-5 font-sans">
         <div className="px-4 flex flex-col">
           {PROJECTS.map((project) => (
             <ProjectItem

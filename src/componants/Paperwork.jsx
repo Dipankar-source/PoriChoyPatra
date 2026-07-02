@@ -231,7 +231,7 @@ const Paperwork = () => {
     const [hoveredId, setHoveredId] = useState(null);
 
     return (
-        <div className="w-full bg-white dark:bg-black text-black dark:text-white transition-colors duration-300 pb-10">
+        <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300 pb-10">
             <hr className="border-blue-100 dark:border-white/10 md:-mt-4 mt-4" />
 
             <div className='flex justify-between items-center'>
@@ -249,7 +249,7 @@ const Paperwork = () => {
                 <p className="ml-4 hidden md:block mt-8 text-gray-900 dark:text-white mb-4 pr-4 leading-tight tracking-tight">ORCID ID: <a className='text-sm cursor-pointer hover:underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors' href="https://orcid.org/0009-0004-6235-8523">0009-0004-6235-8523</a></p>
             </div>
 
-            <div className="bg-white dark:bg-black text-gray-900 dark:text-gray-100 mt-2 font-sans">
+            <div className="bg-[#FFFFFF] dark:bg-[#09090B] text-gray-900 dark:text-gray-100 mt-2 font-sans">
                 <div className="px-4 flex flex-col gap-2">
                     {PAPERS.map((paper) => (
                         <PaperItem
