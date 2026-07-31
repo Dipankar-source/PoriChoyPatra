@@ -327,7 +327,7 @@ Passionate about performance, clean architecture, and intuitive user experiences
               </span>
             </h2>
             <div className="mt-4 md:pl-2 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
-              <TextGenerateEffect words={words} skipAnimation={hasVisited} />
+              <TextGenerateEffect words={words} skipAnimation={hasVisited} filter={false} />
             </div>
           </div>
           <motion.div

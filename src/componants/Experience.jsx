@@ -39,7 +39,7 @@ const StackItem = ({ name }) => {
   const IconComponent = getIconForSkill(name);
 
   return (
-    <div className="group flex items-center h-8 px-2 border border-transparent hover:border-neutral-500 hover:border-dotted cursor-pointer overflow-hidden backdrop-blur-md rounded-sm hover:bg-neutral-200 dark:hover:bg-[#26262680] transition-colors duration-300 ease-out">
+    <div className="group flex items-center h-8 px-2 border border-transparent hover:border-neutral-500 hover:border-dotted cursor-pointer overflow-hidden rounded-sm hover:bg-neutral-200 dark:hover:bg-[#26262680] transition-colors duration-300 ease-out">
       <div className="flex items-center justify-center transition-all duration-300">
         <IconComponent isDark={isDark} />
       </div>
@@ -76,7 +76,6 @@ const ExperienceItem = ({
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
       animate={{
-        filter: shouldDim ? "blur(1.5px)" : "blur(0px)",
         opacity: shouldDim ? 0.38 : 1,
       }}
       transition={{ duration: 0.25, ease: "easeOut" }}
