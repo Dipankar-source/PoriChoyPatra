@@ -31,7 +31,7 @@ const LikeButton = () => {
   const [isLiked, setIsLiked] = useState(() => {
     return localStorage.getItem("portfolioIsLiked") === "true";
   });
-  const BASE_LIKES = 2136;
+  const BASE_LIKES = 2;
   const [likes, setLikes] = useState(() => {
     const savedGlobalDelta = localStorage.getItem("portfolioGlobalDelta");
     return savedGlobalDelta ? BASE_LIKES + parseInt(savedGlobalDelta, 10) : BASE_LIKES;
@@ -148,7 +148,7 @@ const LikeButton = () => {
             {isLiked ? <FcLike size={24} /> : <AiOutlineHeart size={24} className="text-gray-400" />}
           </motion.div>
           <span className={`text-sm font-semibold w-8 text-left transition-colors ${isLiked ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-            {likes}
+            20K+
           </span>
         </button>
       </div>
