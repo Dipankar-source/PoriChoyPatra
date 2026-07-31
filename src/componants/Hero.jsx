@@ -23,6 +23,8 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineHeart } from "react-icons/ai";
 import loveSoundPath from "../assets/sounds/love.mp3";
+import GoldViewer from "./GoldViewer";
+import SamsungViewer from "./SamsungViewer";
 
 const LikeButton = () => {
   // Initialize state from localStorage
@@ -76,14 +78,14 @@ const LikeButton = () => {
     const newIsLiked = !isLiked;
     setIsLiked(newIsLiked);
     localStorage.setItem("portfolioIsLiked", newIsLiked.toString());
-    
+
     if (newIsLiked) {
       playLoveSound();
       setLikes(prev => prev + 1);
-      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/up"); } catch (e) {}
+      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/up"); } catch (e) { }
     } else {
       setLikes(prev => prev - 1);
-      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/down"); } catch (e) {}
+      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/down"); } catch (e) { }
     }
   };
 
@@ -133,7 +135,7 @@ const LikeButton = () => {
           </span>
         </div>
 
-        <button 
+        <button
           onClick={handleLike}
           className="flex justify-center items-center gap-2 cursor-pointer border-neutral-200 dark:border-neutral-800 hover:scale-105 transition-all duration-300"
         >
@@ -302,6 +304,10 @@ Passionate about performance, clean architecture, and intuitive user experiences
 
   return (
     <div>
+      <div className="flex gap-4 relative items-center justify-center top-1">
+        <GoldViewer />
+        <SamsungViewer />
+      </div>
       <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center top-5">
         <LikeButton />
         <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-center md:flex-row">
@@ -316,7 +322,7 @@ Passionate about performance, clean architecture, and intuitive user experiences
               </ScrollFountain>
               <span className="font-semibold dark:text-white text-3xl lg:text-5xl ml-2">
                 <ScrollFountain particleCount={25}>
-                 Dipankar Barik
+                  Dipankar Barik
                 </ScrollFountain>
               </span>
             </h2>
@@ -424,6 +430,7 @@ Passionate about performance, clean architecture, and intuitive user experiences
             </div>
           </motion.div>
         </div>
+
       </div>
     </div>
   );
