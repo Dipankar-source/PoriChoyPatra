@@ -85,7 +85,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "t") {
+      if ((e.shiftKey || e.metaKey) && e.key.toLowerCase() === "t") {
         e.preventDefault();
         handleThemeToggle();
       }
@@ -491,12 +491,12 @@ const Navbar = () => {
             variants={navItemVariants}
             whileHover="hover"
             className={`relative transition-all cursor-pointer duration-300 text-sm lg:text-base px-3 py-2 rounded-lg ${isActiveLink(item.path)
-                ? isDark
-                  ? "text-white"
-                  : "text-black"
-                : isDark
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-black"
+              ? isDark
+                ? "text-white"
+                : "text-black"
+              : isDark
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-black"
               }`}
           >
             {item.name}
@@ -574,10 +574,10 @@ const Navbar = () => {
                 )}
               </motion.div>
             </motion.button>
-            
+
             {/* Tooltip */}
             <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}>
-              Ctrl + T
+              Shift + T
             </div>
           </div>
         </MagneticWrapper>
@@ -614,10 +614,10 @@ const Navbar = () => {
               )}
             </motion.div>
           </motion.button>
-          
+
           {/* Tooltip */}
           <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}>
-            Ctrl + T
+            Shift + T
           </div>
         </div>
 
@@ -678,11 +678,10 @@ const Navbar = () => {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className={`fixed inset-x-2 bottom-2 top-20 rounded-3xl shadow-2xl z-[9991] md:hidden overflow-hidden flex flex-col pointer-events-auto ${
-                  isDark
+                className={`fixed inset-x-2 bottom-2 top-20 rounded-3xl shadow-2xl z-[9991] md:hidden overflow-hidden flex flex-col pointer-events-auto ${isDark
                     ? "bg-[#09090b]/90 border border-white/10 backdrop-blur-2xl"
                     : "bg-white/90 border border-black/10 backdrop-blur-2xl"
-                }`}
+                  }`}
               >
                 <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col justify-between">
                   {/* Top Navigation Links */}
@@ -696,15 +695,14 @@ const Navbar = () => {
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.1 + 0.1 }}
                         onClick={() => handleNavigation(item.path)}
-                        className={`text-left text-3xl font-bold py-3 px-4 rounded-xl transition-colors ${
-                          isActiveLink(item.path)
+                        className={`text-left text-3xl font-bold py-3 px-4 rounded-xl transition-colors ${isActiveLink(item.path)
                             ? isDark
                               ? "bg-white/10 text-white"
                               : "bg-black/5 text-black"
                             : isDark
                               ? "text-gray-400 hover:bg-white/5 hover:text-white"
                               : "text-gray-500 hover:bg-black/5 hover:text-black"
-                        }`}
+                          }`}
                       >
                         {item.name}
                       </motion.button>
@@ -713,7 +711,7 @@ const Navbar = () => {
 
                   {/* Bottom Actions */}
                   <div className="mt-8 flex flex-col space-y-6">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
@@ -730,14 +728,13 @@ const Navbar = () => {
                       </a>
                     </motion.div>
 
-                    <motion.button 
+                    <motion.button
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
                       onClick={() => window.open("/Resume_Portfolio.pdf")}
-                      className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 ${
-                        isDark ? "bg-white text-black" : "bg-black text-white"
-                      }`}
+                      className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 ${isDark ? "bg-white text-black" : "bg-black text-white"
+                        }`}
                     >
                       <Download className="h-5 w-5" /> Download Resume
                     </motion.button>
