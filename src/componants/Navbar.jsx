@@ -72,7 +72,7 @@ const SunIcon = ({ size = 15, className = "" }) => {
 const Navbar = () => {
   const { theme, toggleTheme, isDark } = useTheme();
 
-  const handleThemeToggle = () => {
+  const handleThemeToggle = React.useCallback(() => {
     try {
       const audio = new Audio(clickSoundPath);
       audio.volume = 0.5;
@@ -81,7 +81,19 @@ const Navbar = () => {
       console.error("Audio playback failed", e);
     }
     toggleTheme();
-  };
+  }, [toggleTheme]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "t") {
+        e.preventDefault();
+        handleThemeToggle();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleThemeToggle]);
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -532,14 +544,55 @@ const Navbar = () => {
         </motion.button>
 
         <MagneticWrapper>
+          <div className="relative group">
+            <motion.button
+              variants={themeToggleVariants}
+              whileHover="hover"
+              whileTap="tap"
+              onClick={handleThemeToggle}
+              className={
+                "p-2 rounded-lg cursor-pointer transition-colors duration-300"
+              }
+              aria-label="Toggle theme"
+            >
+              <motion.div
+                key={isDark ? "sun" : "moon"}
+                initial={{ rotate: -180, scale: 0 }}
+                animate={{ rotate: 0, scale: 1 }}
+                exit={{ rotate: 180, scale: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                  duration: 0.5,
+                }}
+              >
+                {isDark ? (
+                  <SunIcon className="h-4.5 w-4.5" />
+                ) : (
+                  <MoonIcon className="h-4.5 w-4.5" />
+                )}
+              </motion.div>
+            </motion.button>
+            
+            {/* Tooltip */}
+            <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}>
+              Ctrl + T
+            </div>
+          </div>
+        </MagneticWrapper>
+      </div>
+
+      <div className="flex md:hidden items-center space-x-1 relative z-50">
+        <PremiumSearch blogPosts={BLOG_POSTS} />
+        <div className="relative group">
           <motion.button
             variants={themeToggleVariants}
             whileHover="hover"
             whileTap="tap"
             onClick={handleThemeToggle}
-            className={
-              "p-2 rounded-lg cursor-pointer transition-colors duration-300"
-            }
+            className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+              }`}
             aria-label="Toggle theme"
           >
             <motion.div
@@ -555,45 +608,18 @@ const Navbar = () => {
               }}
             >
               {isDark ? (
-                <SunIcon className="h-4.5 w-4.5" />
+                <SunIcon className="h-4 w-4" />
               ) : (
-                <MoonIcon className="h-4.5 w-4.5" />
+                <MoonIcon className="h-4 w-4" />
               )}
             </motion.div>
           </motion.button>
-        </MagneticWrapper>
-      </div>
-
-      <div className="flex md:hidden items-center space-x-1 relative z-50">
-        <PremiumSearch blogPosts={BLOG_POSTS} />
-        <motion.button
-          variants={themeToggleVariants}
-          whileHover="hover"
-          whileTap="tap"
-          onClick={handleThemeToggle}
-          className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-            }`}
-          aria-label="Toggle theme"
-        >
-          <motion.div
-            key={isDark ? "sun" : "moon"}
-            initial={{ rotate: -180, scale: 0 }}
-            animate={{ rotate: 0, scale: 1 }}
-            exit={{ rotate: 180, scale: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 20,
-              duration: 0.5,
-            }}
-          >
-            {isDark ? (
-              <SunIcon className="h-4 w-4" />
-            ) : (
-              <MoonIcon className="h-4 w-4" />
-            )}
-          </motion.div>
-        </motion.button>
+          
+          {/* Tooltip */}
+          <div className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}>
+            Ctrl + T
+          </div>
+        </div>
 
         <motion.button
           whileHover={{ scale: 1.05 }}
