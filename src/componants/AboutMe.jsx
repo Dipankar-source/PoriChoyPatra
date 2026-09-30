@@ -9,7 +9,7 @@ const StackItem = ({ item }) => {
   return (
     <div className="relative h-8 w-[44px] flex-shrink-0">
       <div
-        className="group absolute top-0 left-0 z-10 hover:z-50 flex items-center h-8 px-2 border border-transparent hover:border-neutral-500 hover:border-dotted cursor-pointer overflow-hidden backdrop-blur-md rounded-sm hover:bg-neutral-200 dark:hover:bg-[#26262680] transition-all duration-300 ease-out"
+        className="group absolute top-0 left-0 z-10 hover:z-50 flex items-center h-8 px-2 border border-transparent hover:border-neutral-500 hover:border-dotted cursor-pointer overflow-hidden rounded-sm hover:bg-neutral-200 dark:hover:bg-[#26262680] transition-all duration-300 ease-out"
       >
         <div
           className="flex items-center justify-center transition-all duration-300 flex-shrink-0"

@@ -38,24 +38,23 @@ export const MagneticWrapper = ({ children, className = "" }) => {
   );
 };
 
-const CustomMouseFollower = () => {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+const CustomMouseFollower = ({ className = "hidden lg:block" }) => {
+  const pointerX = useMotionValue(-100);
+  const pointerY = useMotionValue(-100);
 
-  const springConfig = { damping: 30, stiffness: 700 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
+  const beeX = useSpring(pointerX, { stiffness: 220, damping: 20, mass: 0.8 });
+  const beeY = useSpring(pointerY, { stiffness: 220, damping: 20, mass: 0.8 });
 
   const [isHovered, setIsHovered] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const moveCursor = (e) => {
-      cursorX.set(e.clientX - 12); // Center offset
-      cursorY.set(e.clientY - 12);
+      pointerX.set(e.clientX + 18);
+      pointerY.set(e.clientY + 18);
     };
 
     const handleMouseOver = (e) => {
-      // Trigger hover if element is a button, link, or wrapped in MagneticWrapper
       if (
         e.target.tagName === "BUTTON" ||
         e.target.tagName === "A" ||
@@ -77,20 +76,35 @@ const CustomMouseFollower = () => {
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("mouseout", handleMouseOut);
     };
-  }, [cursorX, cursorY]);
+  }, [pointerX, pointerY]);
 
   return (
     <motion.div
-      className="fixed top-0 left-0 w-4 h-4 border hidden lg:block border-yellow-400  dark:border-white rounded-full pointer-events-none z-[9999] mix-blend-difference bg-black"
+      className={`fixed left-0 top-0 pointer-events-none z-[9999] ${className}`}
       style={{
-        translateX: cursorXSpring,
-        translateY: cursorYSpring,
+        x: beeX,
+        y: beeY,
       }}
       animate={{
-        scale: isHovered ? 3 : 1,
-        backgroundColor: isHovered ? "#ffffff" : "transparent",
+        scale: isHovered ? 1.08 : 1,
       }}
-    />
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
+    >
+      {videoFailed ? (
+        <div className="h-6 w-6 bg-transparent" />
+      ) : (
+        <video
+          src={followerVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          onError={() => setVideoFailed(true)}
+          className="block h-12 w-12 select-none bg-transparent object-contain opacity-100"
+          style={{ display: "block" }}
+        />
+      )}
+    </motion.div>
   );
 };
 

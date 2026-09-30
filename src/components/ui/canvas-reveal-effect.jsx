@@ -10,7 +10,7 @@ export const CanvasRevealEffect = ({
   colors = [[0, 255, 255]],
   containerClassName,
   dotSize,
-  showGradient = true
+  showGradient = true,
 }) => {
   return (
     <div className={cn("h-full relative bg-white w-full", containerClassName)}>
@@ -148,8 +148,7 @@ const DotMatrix = ({
       fragColor = vec4(color, opacity);
       fragColor.rgb *= fragColor.a;
         }`}
-      uniforms={uniforms}
-      maxFps={60} />
+      uniforms={uniforms} />
   );
 };
 

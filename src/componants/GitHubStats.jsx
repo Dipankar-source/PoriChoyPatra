@@ -18,11 +18,11 @@ const GitHubStats = () => {
   const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
   const colors = {
-    level0: "#ebedf0",
-    level1: "#9be9a8",
-    level2: "#40c463",
-    level3: "#30a14e",
-    level4: "#216e39",
+    level0: "#F3EDF2",
+    level1: "#FFB39A",
+    level2: "#E5A0A3",
+    level3: "#B9788C",
+    level4: "#542A52",
   };
 
   useEffect(() => {
@@ -371,7 +371,7 @@ const GitHubStats = () => {
               GitHub
             </ScrollFountain>
           </p>
-          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+          <p className="text-sm italic tracking-wider">How do I learn?</p>
         </div>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
@@ -457,7 +457,7 @@ const GitHubStats = () => {
               GitHub
             </ScrollFountain>
           </p>
-          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+          <p className="text-sm italic tracking-wider ">How do I learn?</p>
         </div>
         <div className="w-full px-2 sm:px-3 py-4 sm:py-6 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
           <div className="text-center text-black dark:text-white py-1 sm:py-2 text-xs sm:text-sm">
@@ -471,7 +471,7 @@ const GitHubStats = () => {
   // ─── MAIN RENDER ─────────────────────────────────────────────────────────────
   return (
     <div>
-      <hr className="text-blue-100 mt-4" />
+      <hr className="mt-4 border-0 border-t border-[#542A52]/25 dark:border-[#FFB39A]/25" />
 
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
 
@@ -481,7 +481,7 @@ const GitHubStats = () => {
               GitHub
             </ScrollFountain>
           </p>
-          <p className='tracking-wider dark:text-white/30 text-sm italic'>How do I learn?</p>
+          <p className="text-sm italic tracking-wider ">How do I learn?</p>
         </div>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
@@ -568,7 +568,7 @@ const GitHubStats = () => {
         >
           <div className="flex flex-col">
             <h2 className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
-              Total: {totalContributions.toLocaleString()} contributions
+              Total: <span className="text-[#542A52] dark:text-[#FFB39A]">{totalContributions.toLocaleString()}</span> contributions
               {isMobile && (
                 <span className="block text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
                   Last 5 months: {lastFiveMonthsContributions.toLocaleString()} contributions

@@ -180,10 +180,12 @@ export function PremiumSearch({ blogPosts = [] }) {
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Open Search"
-        className="group relative flex w-auto sm:w-12 items-center justify-between gap-2 text-sm text-zinc-900 dark:text-white transition-all"
+        aria-keyshortcuts="Control+K Meta+K"
+          className="group inline-flex h-9 w-auto shrink-0 items-center justify-between gap-2 rounded-md border border-[#542A52]/20 bg-white/70 px-2 text-[#542A52] shadow-sm transition-colors hover:border-[#542A52]/45 hover:bg-[#FFB39A]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#542A52]/40 sm:px-3 dark:border-[#FFB39A]/25 dark:bg-neutral-900/70 dark:text-[#FFB39A] dark:hover:bg-[#542A52]/25 dark:focus-visible:ring-[#FFB39A]/50"
       >
         <Search className="h-4 w-4 shrink-0" />
-        <kbd className="hidden sm:flex items-center justify-center text-[10px] font-medium text-zinc-900 shadow-sm dark:text-zinc-400 font-mono">
+          <span className="text-xs font-medium">Search</span>
+          <kbd className="inline-flex items-center justify-center rounded border border-[#542A52]/15 px-1.5 py-0.5 font-mono text-[10px] font-medium text-[#542A52]/75 dark:border-[#FFB39A]/20 dark:text-[#FFB39A]/75">
           ⌘ K
         </kbd>
       </button>
