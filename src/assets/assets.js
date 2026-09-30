@@ -10,6 +10,10 @@ import IOSBento from './Images/Extra/ios-bento-component.webp'
 import ChronosCard from './Images/Extra/chronos-card-component.webp'
 import IOSAccordion from './Images/Extra/ios-accordion-component.webp'
 
+// Videos
+import BgVideo from './videos/bg-video.mp4'
+import BgVideo1 from './videos/bg-video1.mp4'
+
 
 const assets = {
   careerNexusFullDetail,
@@ -21,6 +25,8 @@ const assets = {
   IOSBento,
   ChronosCard,
   IOSAccordion,
+  BgVideo,
+  BgVideo1,
 };
 
 export default assets;

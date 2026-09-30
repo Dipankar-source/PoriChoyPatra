@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext();
+let themeWipeTimer;
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
@@ -13,6 +14,9 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("light");
+  const [profileIndex, setProfileIndex] = useState(() =>
+    Number(localStorage.getItem("profileIndex")) === 1 ? 1 : 0
+  );
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
@@ -31,15 +35,36 @@ export const ThemeProvider = ({ children }) => {
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
+    const root = document.documentElement;
+    window.clearTimeout(themeWipeTimer);
+    root.classList.remove("theme-wipe", "theme-wipe-to-dark", "theme-wipe-to-light");
+    void root.offsetWidth;
+
+    root.classList.toggle("dark", newTheme === "dark");
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    root.classList.add(
+      "theme-wipe",
+      newTheme === "dark" ? "theme-wipe-to-dark" : "theme-wipe-to-light",
+    );
+
+    themeWipeTimer = window.setTimeout(() => {
+      root.classList.remove("theme-wipe", "theme-wipe-to-dark", "theme-wipe-to-light");
+    }, 750);
+  };
+
+  const cycleProfile = () => {
+    const nextIndex = (profileIndex + 1) % 2;
+    setProfileIndex(nextIndex);
+    localStorage.setItem("profileIndex", String(nextIndex));
   };
 
   const value = {
     theme,
     toggleTheme,
     isDark: theme === "dark",
+    profileIndex,
+    cycleProfile,
   };
 
   return (

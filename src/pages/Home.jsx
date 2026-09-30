@@ -1,49 +1,65 @@
-// components/Home.js
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
-import React, { lazy, Suspense } from "react"; // 1. Added Suspense import
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import Hero from "../componants/Hero";
+import IsometricBg from "../componants/IsometricBg";
 
-// Lazy imports (These take time to load)
-const Hero = lazy(() => import("../componants/Hero"));
+
 const About = lazy(() => import("../componants/About"));
 const Experience = lazy(() => import("../componants/Experience"));
-const TestiMonials = lazy(() => import("../componants/TestiMonials"));
-const Thoughts = lazy(() => import("../componants/Thoughts"));
-
-// Eager imports (Load immediately)
 import Navbar from "../componants/Navbar";
 import { useTheme } from "../context/ThemeContext";
-import { Spotlight } from "@/components/ui/spotlight";
-// import CustomMouseFollower from "@/componants/CustomMouseFollower";
-import { LoaderFive } from "@/components/ui/loader";
-import Projects from "@/componants/Projects";
-import Paperwork from "@/componants/Paperwork";
+const Projects = lazy(() => import("@/componants/Projects"));
+const Paperwork = lazy(() => import("@/componants/Paperwork"));
 import TableOfContents from "@/componants/TableOfContents";
-
-// Lazy imports for below-the-fold components
-const FocusBlades = lazy(() => import("@/uicomponents/projects/focus-blades").then(module => ({ default: module.FocusBlades })));
 const Elevation = lazy(() => import("@/componants/FooterElevation"));
 const Footer = lazy(() => import("@/componants/Footer"));
-const AchieveMents = lazy(() => import("@/componants/AchieveMents"));
-const IsometricBg = lazy(() => import("@/componants/IsometricBg"));
+const VisitorAnalytics = lazy(() => import("@/components/VisitorAnalytics"));
 const GitHubStats = lazy(() => import("@/componants/GitHubStats"));
 const NameHover = lazy(() => import("@/componants/NameHover"));
 
+const DeferredSection = ({ id, children, minHeight = 360 }) => {
+  const sectionRef = useRef(null);
+  const [isNearViewport, setIsNearViewport] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || isNearViewport) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [isNearViewport]);
+
+  return (
+    <section id={id} ref={sectionRef} className="w-full">
+      {isNearViewport ? (
+        <Suspense fallback={<div aria-hidden="true" style={{ minHeight }} />}>
+          {children}
+        </Suspense>
+      ) : (
+        <div aria-hidden="true" style={{ minHeight }} />
+      )}
+    </section>
+  );
+};
+
 const Home = () => {
   const { isDark } = useTheme();
-  const LoadingScreen = () => (
-    <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-300 ${isDark ? "bg-[#09090B]" : "bg-[#FFFFFF]"
-        }`}
-    >
-      <LoaderFive text="Loading..." />
-    </div>
-  );
 
   return (
     <>
       <div
-        className={`transition-colors duration-300 overflow-hidden max-w-3xl mx-auto ${isDark ? "bg-[#09090B]" : "bg-[#FFFFFF]"
-          }`}
+        className={`transition-colors duration-300 overflow-hidden max-w-3xl mx-auto ${
+          isDark ? "bg-[#09090B]" : "bg-[#FFFFFF]"
+        }`}
       >
         {/* Spotlights and Backgrounds load immediately
         <Spotlight
@@ -58,64 +74,46 @@ const Home = () => {
           <Navbar />
         </div>
 
-        {/* 3. Wrap Content in Suspense */}
-        {/* The fallback is what shows while the lazy components below are downloading */}
-        <Suspense fallback={<LoadingScreen />}>
-          <div className="relative pt-16">
-            <div className="relative z-10 w-full px-4 sm:px-6 lg:px-0">
+        <div className="relative pt-16">
+          <div className="relative z-10 w-full px-4 sm:px-6 lg:px-0">
+            <section id="hero" className="relative w-full">
+              <IsometricBg />
+              <Hero />
+            </section>
 
-              <section id="hero" className="w-full relative">
-                <IsometricBg />
-                <Hero />
-              </section>
+            <DeferredSection id="about" minHeight={440}>
+              <About isDark={isDark} />
+            </DeferredSection>
+            <DeferredSection id="experience" minHeight={520}>
+              <Experience />
+            </DeferredSection>
+            <DeferredSection id="github" minHeight={420}>
+              <GitHubStats />
+            </DeferredSection>
+            <DeferredSection id="projects" minHeight={600}>
+              <Projects />
+            </DeferredSection>
+            <DeferredSection id="namehover" minHeight={360}>
+              <NameHover isDark={isDark} />
+            </DeferredSection>
+            <DeferredSection id="paperwork" minHeight={480}>
+              <Paperwork />
+            </DeferredSection>
 
-              <section id="about" className="w-full">
-                <About isDark={isDark} />
-              </section>
+            <DeferredSection id="visitors" minHeight={440}>
+              <VisitorAnalytics />
+            </DeferredSection>
+            
+            <DeferredSection id="contact" minHeight={320}>
+              <Elevation isDark={isDark} />
+            </DeferredSection>
 
-              <section id="experience" className="w-full">
-                <Experience />
-              </section>
-
-              <section id="github" className="w-full">
-                <GitHubStats />
-              </section>
-
-              {/* <section id="testimonials" className="w-full">
-                <TestiMonials />
-              </section> */}
-
-              <section id="projects" className="w-full">
-                <Projects />
-              </section>
-
-              <section id="namehover" className="w-full">
-                <NameHover isDark={isDark} />
-              </section>
-              <section id="paperwork" className="w-full">
-                <Paperwork />
-              </section>
-
-              <section id="thoughts" className="w-full">
-                <Thoughts />
-              </section>
-              {/* 
-              <section id="achivements" className="w-full">
-                <AchieveMents />
-              </section> */}
-
-
-              <section id="contact" className="w-full">
-                <Elevation isDark={isDark} />
-              </section>
-
-              <section id="footer" className="w-full">
-                <Footer />
-              </section>
-            </div>
+            <DeferredSection id="contact" minHeight={260}>
+              <Footer />
+            </DeferredSection>
           </div>
-          <TableOfContents />
-        </Suspense>
+        </div>
+        <TableOfContents />
       </div>
     </>
   );
