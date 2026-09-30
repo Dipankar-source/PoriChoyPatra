@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 // distinct imports assuming you have these icons installed via lucide-react
 import {
-  ArrowUpRight,
   Copy,
   Check,
   Send,
@@ -16,10 +15,18 @@ import {
 
 // Assuming these are your existing components.
 // If you are using standard React, ensure paths are correct.
-import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 import { useTheme } from "@/context/ThemeContext";
+import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
+
+const PALM_BEECH_SHADER_COLORS = [
+  [84, 42, 82],
+  [255, 179, 154],
+];
+const CONTACT_SHADER_OPACITIES = [
+  0.04, 0.05, 0.06, 0.07, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18,
+];
 
 const SOCIALS = [
   {
@@ -27,27 +34,18 @@ const SOCIALS = [
     link: "https://linkedin.com/in/dipankarbarik/",
     handle: "@dipankarbarik",
     icon: Linkedin,
-    color: "text-blue-500",
-    bgHover: "hover:bg-blue-500/10",
-    borderHover: "hover:border-blue-500/50",
   },
   {
     name: "Twitter",
     link: "https://x.com/_dipankarsource",
     handle: "_dipankarsource",
     icon: Twitter,
-    color: "text-sky-500",
-    bgHover: "hover:bg-sky-500/10",
-    borderHover: "hover:border-sky-500/50",
   },
   {
     name: "GitHub",
     link: "https://github.com/Dipankar-source/",
     handle: "@Dipankar-source",
     icon: Github,
-    color: "text-zinc-600 dark:text-zinc-400",
-    bgHover: "hover:bg-zinc-500/10",
-    borderHover: "hover:border-zinc-500/50",
   },
 ];
 
@@ -57,24 +55,18 @@ const CONTACT_METHODS = [
     title: "Email",
     value: "dipankarbarik2002@gmail.com",
     description: "For direct communication",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
   },
   {
     icon: MapPin,
     title: "Location",
     value: "West Bengal, India",
     description: "Based in Kolkata",
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
   },
   {
     icon: Phone,
     title: "Phone",
     value: "+91 97331324__",
     description: "Available for calls",
-    color: "text-indigo-500",
-    bgColor: "bg-indigo-500/10",
   },
 ];
 
@@ -97,13 +89,14 @@ const Contact = () => {
 
   // Theme constants
   const theme = {
-    bg: isDark ? "bg-[#050505]" : "bg-white",
-    text: isDark ? "text-zinc-100" : "text-zinc-900",
-    subText: isDark ? "text-zinc-400" : "text-zinc-500",
-    border: isDark ? "border-zinc-800" : "border-zinc-200",
-    cardBg: isDark ? "bg-zinc-900/30" : "bg-white",
-    inputBg: isDark ? "bg-zinc-900/80" : "bg-zinc-50",
-    separatorBg: isDark ? "bg-[#0a0a0a]" : "bg-zinc-50/50",
+    bg: "bg-[var(--contact-bg)]",
+    text: "text-[var(--contact-text)]",
+    subText: "text-[var(--contact-muted)]",
+    border: "border-[var(--contact-border)]",
+    cardBg: "bg-[var(--contact-surface)]",
+    inputBg: "bg-[var(--contact-input)]",
+    separatorBg: "bg-[var(--contact-separator)]",
+    accent: "text-[var(--contact-accent)]",
   };
 
   const handleCopy = (text, type) => {
@@ -156,10 +149,8 @@ const Contact = () => {
 
   return (
     <div
-      className={`min-h-screen font-sans selection:bg-emerald-500/30 ${theme.bg} ${theme.text}`}
+      className={`min-h-screen font-sans selection:bg-(--beech) selection:text-(--palm) ${theme.bg} ${theme.text}`}
     >
-      <CustomMouseFollower className="hidden lg:block" />
-
       {/* Navbar Wrapper to match strict margin constraints if needed, 
           though usually Navbars are full width. Keeping logic as requested. */}
       <div className={`fixed top-0 left-0 right-0 z-50 ${theme.bg}`}>
@@ -173,13 +164,22 @@ const Contact = () => {
       >
         {/* Hero / Header */}
         <div
-          className={`border-b ${theme.border} px-8 py-12 md:py-16 relative overflow-hidden`}
+          className={`relative isolate overflow-hidden border-b px-8 py-12 md:py-16 ${theme.border}`}
         >
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--contact-accent-soft),transparent_70%)]" />
+          <div className="pointer-events-none absolute inset-0 opacity-40">
+            <CanvasRevealEffect
+              animationSpeed={0.2}
+              colors={PALM_BEECH_SHADER_COLORS}
+              opacities={CONTACT_SHADER_OPACITIES}
+              dotSize={2.5}
+              showGradient={false}
+              containerClassName="!absolute !inset-0 !bg-transparent"
+            />
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 relative z-10">
             Let's build{" "}
-            <span className="text-emerald-500">something iconic.</span>
+            <span className={theme.accent}>something iconic.</span>
           </h1>
           <p
             className={`text-lg md:text-xl font-light ${theme.subText} max-w-4xl relative z-10`}
@@ -195,7 +195,7 @@ const Contact = () => {
           <div className="w-full xl:w-1/2 p-6 md:p-10 space-y-10">
             {/* Direct Contact Cards */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold tracking-widest uppercase text-emerald-500 mb-6">
+              <h3 className={`text-xs font-bold tracking-widest uppercase ${theme.accent} mb-6`}>
                 // Contact Details
               </h3>
               {CONTACT_METHODS.map((method) => (
@@ -204,12 +204,11 @@ const Contact = () => {
                   onClick={() =>
                     handleCopy(method.value, method.title.toLowerCase())
                   }
-                  className={`group relative p-4 rounded-2xl border ${theme.border} ${theme.cardBg} 
-                  hover:border-emerald-500/50 transition-all duration-300 cursor-pointer overflow-hidden`}
+                  className={`group relative overflow-hidden rounded-xl border p-4 ${theme.border} ${theme.cardBg} cursor-pointer transition-colors duration-200 hover:border-(--contact-accent)`}
                 >
                   <div className="flex items-center gap-4 relative z-10">
                     <div
-                      className={`p-3 rounded-xl ${method.bgColor} ${method.color}`}
+                      className="rounded-lg bg-(--contact-accent-soft) p-3 text-(--contact-accent)"
                     >
                       <method.icon size={20} />
                     </div>
@@ -223,16 +222,16 @@ const Contact = () => {
                         {method.value}
                       </p>
                     </div>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 bg-transparent group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md border border-(--contact-border) bg-transparent transition-colors group-hover:border-(--contact-accent) group-hover:bg-(--contact-accent)">
                       {copied === method.title.toLowerCase() ? (
                         <Check
                           size={14}
-                          className="text-emerald-500 group-hover:text-white"
+                          className="text-(--contact-accent) group-hover:text-(--contact-accent-foreground)"
                         />
                       ) : (
                         <Copy
                           size={14}
-                          className={`${theme.subText} group-hover:text-white`}
+                          className={`${theme.subText} group-hover:text-(--contact-accent-foreground)`}
                         />
                       )}
                     </div>
@@ -243,7 +242,7 @@ const Contact = () => {
 
             {/* Social Grid */}
             <div>
-              <h3 className="text-xs font-bold tracking-widest uppercase text-emerald-500 mb-6">
+              <h3 className={`text-xs font-bold tracking-widest uppercase ${theme.accent} mb-6`}>
                 // Socials
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -253,10 +252,10 @@ const Contact = () => {
                     href={social.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`group flex flex-col items-center justify-center p-6 rounded-2xl border ${theme.border} ${theme.cardBg} ${social.borderHover} ${social.bgHover} transition-all duration-300`}
+                    className={`group flex flex-col items-center justify-center rounded-xl border p-5 ${theme.border} ${theme.cardBg} transition-colors duration-200 hover:border-(--contact-accent) hover:bg-(--contact-accent-soft)`}
                   >
                     <social.icon
-                      className={`w-6 h-6 mb-3 ${social.color} transition-transform group-hover:scale-110`}
+                      className="mb-3 h-6 w-6 text-(--contact-accent) transition-transform group-hover:scale-110"
                     />
                     <span className="text-sm font-medium">{social.name}</span>
 
@@ -269,13 +268,13 @@ const Contact = () => {
           {/* MIDDLE SEPARATOR (Strict Requirement) */}
           {/* Vertical on Desktop */}
           <div
-            className={`hidden xl:block w-12 border-x ${theme.border} relative overflow-hidden flex-shrink-0 ${theme.separatorBg}`}
+            className={`hidden xl:block w-12 border-x ${theme.border} relative overflow-hidden shrink-0 ${theme.separatorBg}`}
           >
             <TiltedLines isDark={isDark} />
           </div>
           {/* Horizontal on Mobile/Tablet */}
           <div
-            className={`xl:hidden w-full h-12 border-y ${theme.border} relative overflow-hidden flex-shrink-0 ${theme.separatorBg}`}
+            className={`xl:hidden w-full h-12 border-y ${theme.border} relative overflow-hidden shrink-0 ${theme.separatorBg}`}
           >
             <TiltedLines isDark={isDark} />
           </div>
@@ -294,12 +293,12 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 {submitStatus === "success" ? (
                   <div
-                    className={`p-8 rounded-2xl border ${theme.border} bg-emerald-500/5 text-center flex flex-col items-center animate-in fade-in zoom-in duration-300`}
+                    className={`flex animate-in flex-col items-center rounded-xl border p-8 text-center fade-in zoom-in duration-300 ${theme.border} bg-(--contact-accent-soft)`}
                   >
-                    <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
-                      <Check className="w-8 h-8 text-emerald-500" />
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-(--contact-accent-soft)">
+                      <Check className="h-7 w-7 text-(--contact-accent)" />
                     </div>
-                    <h3 className="text-xl font-bold text-emerald-500 mb-2">
+                    <h3 className={`mb-2 text-xl font-bold ${theme.accent}`}>
                       Message Sent!
                     </h3>
                     <p className={theme.subText}>
@@ -308,7 +307,7 @@ const Contact = () => {
                     <button
                       type="button"
                       onClick={() => setSubmitStatus("")}
-                      className="mt-6 text-sm font-medium underline hover:text-emerald-500"
+                      className="mt-6 text-sm font-medium underline decoration-(--contact-accent) underline-offset-4 hover:text-(--contact-accent)"
                     >
                       Send another message
                     </button>
@@ -362,7 +361,7 @@ const Contact = () => {
                         placeholder="Tell me about your project..."
                         className={`w-full p-4 rounded-xl border ${theme.border} ${theme.inputBg} 
                                 text-sm transition-all duration-300 
-                                placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none`}
+                                placeholder:text-(--contact-muted) focus:border-(--contact-accent) focus:outline-none focus:ring-2 focus:ring-(--contact-accent-soft) resize-none`}
                       />
                     </div>
 
@@ -375,11 +374,10 @@ const Contact = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full py-4 px-6 rounded-xl font-medium text-white transition-all duration-300
-                            flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20
+                      className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200
                             ${isSubmitting
-                          ? "bg-zinc-400 cursor-not-allowed"
-                          : "bg-emerald-600 hover:bg-emerald-500 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                          ? "cursor-not-allowed bg-zinc-400 text-white"
+                          : "bg-(--contact-accent) text-(--contact-accent-foreground) hover:brightness-105"
                         }`}
                     >
                       {isSubmitting ? (
@@ -436,15 +434,13 @@ const FormInput = ({
         placeholder={placeholder}
         className={`w-full p-4 rounded-xl border ${theme.border} ${theme.inputBg} 
         text-sm transition-all duration-300 
-        placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500`}
+        placeholder:text-(--contact-muted) focus:border-(--contact-accent) focus:outline-none focus:ring-2 focus:ring-(--contact-accent-soft)`}
       />
     </div>
   );
 };
 
 const TiltedLines = ({ isDark }) => {
-  const strokeColor = isDark ? "#52525b" : "#d4d4d8"; // zinc-600 vs zinc-300
-
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -459,7 +455,7 @@ const TiltedLines = ({ isDark }) => {
           >
             <path
               d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4"
-              stroke={strokeColor}
+              stroke="var(--contact-accent)"
               strokeWidth="1"
             />
           </pattern>

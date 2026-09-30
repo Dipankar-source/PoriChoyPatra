@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LoaderFive } from "@/components/ui/loader";
+import PageViewTracker from "@/components/PageViewTracker";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));
@@ -31,6 +32,7 @@ const App = () => {
     <div className="bg-[#FFFFFF] dark:bg-[#09090B] transition-colors duration-300">
       <ScrollToTop />
       <ThemeProvider>
+        <PageViewTracker />
         <Suspense fallback={<GlobalLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />

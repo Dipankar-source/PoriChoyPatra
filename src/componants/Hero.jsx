@@ -23,19 +23,18 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineHeart } from "react-icons/ai";
 import loveSoundPath from "../assets/sounds/love.mp3";
+import changeSoundPath from "../assets/sounds/change.mp3";
 import GoldViewer from "./GoldViewer";
 import SamsungViewer from "./SamsungViewer";
+import { ScanQrCode } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 const LikeButton = () => {
   // Initialize state from localStorage
   const [isLiked, setIsLiked] = useState(() => {
     return localStorage.getItem("portfolioIsLiked") === "true";
   });
-  const BASE_LIKES = 2;
-  const [likes, setLikes] = useState(() => {
-    const savedGlobalDelta = localStorage.getItem("portfolioGlobalDelta");
-    return savedGlobalDelta ? BASE_LIKES + parseInt(savedGlobalDelta, 10) : BASE_LIKES;
-  });
+  const [likes, setLikes] = useState(null);
   const [showArrow, setShowArrow] = useState(true);
 
   // Hide arrow after 3 seconds
@@ -44,21 +43,17 @@ const LikeButton = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Fetch real global likes on mount, fallback to local storage
+  // Load the database-backed total on mount.
   useEffect(() => {
     const fetchLikes = async () => {
       try {
-        const res = await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes");
-        if (res.ok) {
-          const data = await res.json();
-          if (data && typeof data.count === 'number') {
-            const trueCount = BASE_LIKES + data.count;
-            setLikes(trueCount);
-            localStorage.setItem("portfolioGlobalDelta", data.count.toString());
-          }
-        }
-      } catch (err) {
-        // Silent fail, just use the local state we already initialized
+        const { supabase } = await import("@/lib/supabase");
+        if (!supabase) return;
+        const { data, error } = await supabase.rpc("get_public_like_count");
+        if (error) throw error;
+        setLikes(Number(data));
+      } catch (error) {
+        if (import.meta.env.DEV) console.error("Could not load like count:", error);
       }
     };
     fetchLikes();
@@ -75,17 +70,30 @@ const LikeButton = () => {
   };
 
   const handleLike = async () => {
+    if (likes === null) return;
+
     const newIsLiked = !isLiked;
+    const delta = newIsLiked ? 1 : -1;
     setIsLiked(newIsLiked);
-    localStorage.setItem("portfolioIsLiked", newIsLiked.toString());
+    setLikes((previous) => previous + delta);
 
     if (newIsLiked) {
       playLoveSound();
-      setLikes(prev => prev + 1);
-      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/up"); } catch (e) { }
-    } else {
-      setLikes(prev => prev - 1);
-      try { await fetch("https://api.counterapi.dev/v1/dipankar_portfolio/likes/down"); } catch (e) { }
+    }
+
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      if (!supabase) throw new Error("Supabase is not configured");
+      const { data, error } = await supabase.rpc("change_public_like_count", {
+        p_delta: delta,
+      });
+      if (error) throw error;
+      setLikes(Number(data));
+      localStorage.setItem("portfolioIsLiked", newIsLiked.toString());
+    } catch (error) {
+      setIsLiked(!newIsLiked);
+      setLikes((previous) => previous - delta);
+      if (import.meta.env.DEV) console.error("Could not update like count:", error);
     }
   };
 
@@ -127,16 +135,10 @@ const LikeButton = () => {
       </AnimatePresence>
 
       {/* Hover Text and Button */}
-      <div className="group relative flex items-center justify-end">
-        {/* Hover Text */}
-        <div className="absolute right-full mr-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
-          <span className="text-sm text-gray-600 dark:text-gray-300 font-medium  border-neutral-200 dark:border-neutral-700">
-            Do you love the work?
-          </span>
-        </div>
-
+      <div className="relative flex items-center justify-end">
         <button
           onClick={handleLike}
+          disabled={likes === null}
           className="flex justify-center items-center gap-2 cursor-pointer border-neutral-200 dark:border-neutral-800 hover:scale-105 transition-all duration-300"
         >
           <motion.div
@@ -147,8 +149,8 @@ const LikeButton = () => {
           >
             {isLiked ? <FcLike size={24} /> : <AiOutlineHeart size={24} className="text-gray-400" />}
           </motion.div>
-          <span className={`text-sm font-semibold w-8 text-left transition-colors ${isLiked ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-            20K+
+          <span className={`text-sm font-semibold min-w-[3.2rem] text-left transition-colors ${isLiked ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            {likes === null ? "..." : likes.toLocaleString()}
           </span>
         </button>
       </div>
@@ -157,10 +159,22 @@ const LikeButton = () => {
 };
 
 const Hero = () => {
+  const { profileIndex, cycleProfile } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const hasVisited = sessionStorage.getItem("hasVisitedHome") === "true";
   const naviagte = useNavigate();
+
+  const handleProfileChange = () => {
+    cycleProfile();
+    try {
+      const audio = new Audio(changeSoundPath);
+      audio.volume = 0.5;
+      audio.play().catch((error) => console.error("Audio playback failed", error));
+    } catch (error) {
+      console.error("Audio playback failed", error);
+    }
+  };
 
   useEffect(() => {
     // Delay rendering heavy backgrounds to prioritize LCP
@@ -327,7 +341,7 @@ Passionate about performance, clean architecture, and intuitive user experiences
               </span>
             </h2>
             <div className="mt-4 md:pl-2 max-w-lg text-center text-base text-neutral-600 md:text-left dark:text-neutral-300">
-              <TextGenerateEffect words={words} skipAnimation={hasVisited} filter={false} />
+              <TextGenerateEffect words={words} skipAnimation filter={false} />
             </div>
           </div>
           <motion.div
@@ -357,27 +371,77 @@ Passionate about performance, clean architecture, and intuitive user experiences
           </motion.div>
         </div>
         <div>
-          <div className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-35 lg:w-35 rounded-full left-8">
-            <img
-              className="lg:h-35 lg:w-35 h-32 w-32 rounded-full object-cover relative"
-              src="./Logo.webp"
-              alt="Dipankar Barik - Logo"
-            />
-            <div className="absolute top-26 font-semibold text-sm bottom-0 left-26 min-w-[100px]">
-              {" "}
-              {/* Add min-width */}
-              <LayoutTextFlip
-                words={[
-                  "He",
-                  "Creative",
-                  "Designer",
-                  "Developer",
-                  "Artist",
-                  "Him",
-                  "Thinker",
-                  "Builder",
-                ]}
-              />
+          <div className="absolute hidden lg:block bottom-0 lg:top-51 top-52 bg-blue-300 h-32 w-32 lg:h-34 lg:w-34 rounded-2xl border-none left-8">
+            <div className="relative lg:h-34 lg:w-34 h-32 w-32 rounded-2xl dark:bg-[#542A52] bg-[#FFB39A] flex justify-center items-center">
+              <button
+                type="button"
+                onClick={handleProfileChange}
+                aria-label="Change profile photo and theme sound"
+                title="Change profile photo and theme sound"
+                className="group absolute right-1 top-1 z-20 rounded-full bg-white/90 p-1.5 text-gray-800 shadow hover:bg-white dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800"
+              >
+                <ScanQrCode size={16} />
+                <span className="pointer-events-none absolute left-full bottom-full z-30 mb-2 ml-2 whitespace-nowrap rounded-sm bg-black px-2 py-1 text-[11px] font-medium text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-white dark:text-black">
+                  Change the content
+                </span>
+              </button>
+              <div className="relative h-28 w-28 overflow-hidden rounded-2xl lg:h-31 lg:w-31">
+                <AnimatePresence initial={false} mode="sync">
+                  <motion.div
+                    key={profileIndex}
+                    className="absolute inset-0 overflow-hidden"
+                    initial={{ opacity: 0.55, scaleX: 0.93 }}
+                    animate={{ opacity: [0.55, 1, 0.65, 1], scaleX: [0.93, 1.04, 0.98, 1] }}
+                    exit={{ opacity: 0, scaleX: 1.06 }}
+                    transition={{ duration: 0.42, ease: "linear" }}
+                  >
+                    <img
+                      className="h-full w-full object-cover"
+                      src={profileIndex === 0 ? "/profile1.webp" : "/profile.webp"}
+                      alt="Dipankar Barik - Logo"
+                    />
+                    <motion.img
+                      aria-hidden="true"
+                      className="absolute inset-0 h-full w-full object-cover mix-blend-screen"
+                      src={profileIndex === 0 ? "/profile1.webp" : "/profile.webp"}
+                      style={{ filter: "sepia(1) saturate(8) hue-rotate(300deg)" }}
+                      animate={{
+                        x: [-9, 7, -6, 4, 0],
+                        opacity: [0.95, 0.15, 0.8, 0.4, 0],
+                        clipPath: ["inset(8% 0 76% 0)", "inset(34% 0 42% 0)", "inset(68% 0 12% 0)", "inset(0)"],
+                      }}
+                      transition={{ duration: 0.42, ease: "linear" }}
+                    />
+                    <motion.img
+                      aria-hidden="true"
+                      className="absolute inset-0 h-full w-full object-cover mix-blend-screen"
+                      src={profileIndex === 0 ? "/profile1.webp" : "/profile.webp"}
+                      style={{ filter: "sepia(1) saturate(8) hue-rotate(150deg)" }}
+                      animate={{
+                        x: [9, -7, 6, -4, 0],
+                        opacity: [0.9, 0.1, 0.75, 0.35, 0],
+                        clipPath: ["inset(70% 0 10% 0)", "inset(38% 0 36% 0)", "inset(6% 0 78% 0)", "inset(0)"],
+                      }}
+                      transition={{ duration: 0.42, ease: "linear" }}
+                    />
+                    <motion.div
+                      aria-hidden="true"
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: "repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.72) 4px 5px)",
+                      }}
+                      animate={{ opacity: [0.95, 0.35, 0.85, 0] }}
+                      transition={{ duration: 0.42, ease: "linear" }}
+                    />
+                    <motion.div
+                      aria-hidden="true"
+                      className="absolute inset-x-0 h-4 bg-white/90 mix-blend-screen"
+                      animate={{ y: [0, 24, 8, 67, 0], opacity: [0, 1, 0.15, 0.9, 0] }}
+                      transition={{ duration: 0.42, ease: "linear" }}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
           <motion.div
@@ -388,40 +452,52 @@ Passionate about performance, clean architecture, and intuitive user experiences
           >
             <div className="flex items-center justify-center lg:justify-start gap-4 mb-2">
               <a
-                className="z-50"
+                className="group relative z-50"
                 target="_blank"
                 href="https://github.com/Dipankar-source/"
                 aria-label="GitHub Profile"
               >
                 <FaGithub className="w-7 h-7 cursor-pointer z-50" />
+                <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-black px-2 py-1 text-[13px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-white dark:text-black">
+                  GitHub
+                </span>
               </a>
 
               <a
-                className="z-50"
+                className="group relative z-50"
                 target="_blank"
                 href="https://www.instagram.com/techandbhakti/?next=%2F"
                 aria-label="Instagram Profile"
               >
                 <FaInstagram className="w-7 h-7 cursor-pointer z-50" />
+                <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-black px-2 py-1 text-[13px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-white dark:text-black">
+                  Instagram
+                </span>
               </a>
               <a
-                className="z-50"
+                className="group relative z-50"
                 target="_blank"
                 href="https://linkedin.com/in/dipankarbarik/"
                 aria-label="LinkedIn Profile"
               >
                 <CiLinkedin className="w-7 h-7 cursor-pointer z-50" />
+                <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-black px-2 py-1 text-[13px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-white dark:text-black">
+                  LinkedIn
+                </span>
               </a>
               <a
-                className="z-50"
+                className="group relative z-50"
                 target="_blank"
                 href="https://x.com/_dipankarsource"
-                aria-label="Twitter Profile"
+                aria-label="X Profile"
               >
                 <FaXTwitter className="w-7 h-7 cursor-pointer z-50" />
+                <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-black px-2 py-1 text-[13px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-white dark:text-black">
+                  X
+                </span>
               </a>
             </div>
-            <div className="text-sm mx-auto font-normal -z-50 text-neutral-600 dark:text-neutral-400 min-w-[200px]">
+            <div className="pl-6 pt-2 md:pt-0 md:pl-0 text-sm mx-auto font-normal -z-50 text-neutral-600 dark:text-neutral-400 min-w-[200px]">
               {" "}
               {/* Add min-width */}
               Build

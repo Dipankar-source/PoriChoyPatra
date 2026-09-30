@@ -10,6 +10,7 @@ const SECTIONS = [
   { id: 'projects', title: 'What have I built?' },
   { id: 'paperwork', title: 'What have I explored?'},
   { id: 'thoughts', title: 'What do I believe?' },
+  { id: 'visitors', title: 'Who are there?' },
   { id: 'contact', title: 'The Ending' },
 ];
 

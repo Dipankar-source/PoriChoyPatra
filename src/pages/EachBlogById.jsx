@@ -506,7 +506,7 @@ const EachBlogById = () => {
     <div
       className={`min-h-screen transition-colors duration-300 ease-in-out overflow-x-hidden  ${bgMain} ${textColor} font-sans`}
     >
-      <CustomMouseFollower className="hidden lg:block" />
+      {/* <CustomMouseFollower className="hidden lg:block" /> */}
 
       <div
         className={`lg:mx-92 ${bgMain} min-h-screen flex flex-col border-1 ${borderColor}`}
