@@ -1,4 +1,4 @@
-//;
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -30,7 +30,7 @@ export const FlipWords = ({
       onExitComplete={() => {
         setIsAnimating(false);
       }}>
-      <motion.span
+      <motion.div
         initial={{
           opacity: 0,
           y: 10,
@@ -84,7 +84,7 @@ export const FlipWords = ({
             <span className="inline-block">&nbsp;</span>
           </motion.span>
         ))}
-      </motion.span>
+      </motion.div>
     </AnimatePresence>
   );
 };

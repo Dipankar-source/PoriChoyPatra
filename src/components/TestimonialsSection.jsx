@@ -1,5 +1,5 @@
 import { Quote } from "lucide-react";
-import PageGridLines, { GridSectionHeader } from "@/components/PageGridLines";
+import { GridSectionHeader } from "@/components/PageGridLines";
 
 const testimonials = [
   {
@@ -74,12 +74,11 @@ const TestimonialsSection = () => {
 
   return (
     <section
-      className="relative w-full px-2 py-6 sm:px-4 sm:py-7"
+      className="relative w-full px-4 py-6 sm:px-0 sm:py-7"
       aria-labelledby="testimonials-heading"
     >
-      <PageGridLines section sectionOffset={27} />
 
-      <GridSectionHeader className="mb-5">
+      <GridSectionHeader className="mb-5  ">
         <div className="mb-3 mt-1.5 flex items-baseline justify-between gap-4">
           <h2
             id="testimonials-heading"

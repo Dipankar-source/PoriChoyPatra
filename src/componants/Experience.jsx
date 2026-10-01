@@ -275,7 +275,6 @@ const Experience = () => {
 
   return (
     <div className="w-full bg-[#F7F7F4] dark:bg-[#0F0F0F] text-black dark:text-white transition-colors duration-300">
-      {/* Section heading: fluid 18px → 24px */}
       <GridSectionHeader className="flex justify-between items-center">
         <PageGridLines section sectionOffset={27} />
         <div className="flex items-center justify-between">
@@ -284,12 +283,6 @@ const Experience = () => {
               Experience
             </p>
           </div>
-          {/* <p
-            className=" hover:underline text-gray-900 dark:text-stone-400 leading-tight tracking-tighter cursor-pointer"
-            onClick={() => navigate("/experience")}
-          >
-            View All
-          </p> */}
         </div>
       </GridSectionHeader>
 

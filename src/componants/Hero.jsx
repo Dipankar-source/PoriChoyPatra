@@ -198,11 +198,11 @@ const Hero = () => {
         <div className="min-w-0">
           <h1
             id="profile-name"
-            className="aktura-font text-[26px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px] mt-1"
+            className="aktura-font text-[18px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px] mt-1"
           >
             Dipankar Barik
           </h1>
-          <p className="dancing-font mt-1 text-[15px] font-semibold tracking-[0.05em] text-neutral-700 sm:text-[20px] dark:text-stone-500">
+          <p className="dancing-font mt-1 text-[9px] font-semibold tracking-[0.05em] text-neutral-700 sm:text-[20px] dark:text-stone-500">
             I'm{" "}
             <FlipWords
               className={cn("text-neutral-700 dark:text-stone-400 -ml-2")}
@@ -220,7 +220,7 @@ const Hero = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className={`group/social relative z-0 inline-flex h-7 w-7 shrink-0 items-center overflow-hidden text-neutral-500 transition-[width,color] duration-300 ease-out hover:z-10 hover:text-neutral-950 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:text-neutral-400 dark:hover:text-white ${expandedClassName}`}
+                className={`group/social relative z-0 inline-flex h-5 w-5 sm:h-7 sm:w-7 shrink-0 items-center overflow-hidden text-neutral-500 transition-[width,color] duration-300 ease-out hover:z-10 hover:text-neutral-950 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:text-neutral-400 dark:hover:text-white ${expandedClassName}`}
               >
                 <Icon className="absolute left-1/2 top-1/2 size-[18px] shrink-0 -translate-x-1/2 -translate-y-1/2 transition-[left,transform] duration-300 ease-out group-hover/social:left-2 group-hover/social:translate-x-0 group-focus-visible/social:left-2 group-focus-visible/social:translate-x-0" aria-hidden="true" />
                 <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 translate-x-1 whitespace-nowrap text-xs font-medium opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover/social:translate-x-0 group-hover/social:opacity-100 group-focus-visible/social:translate-x-0 group-focus-visible/social:opacity-100">

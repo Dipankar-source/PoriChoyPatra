@@ -468,12 +468,11 @@ const GitHubStats = () => {
   // ─── MAIN RENDER ─────────────────────────────────────────────────────────────
   return (
     <div className="mb-4">
-      {/* <hr className="mt-4 border-0 border-t border-[#542A52]/25 dark:border-[#FFB39A]/25" /> */}
 
-      <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4 ">
+      <div className="w-full px-4 sm:px-4 mt-3 sm:mt-4 ">
         <PageGridLines section sectionOffset={27} />
 
-        <GridSectionHeader>
+        <GridSectionHeader >
           <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
             GitHub
           </p>

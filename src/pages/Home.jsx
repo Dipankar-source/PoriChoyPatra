@@ -13,7 +13,7 @@ import PageGridLines from "@/components/PageGridLines";
 const Elevation = lazy(() => import("@/componants/FooterElevation"));
 const Footer = lazy(() => import("@/componants/Footer"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
-const VisitorAnalytics = lazy(() => import("@/components/VisitorAnalytics"));
+const VisitorAnalytics = lazy(() => import("@/componants/VisitorAnalytics"));
 const GitHubStats = lazy(() => import("@/componants/GitHubStats"));
 const NameHover = lazy(() => import("@/componants/NameHover"));
 

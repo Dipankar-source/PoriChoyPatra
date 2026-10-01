@@ -234,7 +234,7 @@ const VisitorAnalytics = () => {
       <PageGridLines section sectionOffset={27} />
 
       <GridSectionHeader className="flex items-center justify-between ">
-        <div className="flex items-center justify-between px-2 sm:px-4">
+        <div className="flex items-center justify-between px-4 sm:px-4">
           <div>
             <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
               Visitors
@@ -264,7 +264,7 @@ const VisitorAnalytics = () => {
         <p className="py-10 text-sm text-neutral-500">Unavailable.</p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">
+          <div className="grid grid-cols-2 gap-4 px-5 py-4 dark:border-neutral-800">
             <Stat
               label="Visitors"
               value={data?.visitors}
@@ -280,7 +280,7 @@ const VisitorAnalytics = () => {
           </div>
           <div className="px-5 py-4">
             {loading ? (
-              <div className="h-[88px] border-b border-neutral-200 dark:border-neutral-800" />
+              <div className="h-[88px]  dark:border-neutral-800" />
             ) : (
               <Chart daily={data.daily} range={range} />
             )}

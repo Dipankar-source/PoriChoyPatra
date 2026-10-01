@@ -314,7 +314,7 @@ const Paperwork = () => {
     <div className="w-full bg-[#F7F7F4] dark:bg-[#0F0F0F] text-black dark:text-white transition-colors duration-300 pb-10">
       <PageGridLines section sectionOffset={27} />
 
-      <GridSectionHeader className="flex justify-between items-center px-2 sm:px-4">
+      <GridSectionHeader className="flex justify-between items-center px-4 sm:px-4">
         <div className="flex justify-between items-center">
           <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
             Research

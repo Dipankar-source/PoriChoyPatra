@@ -65,8 +65,8 @@ const projects = [
 
 const ProjectCard = ({ project, index }) => (
   <article
-    className={`group/project relative min-w-0 border-b border-dashed border-neutral-300/70 px-4 py-5 transition-[transform,box-shadow,background-color] duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:bg-white/70 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)] dark:border-neutral-800 dark:hover:bg-neutral-900/80 sm:px-0 ${
-      index % 2 === 0 ? "sm:border-r sm:pl-4 sm:pr-6" : "sm:pl-6 sm:pr-4"
+    className={`group/project relative min-w-0 px-4 py-5 transition-[transform,box-shadow,background-color] duration-300 ease-out hover:z-10 hover:-translate-y-1  hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)]  sm:px-0 ${
+      index % 2 === 0 ? "sm:pl-4 sm:pr-8" : "sm:pl-8 sm:pr-4"
     }`}
   >
     <a
@@ -164,10 +164,10 @@ const ProjectCard = ({ project, index }) => (
 );
 
 const Projects = () => (
-  <section className="w-full bg-[#F7F7F4] text-black dark:bg-[#0F0F0F] dark:text-white mb-7">
+  <section className="relative mb-7 w-full bg-[#F7F7F4] text-black dark:bg-[#0F0F0F] dark:text-white">
     <PageGridLines section sectionOffset={27} />
 
-    <GridSectionHeader className="flex items-center justify-between px-2 py-2 sm:px-4">
+    <GridSectionHeader className="flex items-center justify-between px-4 py-2 sm:px-4">
       <div className="flex items-center justify-between mt-8">
         <h2 className="aktura-font tracking-wider  text-[28px] leading-tight text-neutral-950 dark:text-neutral-50">
           Projects
@@ -182,11 +182,34 @@ const Projects = () => (
       </div>
     </GridSectionHeader>
 
-    <div className="grid grid-cols-1 px-1 sm:grid-cols-2">
-      {projects.map((project, index) => (
-        <ProjectCard key={project.id} project={project} index={index} />
-      ))}
+    <div className="px-1">
+      {Array.from({ length: Math.ceil(projects.length / 2) }, (_, rowIndex) => {
+        const rowProjects = projects.slice(rowIndex * 2, rowIndex * 2 + 2);
+
+        return (
+          <div key={`project-row-${rowIndex}`} className="relative grid grid-cols-1 sm:grid-cols-2">
+            {rowProjects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} />
+            ))}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden w-full -translate-x-1/2 sm:block"
+              style={{ width: "7px" }}
+            >
+              <span className="absolute inset-y-0 left-4 border-l border-dashed border-neutral-300/80 dark:border-neutral-800" />
+              <span className="absolute inset-y-0 right-4 border-l border-dashed border-neutral-300/80 dark:border-neutral-800" />
+            </div>
+            {rowIndex < Math.ceil(projects.length / 2) - 1 && (
+              <div aria-hidden="true" className="relative col-span-full h-10">
+                <span className="pointer-events-none absolute left-1/2 top-0 w-screen -translate-x-1/2 border-t border-dashed border-neutral-300/80 dark:border-neutral-800" />
+                <span className="pointer-events-none absolute left-1/2 top-7 w-screen -translate-x-1/2 border-t border-dashed border-neutral-300/80 dark:border-neutral-800" />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
+    <PageGridLines section sectionOffset="100%" />
   </section>
 );
 

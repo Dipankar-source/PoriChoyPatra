@@ -15,7 +15,6 @@ import { AnimatedParagraph, AnimatedSpan } from "@/components/ui/animated-paragr
 const Thoughts = () => {
   return (
     <div>
-      <hr className="text-blue-100 mt-1" />
       <div className=" p-4 pb-12">
         <div className="mt-4 mb-8">
           <p className=" text-xl lg:text-2xl font-medium mb-1">
