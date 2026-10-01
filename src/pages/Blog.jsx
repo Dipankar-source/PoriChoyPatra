@@ -123,7 +123,7 @@ const Blog = () => {
   const borderColor = isDark ? "border-white/10" : "border-black/10";
   const textColor = isDark ? "text-white" : "text-zinc-900";
   const subText = isDark ? "text-zinc-400" : "text-zinc-500";
-  const bgMain = isDark ? "bg-[#050505]" : "bg-white";
+  const bgMain = isDark ? "bg-[#050505]" : "bg-[#F7F7F4]";
   const separatorBg = isDark ? "bg-[#0a0a0a]" : "bg-zinc-50/50";
   const cardTitleColor = isDark ? "text-zinc-100" : "text-zinc-900";
   const cardExcerptColor = isDark ? "text-zinc-400" : "text-zinc-600";

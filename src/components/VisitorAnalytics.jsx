@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatedParagraph } from "./ui/animated-paragraph";
-import { ScrollFountain } from "./ui/scroll-fountain-text";
+import PageGridLines, { GridSectionHeader } from "@/components/PageGridLines";
 
 const VIEWS = "text-[#542A52] dark:text-[#d9a6d3]";
 const VISITORS = "text-[#FFB39A]";
@@ -20,212 +19,107 @@ const fmtDate = (v, range) =>
 const analyticsCache = new Map();
 const inflightRequests = new Map();
 
-/* ---------- shimmer skeleton ---------- */
-
-const shimmerCss = `
-.shimmer{
-  background:linear-gradient(90deg,rgba(128,128,128,.10) 0%,rgba(128,128,128,.24) 50%,rgba(128,128,128,.10) 100%);
-  background-size:200% 100%;
-  animation:shimmer 1.4s ease-in-out infinite;
-}
-@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
-@media (prefers-reduced-motion:reduce){.shimmer{animation:none}}
-`;
-
-const Shimmer = ({ className = "" }) => (
-  <div className={`shimmer rounded-md ${className}`} />
-);
-
-/* ---------- chart frame with horizontal grid ---------- */
-
-const Frame = ({ labels, children, footer }) => (
-  <div>
-    <div className="flex">
-      <div className="relative h-56 w-9 shrink-0">
-        {labels.map((label, i) => (
-          <span
-            key={i}
-            className="absolute right-3 -translate-y-1/2 text-[11px] tabular-nums text-neutral-400"
-            style={{ top: `${(i / 3) * 100}%` }}
-          >
-            {label}
-          </span>
-        ))}
-      </div>
-      <div className="relative h-56 flex-1">
-        {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="absolute inset-x-0 h-px bg-neutral-200 dark:bg-neutral-800"
-            style={{ top: `${(i / 3) * 100}%` }}
-          />
-        ))}
-        {children}
-      </div>
-    </div>
-    <div className="ml-9 mt-3 flex justify-between text-[11px] text-neutral-400">
-      {footer}
-    </div>
-  </div>
-);
-
-const ChartSkeleton = () => (
-  <Frame
-    labels={["", "", "", ""]}
-    footer={
-      <>
-        <Shimmer className="h-3 w-10" />
-        <Shimmer className="h-3 w-10" />
-      </>
-    }
-  >
-    <div
-      className="shimmer absolute inset-0 opacity-60"
-      style={{
-        clipPath:
-          "polygon(0 62%,12% 50%,26% 58%,42% 34%,58% 46%,74% 22%,88% 32%,100% 18%,100% 100%,0 100%)",
-      }}
-    />
-  </Frame>
-);
-
-/* ---------- chart ---------- */
+/* ---------- compact chart ---------- */
 
 const Chart = ({ daily, range }) => {
-  const [hover, setHover] = useState(null);
+  const [hoverIndex, setHoverIndex] = useState(null);
   const n = daily.length;
-  const raw = Math.max(
+  const maxValue = Math.max(
     1,
     ...daily.map((d) => Math.max(+d.page_views || 0, +d.visitors || 0)),
   );
-  const step = Math.ceil(raw / 3);
-  const top = step * 3;
-
-  const X = (i) => (n <= 1 ? 50 : (i / (n - 1)) * 100);
-  const Y = (v) => 100 - ((+v || 0) / top) * 100;
-  const line = (key) =>
-    daily.map((d, i) => `${i ? "L" : "M"}${X(i)},${Y(d[key])}`).join(" ");
-  const area = (key) => `${line(key)} L${X(n - 1)},100 L${X(0)},100 Z`;
+  const x = (index) => (n <= 1 ? 50 : (index / (n - 1)) * 100);
+  const y = (value) => 30 - ((Number(value) || 0) / maxValue) * 26;
 
   const series = [
-    { key: "page_views", name: "Page views", color: VIEWS, id: "gv" },
-    { key: "visitors", name: "Visitors", color: VISITORS, id: "gs" },
+    { key: "page_views", name: "Page views", color: "#d9a6d3" },
+    { key: "visitors", name: "Visitors", color: "#FFB39A" },
   ];
 
-  const onMove = (e) => {
+  const updateHover = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
-    setHover(Math.min(n - 1, Math.max(0, Math.round(ratio * (n - 1)))));
+    if (!rect.width || !n) return;
+    const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    setHoverIndex(Math.round(ratio * (n - 1)));
   };
 
-  const ticks = [...new Set([0, Math.floor((n - 1) / 2), n - 1])].filter(
-    (i) => i >= 0 && i < n,
-  );
-  const active = hover !== null ? daily[hover] : null;
+  const active = hoverIndex === null ? null : daily[hoverIndex];
+  const tooltipLeft = active ? Math.min(86, Math.max(14, x(hoverIndex))) : 0;
 
   return (
-    <Frame
-      labels={[top, step * 2, step, 0]}
-      footer={ticks.map((i) => (
-        <span key={i}>{fmtDate(daily[i].date, range)}</span>
-      ))}
-    >
-      {n > 0 && (
-        <>
+    <div className="w-full">
+      <div className="mb-2 flex items-center gap-4 text-[10px] text-neutral-500">
+        {series.map((item) => (
+          <span key={item.key} className="flex items-center gap-1.5">
+            <span className="size-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+            {item.name}
+          </span>
+        ))}
+      </div>
+
+      <div
+        className="relative h-[88px] touch-pan-y"
+        onPointerMove={updateHover}
+        onPointerLeave={() => setHoverIndex(null)}
+      >
+        {n > 0 && (
           <svg
-            viewBox="0 0 100 100"
+            viewBox="0 0 100 34"
             preserveAspectRatio="none"
+            role="img"
+            aria-label="Visitors and page views over time"
             className="absolute inset-0 h-full w-full overflow-visible"
           >
-            <defs>
-              {series.map((s) => (
-                <linearGradient
-                  key={s.id}
-                  id={s.id}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor="currentColor"
-                    stopOpacity="0.22"
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor="currentColor"
-                    stopOpacity="0"
-                  />
-                </linearGradient>
-              ))}
-            </defs>
-            {series.map((s) => (
-              <g key={s.key} className={s.color}>
-                <path d={area(s.key)} fill={`url(#${s.id})`} />
+            <line x1="0" y1="32" x2="100" y2="32" stroke="currentColor" className="text-neutral-200 dark:text-neutral-800" />
+            {series.map((item) => {
+              const path = daily
+                .map((entry, index) => `${index ? "L" : "M"}${x(index)},${y(entry[item.key])}`)
+                .join(" ");
+
+              return (
                 <path
-                  d={line(s.key)}
+                  key={item.key}
+                  d={path}
                   fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
+                  stroke={item.color}
+                  strokeWidth="1.6"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   vectorEffect="non-scaling-stroke"
                 />
-              </g>
-            ))}
-          </svg>
+              );
+            })}
 
-          <div
-            className="absolute inset-0 touch-pan-y"
-            onPointerMove={onMove}
-            onPointerLeave={() => setHover(null)}
-          >
-            {active && (
-              <>
-                <div
-                  className="absolute inset-y-0 w-px bg-neutral-300 dark:bg-neutral-700"
-                  style={{ left: `${X(hover)}%` }}
-                />
-                {series.map((s) => (
-                  <span
-                    key={s.key}
-                    className={`absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current ring-2 ring-white dark:ring-neutral-950 ${s.color}`}
-                    style={{
-                      left: `${X(hover)}%`,
-                      top: `${Y(active[s.key])}%`,
-                    }}
-                  />
-                ))}
-                <div
-                  className="pointer-events-none absolute -top-2 z-10 -translate-y-full whitespace-nowrap rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
-                  style={{
-                    left: `${X(hover)}%`,
-                    transform: `translate(-${X(hover)}%, -100%)`,
-                  }}
+          </svg>
+        )}
+
+        <div
+          aria-hidden={!active}
+          className="pointer-events-none absolute top-1 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-sm border border-neutral-200 bg-background/95 px-1.5 py-1 text-[9px] shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-opacity duration-150 dark:border-neutral-800"
+          style={{ left: `${tooltipLeft}%`, opacity: active ? 1 : 0 }}
+        >
+          {active && (
+            <>
+              <span className="text-neutral-500">{fmtDate(active.date, range)}</span>
+              {series.map((item) => (
+                <span
+                  key={item.key}
+                  className="tabular-nums leading-none"
+                  style={{ color: item.color }}
                 >
-                  <p className="mb-1 text-neutral-400">
-                    {fmtDate(active.date, range)}
-                  </p>
-                  {series.map((s) => (
-                    <p
-                      key={s.key}
-                      className="flex items-center gap-2 text-neutral-900 dark:text-white"
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full bg-current ${s.color}`}
-                      />
-                      <span className="tabular-nums">{fmt(active[s.key])}</span>
-                      <span className="text-neutral-400">{s.name}</span>
-                    </p>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </>
-      )}
-    </Frame>
+                  {fmt(active[item.key])}
+                </span>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-1 flex justify-between text-[10px] text-neutral-400">
+        <span>{n ? fmtDate(daily[0].date, range) : "No activity"}</span>
+        {n > 1 && <span>{fmtDate(daily[n - 1].date, range)}</span>}
+      </div>
+    </div>
   );
 };
 
@@ -233,14 +127,18 @@ const Chart = ({ daily, range }) => {
 
 const Stat = ({ label, value, color, loading }) => (
   <div>
-    <p className="mb-3 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500">
+    <p className="mb-1 flex items-center gap-2 text-[10px] font-medium uppercase text-neutral-500">
       <span className={`h-0.5 w-4 rounded-full bg-current ${color}`} />
       {label}
     </p>
     {loading ? (
-      <Shimmer className="h-10 w-28" />
+      <span
+        role="status"
+        aria-label="Loading metric"
+        className="block h-6 w-16 rounded-sm bg-neutral-200 dark:bg-neutral-800"
+      />
     ) : (
-      <p className="text-4xl font-light tabular-nums tracking-tight text-neutral-900 dark:text-white">
+      <p className="text-2xl font-light tabular-nums leading-none text-neutral-900 dark:text-white">
         {fmt(value)}
       </p>
     )}
@@ -250,10 +148,10 @@ const Stat = ({ label, value, color, loading }) => (
 /* ---------- main ---------- */
 
 const VisitorAnalytics = () => {
-  const [data, setData] = useState(() => analyticsCache.get("30D") ?? null);
+  const [data, setData] = useState(() => analyticsCache.get("24H") ?? null);
   const [error, setError] = useState(false);
-  const [range, setRange] = useState("30D");
-  const [isLoading, setIsLoading] = useState(!analyticsCache.has("30D"));
+  const [range, setRange] = useState("24H");
+  const [isLoading, setIsLoading] = useState(!analyticsCache.has("24H"));
 
   useEffect(() => {
     let active = true;
@@ -333,44 +231,40 @@ const VisitorAnalytics = () => {
 
   return (
     <section className="w-full divide-y divide-neutral-200 border-y border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
-      <style>{shimmerCss}</style>
+      <PageGridLines section sectionOffset={27} />
 
-      <div className="flex items-center justify-between py-4 px-5">
-        <div>
-          <p
-            className="font-medium text-gray-900 dark:text-white mb-2 leading-tight tracking-tight"
-            style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
-          >
-            <ScrollFountain particleCount={40}>Visitors</ScrollFountain>
-          </p>
-          <AnimatedParagraph className="tracking-wider dark:text-white/30 text-sm italic">
-            Who are there?
-          </AnimatedParagraph>
-        </div>
+      <GridSectionHeader className="flex items-center justify-between ">
+        <div className="flex items-center justify-between px-2 sm:px-4">
+          <div>
+            <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
+              Visitors
+            </p>
+          </div>
 
-        <div className="flex gap-1">
-          {["24H", "7D", "30D", "ALL"].map((o) => (
-            <button
-              key={o}
-              type="button"
-              onClick={() => setRange(o)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                range === o
-                  ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                  : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-              }`}
-            >
-              {o}
-            </button>
-          ))}
+          <div className="flex gap-1 mt-6">
+            {["24H", "7D", "30D", "ALL"].map((o) => (
+              <button
+                key={o}
+                type="button"
+                onClick={() => setRange(o)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  range === o
+                    ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                    : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                }`}
+              >
+                {o}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </GridSectionHeader>
 
       {error && !data ? (
         <p className="py-10 text-sm text-neutral-500">Unavailable.</p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-6 py-6 px-6">
+          <div className="grid grid-cols-2 gap-4 border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">
             <Stat
               label="Visitors"
               value={data?.visitors}
@@ -384,9 +278,9 @@ const VisitorAnalytics = () => {
               loading={loading}
             />
           </div>
-          <div className="py-6">
+          <div className="px-5 py-4">
             {loading ? (
-              <ChartSkeleton />
+              <div className="h-[88px] border-b border-neutral-200 dark:border-neutral-800" />
             ) : (
               <Chart daily={data.daily} range={range} />
             )}

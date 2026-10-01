@@ -1,14 +1,25 @@
-import React from 'react';
-import AboutMe from './AboutMe';
+import AboutMe from "./AboutMe";
+import PageGridLines from "@/components/PageGridLines";
 
-const About = ({ isDark }) => {
+const About = () => {
   return (
-    <div className="w-full pt-12 mt-40">
-      <hr className="text-blue-100 mb-4" />
+    <section
+      className="relative w-full px-5 py-6 sm:px-4 sm:py-7"
+      aria-labelledby="about-heading"
+    >
+      <PageGridLines section sectionOffset={27} />
+      
+      <div className="mb-5 flex items-baseline justify-between gap-4 mt-1.5">
+        <h2
+          id="about-heading"
+          className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50"
+        >
+          About
+        </h2>
+      </div>
+      <PageGridLines section sectionOffset={79} />
       <AboutMe />
-      <hr className="text-blue-100 mt-8" />
-
-    </div>
+    </section>
   );
 };
 

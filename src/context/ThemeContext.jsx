@@ -1,5 +1,6 @@
 // context/ThemeContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import changeSoundPath from "../assets/sounds/change.mp3";
 
 const ThemeContext = createContext();
 let themeWipeTimer;
@@ -14,9 +15,10 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("light");
-  const [profileIndex, setProfileIndex] = useState(() =>
-    Number(localStorage.getItem("profileIndex")) === 1 ? 1 : 0
-  );
+  const [profileIndex, setProfileIndex] = useState(() => {
+    const savedIndex = Number(localStorage.getItem("profileIndex"));
+    return savedIndex === 1 || savedIndex === 2 ? savedIndex : 0;
+  });
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
@@ -54,9 +56,16 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const cycleProfile = () => {
-    const nextIndex = (profileIndex + 1) % 2;
+    const nextIndex = (profileIndex + 1) % 3;
     setProfileIndex(nextIndex);
     localStorage.setItem("profileIndex", String(nextIndex));
+    try {
+      const audio = new Audio(changeSoundPath);
+      audio.volume = 0.5;
+      void audio.play().catch(() => {});
+    } catch {
+      // Profile switching should still work if audio playback is unavailable.
+    }
   };
 
   const value = {

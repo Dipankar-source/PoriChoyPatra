@@ -1,412 +1,193 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MdOutlineKeyboardArrowRight, MdCode } from "react-icons/md";
-import { FaRegPaperPlane } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
+import { ArrowUpRight, Github, Globe2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import assets from "../assets/assets";
-import icons from '../assets/icons';
-import { useTheme } from '../context/ThemeContext';
-import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
-import { AnimatedParagraph } from '@/components/ui/animated-paragraph';
-import { useNavigate } from "react-router-dom";
+import PageGridLines, { GridSectionHeader } from "@/components/PageGridLines";
 
-// ─── Data ────────────────────────────────────────────────────────────────────
 
-const PROJECTS = [
+const projects = [
   {
-    id: "1",
-    title: "Career Nexus",
-    category: "Full Stack",
+    id: "trust_io",
+    title: "Trust-io",
+    summary: "A smart platform for making confident purchase decisions.",
     description:
-      "A scalable MERN-based platform connecting job seekers, recruiters, and mentors through an integrated ecosystem with AI-powered matching.",
-    tech: ["Node.js", "React.js", "TailwindCSS", "MongoDB"],
+      "Helps users evaluate products and make informed decisions before purchasing.",
+    tech: ["React", "Framer Motion", "Tailwind CSS"],
+    github: "https://github.com/Dipankar-source/",
+    demo: "https://trust-io-frontend.onrender.com/",
+    status: "Live",
+    image: assets.Trustio,
+    highlight: "1000+ active users",
+    gradient: "linear-gradient(135deg, #dff5ff 0%, #7dd3fc 48%, #0284c7 100%)",
+  },
+
+  {
+    id: "ish-trip",
+    title: "IshTrip",
+    summary: "An online bus booking platform for convenient travel planning.",
+    description:
+      "Enables users to search for bus routes and book journeys through a simple and accessible interface.",
+    tech: ["React", "Tailwind CSS", "MongoDB"],
     github: "https://github.com/Dipankar-source/CareerNexus",
     demo: "https://career-nexus-demo.vercel.app",
+    status: "Suspended",
     image: assets.careerNexusFullDetail,
+    gradient: "linear-gradient(135deg, #f0ffe3 0%, #a3e635 52%, #65a30d 100%)",
   },
+
   {
-    id: "2",
+    id: "ishani-ui",
     title: "Ishani-UI",
-    category: "Frontend / NPM",
+    summary: "A reusable React component library for modern interfaces.",
     description:
-      "A React component library published on NPM, designed for developers to drop in and reuse polished UI primitives with zero friction.",
-    tech: ["React", "NPM", "Tailwind"],
+      "A collection of reusable UI components designed to help developers build consistent and polished React interfaces faster.",
+    tech: ["React", "NPM", "Tailwind CSS"],
     github: "https://github.com/Dipankar-source/ishani-ui",
     demo: "https://www.npmjs.com/package/ishani-ui",
+    status: "Live",
     image: assets.NPMContribution,
+    gradient: "linear-gradient(135deg, #fff0f3 0%, #fb7185 52%, #e11d48 100%)",
   },
+
   {
-    id: "3",
-    title: "Brainu Bot",
-    category: "Full Stack",
+    id: "ishi-fy",
+    title: "IshiFy",
+    summary: "An AI-powered tool for creating presentations faster.",
     description:
-      "A helpdesk chatbot built for Brainware University students, powered by Gemini API with Firebase backend and a clean conversational UI.",
+      "Uses AI to simplify the presentation creation process, helping users generate and organize PPT content with less manual effort.",
     tech: ["React", "Firebase", "Gemini API"],
     github: "https://github.com/Dipankar-source/Student-HelpDesk-ChatBot",
     demo: "https://student-helpdesk-chatbot-0do3.onrender.com/dashboard",
+    status: "Suspended",
     image: assets.BranuBot,
-  },
-  {
-    id: "4",
-    title: "Portfolio",
-    category: "Design / Frontend",
-    description:
-      "A minimalist developer portfolio with smooth motion design, custom cursor interactions, and AI-assisted content generation.",
-    tech: ["React.js", "ishani-ui", "Aceternity.ui", "Framer Motion"],
-    github: "https://github.com/Dipankar-source/PoriChoyPatra",
-    demo: "https://porichoypatra.onrender.com/",
-    image: assets.Portfolio,
+    gradient: "linear-gradient(135deg, #fff1e6 0%, #fb923c 52%, #ea580c 100%)",
   },
 ];
 
-// ─── Tech chip ────────────────────────────────────────────────────────────────
-
-const getIconForTech = (techName) => {
-  const normalizedMap = {
-    "node.js": icons.NodeJSIcon,
-    "react.js": icons.ReactIcon,
-    "react": icons.ReactIcon,
-    "tailwindcss": icons.TailwindIcon,
-    "tailwind": icons.TailwindIcon,
-    "mongodb": icons.MongoDBIcon,
-    "firebase": icons.FirebaseIcon,
-    "aceternity.ui": icons.AceternityUIIcon,
-    "framer motion": icons.FramerMotionIcon,
-    "next.js": icons.NextJSIcon,
-    "express": icons.ExpressIcon,
-    "npm": icons.NPMIcon,
-    "claude": icons.ClaudeIcon,
-    "antigravity": icons.AntigravityIcon,
-    "openai": icons.OpenAIIcon,
-    "gemini api": icons.GeminiIcon,
-  };
-
-  const Icon = normalizedMap[techName.toLowerCase()];
-  if (Icon) return Icon;
-
-  // Fallback icon
-  return ({ isDark }) => <MdCode size={26} color={isDark ? '#fff' : '#000'} />;
-};
-
-const TechChip = ({ name }) => {
-  const { isDark } = useTheme();
-  const IconComponent = getIconForTech(name);
-
-  return (
-    <div
-      title={name}
-      className="flex items-center justify-center transition-transform duration-200 hover:scale-110 cursor-pointer p-0.5"
+const ProjectCard = ({ project, index }) => (
+  <article
+    className={`group/project relative min-w-0 border-b border-dashed border-neutral-300/70 px-4 py-5 transition-[transform,box-shadow,background-color] duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:bg-white/70 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)] dark:border-neutral-800 dark:hover:bg-neutral-900/80 sm:px-0 ${
+      index % 2 === 0 ? "sm:border-r sm:pl-4 sm:pr-6" : "sm:pl-6 sm:pr-4"
+    }`}
+  >
+    <a
+      href={project.demo}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open ${project.title} live demo`}
+      className="group/image relative isolate block aspect-[1.55] overflow-hidden rounded-lg bg-neutral-200 dark:bg-neutral-800"
     >
-      <div className="scale-[0.85] sm:scale-80">
-        <IconComponent isDark={isDark} />
-      </div>
-    </div>
-  );
-};
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 opacity-0 transition-opacity duration-500 ease-out group-hover/project:opacity-100"
+        style={{ backgroundImage: project.gradient }}
+      />
+      <img
+        src={project.image}
+        alt={`${project.title} project preview`}
+        loading="lazy"
+        className="absolute left-[10%] top-[18%] h-[82%] w-[90%] rounded-tl-md border-l border-t border-white/80 bg-white object-cover object-top shadow-lg shadow-black/15 grayscale brightness-[0.78] transition-[filter,transform] duration-500 ease-out group-hover/project:-translate-y-1 group-hover/project:translate-x-1 group-hover/project:scale-[1.04] group-hover/project:grayscale-0 group-hover/project:brightness-100"
+      />
+      {project.highlight && (
+        <span className="absolute -right-12 top-16 z-10 flex w-60 rotate-45 items-center justify-center gap-2 bg-[#ffd43b] px-3 py-2 text-[13px] font-semibold leading-none text-neutral-950 shadow-md ring-1 ring-black/10">
+          <span
+            aria-hidden="true"
+            className="size-2 shrink-0 rounded-full bg-emerald-600"
+          />
+          {project.highlight}
+        </span>
+      )}
+    </a>
 
-// ─── Single project row ───────────────────────────────────────────────────────
-
-const ProjectItem = ({ project, isOpen, isAnyOpen, onToggle, isHoveredOuter, isAnyHoveredOuter, onHoverStart, onHoverEnd }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [fountainProps, setFountainProps] = useState({ x: 0, y: 50, rotate: 0 });
-
-  // When another item is open OR hovered: blur + dim this one
-  const shouldDim = (isAnyOpen && !isOpen) || (!isAnyOpen && isAnyHoveredOuter && !isHoveredOuter);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    onHoverStart?.();
-    setFountainProps({
-      x: (Math.random() - 0.5) * 100, // random x between -50 and 50
-      y: 60 + Math.random() * 60,     // random y between 60 and 120 (coming from bottom)
-      rotate: (Math.random() - 0.5) * 30, // random rotation
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    onHoverEnd?.();
-  };
-
-  return (
-    <motion.div
-      className="relative flex flex-col w-full rounded-md cursor-pointer"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={onToggle}
-      animate={{
-        filter: shouldDim ? "blur(1.5px)" : "blur(0px)",
-        opacity: shouldDim ? 0.38 : 1,
-      }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-    >
-      {/* ── Row header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-2 group">
-
-        {/* Left: title + category */}
-        <div className="sm:w-1/2 flex flex-col gap-1.5 w-full">
-          <div className="flex items-center justify-between sm:justify-start gap-3 w-full">
-            <div className="flex items-center gap-3">
-              <span
-                className="font-semibold text-gray-700 dark:text-white/95 leading-snug tracking-tight"
-                style={{ fontSize: "clamp(15px, 2.6vw, 18px)" }}
-              >
-                {project.title}
-              </span>
-
-              {/* GitHub (Desktop) */}
-              {project.github && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className={`hidden sm:flex group/gh items-center flex-shrink-0 transition-opacity duration-200 ${isOpen || isHovered ? "opacity-100" : "opacity-0"}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FaGithub
-                    size={16}
-                    className="text-gray-500 dark:text-gray-400 group-hover/gh:text-gray-900 dark:group-hover/gh:text-white transition-colors"
-                  />
-                  <span className="overflow-hidden max-w-0 opacity-0 group-hover/gh:max-w-[50px] group-hover/gh:opacity-100 group-hover/gh:ml-1.5 transition-all duration-200 text-[12px] font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
-                    GitHub
-                  </span>
-                </a>
-              )}
-
-              {/* Live (Desktop) */}
-              {project.demo && (
-                <a
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Live demo"
-                  className={`hidden sm:flex group/live items-center flex-shrink-0 transition-opacity duration-200 ${isOpen || isHovered ? "opacity-100" : "opacity-0"}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FaRegPaperPlane
-                    size={14}
-                    className="text-gray-500 dark:text-gray-400 group-hover/live:text-gray-900 dark:group-hover/live:text-white transition-colors"
-                  />
-                  <span className="overflow-hidden max-w-0 opacity-0 group-hover/live:max-w-[40px] group-hover/live:opacity-100 group-hover/live:ml-1.5 transition-all duration-200 text-[12px] font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
-                    Live
-                  </span>
-                </a>
-              )}
-            </div>
-
-            {/* Chevron */}
-            <motion.span
-              animate={{ rotate: isOpen ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
-              className={`flex-shrink-0 transition-opacity duration-200 ${isOpen ? "opacity-100" : "opacity-100 sm:opacity-0 group-hover:opacity-100"}`}
-            >
-              <MdOutlineKeyboardArrowRight
-                size={22}
-                className="text-gray-500 dark:text-gray-400"
-              />
-            </motion.span>
-          </div>
-          <p className="font-medium text-gray-400 dark:text-gray-500 leading-snug" style={{ fontSize: "clamp(10px, 1.4vw, 12px)" }}>{project.description.split(",")[0] + "..."}</p>
-
-          <p
-            className="font-medium text-gray-400 dark:text-gray-500 leading-snug"
-            style={{ fontSize: "clamp(10px, 1.4vw, 12px)" }}
-          >
-            {project.category}
-          </p>
-        </div>
-
-        {/* Right: thumbnail on hover (collapsed state only) */}
-        <div className="hidden sm:flex sm:w-1/2 items-center justify-end min-h-[64px] relative">
-          {/* Tech chips preview — hidden when image thumbnail is showing */}
-          <AnimatePresence>
-            {!isHovered && !isOpen && (
-              <motion.div
-                key="chips"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                className="flex flex-wrap gap-1.5 justify-end"
-              >
-                {project.tech.map((t) => (
-                  <TechChip key={t} name={t} />
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Hover thumbnail — only shows when collapsed + hovered */}
-          <AnimatePresence>
-            {isHovered && (
-              <motion.div
-                key="thumb-wrapper"
-                initial={{ opacity: 0, scale: 0.3, x: fountainProps.x, y: fountainProps.y, rotate: fountainProps.rotate }}
-                animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.3, x: fountainProps.x, y: fountainProps.y, rotate: fountainProps.rotate }}
-                transition={{ type: "spring", damping: 14, stiffness: 250 }}
-                className="absolute right-0 top-1/2 -mt-16 z-[60] flex-shrink-0 w-36 h-24 sm:w-48 sm:h-32 pointer-events-none origin-center"
-              >
-                {!isOpen && (
-                  <motion.div
-                    layoutId={`project-image-${project.id}`}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                    className="w-full h-full rounded-xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-700"
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover object-top"
-                    />
-                    {/* subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* ── Expanded body ── */}
-      <motion.div
-        layout
-        initial={false}
-        animate={
-          isOpen
-            ? { height: "auto", opacity: 1, marginTop: 8 }
-            : { height: 0, opacity: 0, marginTop: 0 }
-        }
-        transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ overflow: "hidden" }}
+    <div className="mt-3 flex items-center justify-between gap-3">
+      <h3 className="min-w-0 truncate text-[20px] font-semibold leading-tight text-neutral-950 dark:text-neutral-50">
+        {project.title}
+      </h3>
+      <span
+        className={`flex shrink-0 items-center gap-1.5 text-sm ${
+          project.status === "Live"
+            ? "text-neutral-500 dark:text-neutral-400"
+            : "text-amber-700 dark:text-amber-400"
+        }`}
       >
-        <div className="pb-4">
-          {/* Image + text side by side */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Image */}
-            <div className="flex-shrink-0 w-full sm:w-44 h-28">
-              {isOpen && (
-                <motion.div
-                  layoutId={`project-image-${project.id}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="w-full h-full rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-md"
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover object-top"
-                  />
-                </motion.div>
-              )}
-            </div>
+        <span
+          aria-hidden="true"
+          className={`size-2 rounded-full ${
+            project.status === "Live" ? "bg-emerald-500" : "bg-amber-500"
+          }`}
+        />
+        {project.status}
+      </span>
+    </div>
 
-            {/* Description + full tech */}
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={isOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-              transition={{ duration: 0.3, delay: 0.12 }}
-              className="flex flex-col justify-between gap-3"
-            >
-              <p
-                className="text-gray-600 dark:text-gray-300 leading-relaxed"
-                style={{ fontSize: "clamp(12px, 1.9vw, 13.5px)" }}
-              >
-                {project.description}
-              </p>
+    <p className="mt-1 text-sm leading-snug text-neutral-500 dark:text-neutral-400">
+      {project.summary}
+    </p>
+    <p className="mt-3 min-h-[3.5em] text-[15px] leading-normal text-neutral-600 dark:text-neutral-400">
+      {project.description}
+    </p>
 
-              {/* Mobile GitHub & Live Links */}
-              <div className="flex sm:hidden flex-wrap gap-4 mt-1">
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
-                  >
-                    <FaGithub size={16} /> GitHub
-                  </a>
-                )}
-                {project.demo && (
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
-                  >
-                    <FaRegPaperPlane size={14} /> Live Demo
-                  </a>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-1.5">
-                {project.tech.map((t) => (
-                  <TechChip key={t} name={t} />
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Hairline divider */}
-      <div className={`w-full h-px bg-neutral-100 dark:bg-neutral-800 hidden ${isOpen ? "block" : "hidden"}`} />
-    </motion.div>
-  );
-};
-
-// ─── Section ──────────────────────────────────────────────────────────────────
-
-const Projects = () => {
-  const [openId, setOpenId] = useState(null);
-  const [hoveredId, setHoveredId] = useState(null);
-  const navigate = useNavigate()
-
-  return (
-    <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300">
-      <hr className="text-blue-100 mt-8" />
-
-      <div className="flex items-center justify-between">
-
-        <div className="ml-4 mt-4 pr-4 ">
-          <p
-            className="font-medium text-gray-900 dark:text-white mb-1 leading-tight tracking-tight"
-            style={{ fontSize: "clamp(18px, 4vw, 24px)" }}
+    <div className="mt-4 flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-wrap gap-1.5">
+        {project.tech.map((technology) => (
+          <span
+            key={technology}
+            className="whitespace-nowrap rounded-sm border border-neutral-200 px-2 py-1 text-xs text-neutral-700 dark:border-neutral-800 dark:text-neutral-300"
           >
-            <ScrollFountain particleCount={30}>
-              Projects
-            </ScrollFountain>
-          </p>
-          <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>What have I built?</AnimatedParagraph>
-        </div>
-        <p className="mr-4 mt-4 hover:underline text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tighter cursor-pointer"
-          onClick={() => navigate('/projects')}
-        >
-          View All
-        </p>
+            {technology}
+          </span>
+        ))}
       </div>
-
-      <div className="bg-[#FFFFFF] dark:bg-[#09090B] text-gray-900 dark:text-gray-100 mt-5 font-sans">
-        <div className="px-4 flex flex-col">
-          {PROJECTS.map((project) => (
-            <ProjectItem
-              key={project.id}
-              project={project}
-              isOpen={openId === project.id}
-              isAnyOpen={openId !== null}
-              onToggle={() => setOpenId(openId === project.id ? null : project.id)}
-              isHoveredOuter={hoveredId === project.id}
-              isAnyHoveredOuter={hoveredId !== null}
-              onHoverStart={() => setHoveredId(project.id)}
-              onHoverEnd={() => setHoveredId(null)}
-            />
-          ))}
-        </div>
+      <div className="flex shrink-0 items-center gap-3 text-neutral-500 dark:text-neutral-400">
+        <a
+          href={project.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${project.title} website`}
+          title="Open website"
+          className="transition-colors hover:text-neutral-950 dark:hover:text-white"
+        >
+          <Globe2 className="size-5" aria-hidden="true" />
+        </a>
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${project.title} GitHub repository`}
+          title="Open GitHub repository"
+          className="transition-colors hover:text-neutral-950 dark:hover:text-white"
+        >
+          <Github className="size-5" aria-hidden="true" />
+        </a>
       </div>
     </div>
-  );
-};
+  </article>
+);
+
+const Projects = () => (
+  <section className="w-full bg-[#F7F7F4] text-black dark:bg-[#0F0F0F] dark:text-white mb-7">
+    <PageGridLines section sectionOffset={27} />
+
+    <GridSectionHeader className="flex items-center justify-between px-2 py-2 sm:px-4">
+      <div className="flex items-center justify-between mt-8">
+        <h2 className="aktura-font tracking-wider  text-[28px] leading-tight text-neutral-950 dark:text-neutral-50">
+          Projects
+        </h2>
+        <Link
+          to="/projects"
+          className="inline-flex items-center gap-1 text-sm text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+        >
+          View all
+          <ArrowUpRight className="size-4" aria-hidden="true" />
+        </Link>
+      </div>
+    </GridSectionHeader>
+
+    <div className="grid grid-cols-1 px-1 sm:grid-cols-2">
+      {projects.map((project, index) => (
+        <ProjectCard key={project.id} project={project} index={index} />
+      ))}
+    </div>
+  </section>
+);
 
 export default Projects;

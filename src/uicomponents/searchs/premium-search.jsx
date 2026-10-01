@@ -65,8 +65,10 @@ const STATIC_SEARCH_ITEMS = [
   },
 ];
 
+const EMPTY_BLOG_POSTS = [];
+
 // Updated to accept dynamic blogPosts
-export function PremiumSearch({ blogPosts = [] }) {
+export function PremiumSearch({ blogPosts = EMPTY_BLOG_POSTS }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -180,12 +182,13 @@ export function PremiumSearch({ blogPosts = [] }) {
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Open Search"
+        title="Search pages and content"
         aria-keyshortcuts="Control+K Meta+K"
-          className="group inline-flex h-9 w-auto shrink-0 items-center justify-between gap-2 rounded-md border border-[#542A52]/20 bg-white/70 px-2 text-[#542A52] shadow-sm transition-colors hover:border-[#542A52]/45 hover:bg-[#FFB39A]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#542A52]/40 sm:px-3 dark:border-[#FFB39A]/25 dark:bg-neutral-900/70 dark:text-[#FFB39A] dark:hover:bg-[#542A52]/25 dark:focus-visible:ring-[#FFB39A]/50"
+        className="group inline-flex h-9 w-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#542A52]/20 bg-white/70 px-0 text-[#542A52] shadow-sm transition-colors hover:border-[#542A52]/45 hover:bg-[#FFB39A]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#542A52]/40 md:ml-1 md:w-auto md:justify-between md:gap-1.5 md:px-2 dark:border-[#FFB39A]/25 dark:bg-neutral-900/70 dark:text-[#FFB39A] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,179,154,0.12)] dark:hover:bg-[#542A52]/25 dark:hover:shadow-[0_3px_10px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,179,154,0.22)] dark:focus-visible:ring-[#FFB39A]/50"
       >
         <Search className="h-4 w-4 shrink-0" />
-          <span className="text-xs font-medium">Search</span>
-          <kbd className="inline-flex items-center justify-center rounded border border-[#542A52]/15 px-1.5 py-0.5 font-mono text-[10px] font-medium text-[#542A52]/75 dark:border-[#FFB39A]/20 dark:text-[#FFB39A]/75">
+        <span className="hidden text-xs font-medium md:inline">Search</span>
+        <kbd className="hidden items-center justify-center rounded border border-[#542A52]/15 px-1 py-0.5 font-mono text-[10px] font-medium text-[#542A52]/75 md:inline-flex dark:border-[#FFB39A]/20 dark:text-[#FFB39A]/75">
           ⌘ K
         </kbd>
       </button>

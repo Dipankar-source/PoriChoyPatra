@@ -667,7 +667,7 @@ const Projects = () => {
   const borderColor = isDark ? "border-white/10" : "border-black/10";
   const textColor = isDark ? "text-white" : "text-zinc-900";
   const subText = isDark ? "text-zinc-400" : "text-zinc-500";
-  const bgMain = isDark ? "bg-[#050505]" : "bg-white";
+  const bgMain = isDark ? "bg-[#050505]" : "bg-[#F7F7F4]";
   const separatorBg = isDark ? "bg-[#0a0a0a]" : "bg-zinc-50/50";
   const cardTitleColor = isDark ? "text-zinc-100" : "text-zinc-900";
   const cardExcerptColor = isDark ? "text-zinc-400" : "text-zinc-600";
@@ -754,7 +754,7 @@ const Projects = () => {
             {/* Header */}
             <div className="mb-8">
               <h2
-                className={`text-3xl md:text-4xl font-medium tracking-tight py-4 flex items-center border-t border-b transition-colors duration-300 lg:px-5 ${borderColor}`}
+                className={`text-3xl md:text-4xl font-medium tracking-tight py-4 flex items-center  transition-colors duration-300 lg:px-5 ${borderColor}`}
               >
                 Projects
               </h2>
@@ -811,7 +811,7 @@ const Projects = () => {
 
             {/* Projects Grid */}
             <div
-              className={`w-full flex flex-col border-t border-b transition-colors duration-300 ${borderColor} min-h-[400px]`}
+              className={`w-full flex flex-col transition-colors duration-300 ${borderColor} min-h-[400px]`}
             >
               {filteredAndSortedProjects.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 opacity-50">

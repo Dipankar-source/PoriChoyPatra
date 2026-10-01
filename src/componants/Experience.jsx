@@ -1,28 +1,29 @@
 import React, { useState } from "react";
-import { MdOutlineKeyboardArrowRight, MdCode } from "react-icons/md";
-import { AiOutlineCloudDownload } from "react-icons/ai";
+import { ChevronRight, CloudDownload, Code2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import icons from '../assets/icons';
-import { useTheme } from '../context/ThemeContext';
+import icons from "../assets/icons";
+import { useTheme } from "../context/ThemeContext";
 import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
-import { AnimatedParagraph } from '@/components/ui/animated-paragraph';
+import { AnimatedParagraph } from "@/components/ui/animated-paragraph";
+import { GridSectionHeader } from "@/components/PageGridLines";
+import PageGridLines from "@/components/PageGridLines";
 
 const getIconForSkill = (skillName) => {
   const normalizedMap = {
-    "python": icons.PythonIcon,
-    "kaggle": icons.KaggleIcon,
-    "numpy": icons.NumPyIcon,
-    "pandas": icons.PandasIcon,
-    "matplotlib": icons.MatplotlibIcon,
+    python: icons.PythonIcon,
+    kaggle: icons.KaggleIcon,
+    numpy: icons.NumPyIcon,
+    pandas: icons.PandasIcon,
+    matplotlib: icons.MatplotlibIcon,
     "scikit-learn": icons.ScikitLearnIcon,
-    "javascript": icons.JavaScriptIcon,
-    "react": icons.ReactIcon,
-    "tailwindcss": icons.TailwindIcon,
+    javascript: icons.JavaScriptIcon,
+    react: icons.ReactIcon,
+    tailwindcss: icons.TailwindIcon,
     "framer-motion": icons.FramerMotionIcon,
     "lucide-react": icons.LucideReactIcon,
-    "html": icons.HTMLIcon,
-    "css": icons.CSSIcon,
+    html: icons.HTMLIcon,
+    css: icons.CSSIcon,
     "lucide-icons": icons.LucideReactIcon,
     "react-icons": icons.ReactIconsIcon,
     "tabular icons": icons.TablerIconsIcon,
@@ -31,7 +32,7 @@ const getIconForSkill = (skillName) => {
   const Icon = normalizedMap[skillName.toLowerCase()];
   if (Icon) return Icon;
 
-  return ({ isDark }) => <MdCode size={26} color={isDark ? '#fff' : '#000'} />;
+  return ({ isDark }) => <Code2 size={26} color={isDark ? "#fff" : "#000"} />;
 };
 
 const StackItem = ({ name }) => {
@@ -47,7 +48,7 @@ const StackItem = ({ name }) => {
         {/* Skill label: fluid between 11px (mobile) and 13px (desktop) */}
         <span
           className="font-medium text-neutral-800 dark:text-neutral-200 whitespace-nowrap"
-          style={{ fontSize: 'clamp(11px, 1.8vw, 13px)', lineHeight: '1.4' }}
+          style={{ fontSize: "clamp(11px, 1.8vw, 13px)", lineHeight: "1.4" }}
         >
           {name}
         </span>
@@ -56,8 +57,8 @@ const StackItem = ({ name }) => {
   );
 };
 
-const ExperienceItem = ({ 
-  company, 
+const ExperienceItem = ({
+  company,
   position,
   isOpen,
   isAnyOpen,
@@ -65,9 +66,11 @@ const ExperienceItem = ({
   isHoveredOuter,
   isAnyHoveredOuter,
   onHoverStart,
-  onHoverEnd 
+  onHoverEnd,
 }) => {
-  const shouldDim = (isAnyOpen && !isOpen) || (!isAnyOpen && isAnyHoveredOuter && !isHoveredOuter);
+  const shouldDim =
+    (isAnyOpen && !isOpen) ||
+    (!isAnyOpen && isAnyHoveredOuter && !isHoveredOuter);
 
   return (
     <motion.div
@@ -81,7 +84,6 @@ const ExperienceItem = ({
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
         {/* Left: company + title */}
         <div className="sm:w-2/3">
           <div className="flex flex-col gap-1.5">
@@ -89,16 +91,19 @@ const ExperienceItem = ({
               {/* Company name: fluid 16px → 20px */}
               <span
                 className="font-semibold text-gray-700 dark:text-white/95 leading-snug tracking-tight"
-                style={{ fontSize: 'clamp(16px, 3vw, 18px)' }}
+                style={{ fontSize: "clamp(16px, 3vw, 18px)" }}
               >
                 {company.companyName}
               </span>
               <button
                 className={`flex-shrink-0 transition-all duration-300 ${isOpen ? "rotate-90 opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-                onClick={(e) => { e.stopPropagation(); onToggle(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggle();
+                }}
                 aria-label={isOpen ? "Collapse" : "Expand"}
               >
-                <MdOutlineKeyboardArrowRight
+                <ChevronRight
                   size={20}
                   className="text-gray-600 dark:text-gray-300"
                 />
@@ -108,10 +113,12 @@ const ExperienceItem = ({
                 target={position.certificateLink ? "_blank" : "_self"}
                 rel="noopener noreferrer"
                 className={`group/cert flex items-center flex-shrink-0 transition-all duration-300 ${isOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
                 title="Certificate"
               >
-                <AiOutlineCloudDownload
+                <CloudDownload
                   size={20}
                   className="text-gray-600 dark:text-gray-300 group-hover/cert:text-slate-800 dark:group-hover/cert:text-slate-100 transition-colors"
                 />
@@ -126,7 +133,7 @@ const ExperienceItem = ({
             {/* Job title: fluid 13px → 15px */}
             <p
               className="font-medium text-gray-500 dark:text-gray-400 leading-snug"
-              style={{ fontSize: 'clamp(9px, 1vw, 15px)' }}
+              style={{ fontSize: "clamp(9px, 1vw, 15px)" }}
             >
               {position.title}
             </p>
@@ -138,14 +145,14 @@ const ExperienceItem = ({
           {/* Employment period: fluid 12px → 14px */}
           <p
             className="font-medium text-gray-700 dark:text-white/95 leading-snug"
-            style={{ fontSize: 'clamp(12px, 2vw, 14px)' }}
+            style={{ fontSize: "clamp(12px, 2vw, 14px)" }}
           >
             {position.employmentPeriod}
           </p>
           {/* Location: fluid 11px → 13px, muted */}
           <p
             className="text-gray-500 dark:text-gray-400 leading-snug"
-            style={{ fontSize: 'clamp(11px, 1.8vw, 13px)' }}
+            style={{ fontSize: "clamp(11px, 1.8vw, 13px)" }}
           >
             {position.Location}
           </p>
@@ -154,15 +161,18 @@ const ExperienceItem = ({
 
       {/* Expandable body */}
       <div
-        className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0 mt-0"
-          }`}
+        className={`grid transition-all duration-300 ease-in-out ${
+          isOpen
+            ? "grid-rows-[1fr] opacity-100 mt-2"
+            : "grid-rows-[0fr] opacity-0 mt-0"
+        }`}
       >
         <div className="overflow-hidden">
           <ul className="list-disc list-inside space-y-1 mb-3 ml-1">
             {/* Description: fluid 12px → 14px */}
             <li
               className="text-gray-600 dark:text-gray-300 leading-relaxed"
-              style={{ fontSize: 'clamp(12px, 2vw, 14px)' }}
+              style={{ fontSize: "clamp(12px, 2vw, 14px)" }}
             >
               {position.description}
             </li>
@@ -197,8 +207,16 @@ const Experience = () => {
           employmentPeriod: "Sept 2025 - Nov 2025",
           employmentType: "Part-Time",
           Location: "BWU, Kolkata (Onsite)",
-          description: "Working on face recognition project with traditional algorithms",
-          skills: ["Python", "Kaggle", "NumPy", "Pandas", "Matplotlib", "scikit-learn"],
+          description:
+            "Working on face recognition project with traditional algorithms",
+          skills: [
+            "Python",
+            "Kaggle",
+            "NumPy",
+            "Pandas",
+            "Matplotlib",
+            "scikit-learn",
+          ],
           certificateLink: "", // Add your Google Drive link here
         },
       ],
@@ -215,8 +233,16 @@ const Experience = () => {
           employmentType: "Part-Time",
           Location: "BWU, Kolkata (Remote)",
           description: "Building an analytic portal for the company",
-          skills: ["JavaScript", "React", "tailwindcss", "framer-motion", "lucide-react", "react-icons"],
-          certificateLink: "https://drive.google.com/file/d/1mlBM5N0pkXPcXqS11A1Kzcp8U2z8-a0k/view?usp=drive_link", // Add your Google Drive link here
+          skills: [
+            "JavaScript",
+            "React",
+            "tailwindcss",
+            "framer-motion",
+            "lucide-react",
+            "react-icons",
+          ],
+          certificateLink:
+            "https://drive.google.com/file/d/1mlBM5N0pkXPcXqS11A1Kzcp8U2z8-a0k/view?usp=drive_link", // Add your Google Drive link here
         },
       ],
     },
@@ -232,52 +258,60 @@ const Experience = () => {
           employmentType: "Part-Time",
           Location: "Kolkata, Salt Lake (Remote)",
           description: "Building an analytic portal for the company",
-          skills: ["JavaScript", "React", "tailwindcss", "framer-motion", "lucide-react", "react-icons"],
-          certificateLink: "https://drive.google.com/file/d/1Sf9HZd-41Z2Uu-T8lU6fEgVbTXT2dud7/view?usp=drive_link",
+          skills: [
+            "JavaScript",
+            "React",
+            "tailwindcss",
+            "framer-motion",
+            "lucide-react",
+            "react-icons",
+          ],
+          certificateLink:
+            "https://drive.google.com/file/d/1Sf9HZd-41Z2Uu-T8lU6fEgVbTXT2dud7/view?usp=drive_link",
         },
       ],
     },
   ];
 
   return (
-    <div className="w-full bg-[#FFFFFF] dark:bg-[#09090B] text-black dark:text-white transition-colors duration-300">
-
+    <div className="w-full bg-[#F7F7F4] dark:bg-[#0F0F0F] text-black dark:text-white transition-colors duration-300">
       {/* Section heading: fluid 18px → 24px */}
-      <div className="flex justify-between items-center ">
-        <div className="ml-4 mt-4">
-          <p
-            className="font-medium text-gray-900 dark:text-white leading-tight tracking-tight mb-1"
-            style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
-          >
-            <ScrollFountain particleCount={20}>
+      <GridSectionHeader className="flex justify-between items-center">
+        <PageGridLines section sectionOffset={27} />
+        <div className="flex items-center justify-between">
+          <div className="ml-4 mt-9 mb-3">
+            <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50">
               Experience
-            </ScrollFountain>
-          </p>
-          <AnimatedParagraph className='tracking-wider dark:text-white/30 text-sm italic'>What have I done?</AnimatedParagraph>
+            </p>
+          </div>
+          {/* <p
+            className=" hover:underline text-gray-900 dark:text-stone-400 leading-tight tracking-tighter cursor-pointer"
+            onClick={() => navigate("/experience")}
+          >
+            View All
+          </p> */}
         </div>
-        <p className="mr-4 mt-4 hover:underline text-gray-900 dark:text-white mb-2 pr-4 leading-tight tracking-tighter cursor-pointer"
-          onClick={() => navigate('/experience')}>
-          View All
-        </p>
-      </div>
+      </GridSectionHeader>
 
-      <div className="bg-[#FFFFFF] dark:bg-[#09090B] text-gray-900 dark:text-gray-100 mt-5 font-sans">
+      <div className="bg-[#F7F7F4] dark:bg-[#0F0F0F] text-gray-900 dark:text-gray-100 mt-5 font-sans">
         <div className="px-4 flex flex-col gap-2">
           {WORK_EXPERIENCE.map((company) =>
             company.positions.map((position) => (
-              <ExperienceItem 
-                key={position.id} 
-                company={company} 
+              <ExperienceItem
+                key={position.id}
+                company={company}
                 position={position}
                 isOpen={openId === position.id}
                 isAnyOpen={openId !== null}
-                onToggle={() => setOpenId(openId === position.id ? null : position.id)}
+                onToggle={() =>
+                  setOpenId(openId === position.id ? null : position.id)
+                }
                 isHoveredOuter={hoveredId === position.id}
                 isAnyHoveredOuter={hoveredId !== null}
                 onHoverStart={() => setHoveredId(position.id)}
                 onHoverEnd={() => setHoveredId(null)}
               />
-            ))
+            )),
           )}
         </div>
       </div>

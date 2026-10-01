@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ScrollFountain } from "@/components/ui/scroll-fountain-text";
+import PageGridLines, { GridSectionHeader } from "@/components/PageGridLines";
 
 const GitHubStats = () => {
   const [contributions, setContributions] = useState([]);
@@ -365,18 +366,15 @@ const GitHubStats = () => {
 
     return (
       <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
-        <div>
-          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
-            <ScrollFountain particleCount={25}>
-              GitHub
-            </ScrollFountain>
+        <GridSectionHeader>
+          <p className="aktura-font tracking-wider text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
+            <ScrollFountain particleCount={25}>GitHub</ScrollFountain>
           </p>
           <p className="text-sm italic tracking-wider">How do I learn?</p>
-        </div>
+        </GridSectionHeader>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
           <div className="animate-pulse flex gap-1 sm:gap-2 mb-3 sm:mb-4 px-1 sm:px-2 overflow-hidden mt-5 sm:mt-7">
-
             {/* Day labels column — only on desktop */}
             {!isMobile && !isTablet && (
               <div className="flex flex-col gap-1 pt-[28px] shrink-0">
@@ -422,8 +420,9 @@ const GitHubStats = () => {
 
         {/* Stats row skeleton */}
         <div
-          className={`flex ${isMobile ? "flex-col" : "items-center justify-between"
-            } mt-3 sm:mt-4 w-full gap-2 sm:gap-3`}
+          className={`flex ${
+            isMobile ? "flex-col" : "items-center justify-between"
+          } mt-3 sm:mt-4 w-full gap-2 sm:gap-3`}
         >
           <div className="flex flex-col gap-1 sm:gap-2">
             <div className="h-2.5 sm:h-3 w-36 sm:w-52 bg-gray-200 dark:bg-gray-700 rounded-[2px]" />
@@ -451,14 +450,12 @@ const GitHubStats = () => {
   if (error) {
     return (
       <div className="w-full px-2 sm:px-4 py-6 sm:py-10">
-        <div>
-          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
-            <ScrollFountain particleCount={25}>
-              GitHub
-            </ScrollFountain>
+        <GridSectionHeader>
+          <p className="aktura-fon tracking-widert text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
+            <ScrollFountain particleCount={25}>GitHub</ScrollFountain>
           </p>
           <p className="text-sm italic tracking-wider ">How do I learn?</p>
-        </div>
+        </GridSectionHeader>
         <div className="w-full px-2 sm:px-3 py-4 sm:py-6 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
           <div className="text-center text-black dark:text-white py-1 sm:py-2 text-xs sm:text-sm">
             {error}
@@ -470,19 +467,17 @@ const GitHubStats = () => {
 
   // ─── MAIN RENDER ─────────────────────────────────────────────────────────────
   return (
-    <div>
-      <hr className="mt-4 border-0 border-t border-[#542A52]/25 dark:border-[#FFB39A]/25" />
+    <div className="mb-4">
+      {/* <hr className="mt-4 border-0 border-t border-[#542A52]/25 dark:border-[#FFB39A]/25" /> */}
 
-      <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
+      <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4 ">
+        <PageGridLines section sectionOffset={27} />
 
-        <div>
-          <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
-            <ScrollFountain particleCount={25}>
-              GitHub
-            </ScrollFountain>
+        <GridSectionHeader>
+          <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
+            GitHub
           </p>
-          <p className="text-sm italic tracking-wider ">How do I learn?</p>
-        </div>
+        </GridSectionHeader>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
           <motion.div
@@ -495,20 +490,25 @@ const GitHubStats = () => {
             {/* Day labels — desktop only */}
             {!isMobile && !isTablet && (
               <div className="flex flex-col gap-1 pt-[28px] shrink-0 mt-5">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
-                  <span
-                    key={i}
-                    style={{ height: cellSize }}
-                    className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 flex items-center justify-end pr-1"
-                  >
-                    {day}
-                  </span>
-                ))}
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                  (day, i) => (
+                    <span
+                      key={i}
+                      style={{ height: cellSize }}
+                      className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 flex items-center justify-end pr-1"
+                    >
+                      {day}
+                    </span>
+                  ),
+                )}
               </div>
             )}
 
             {/* Grid + month labels */}
-            <div className="flex-1 overflow-x-auto pb-2 sm:pb-4 mt-5 sm:mt-7" ref={scrollContainerRef}>
+            <div
+              className="flex-1 overflow-x-auto pb-2 sm:pb-4 mt-5 sm:mt-7"
+              ref={scrollContainerRef}
+            >
               <div className="min-w-max">
                 {/* Month labels */}
                 <div className="flex relative h-5 sm:h-6">
@@ -551,7 +551,7 @@ const GitHubStats = () => {
                             key={`${weekIndex}-${dayIndex}`}
                             style={{ width: cellSize, height: cellSize }}
                           />
-                        )
+                        ),
                       )}
                     </div>
                   ))}
@@ -563,31 +563,42 @@ const GitHubStats = () => {
 
         {/* Legend and Stats */}
         <div
-          className={`flex ${isMobile ? "flex-col" : "items-center justify-between"
-            } mt-3 sm:mt-4 w-full gap-2 sm:gap-3`}
+          className={`flex ${
+            isMobile ? "flex-col" : "items-center justify-between"
+          } mt-3 sm:mt-4 w-full gap-2 sm:gap-3`}
         >
           <div className="flex flex-col">
             <h2 className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
-              Total: <span className="text-[#542A52] dark:text-[#FFB39A]">{totalContributions.toLocaleString()}</span> contributions
+              Total:{" "}
+              <span className="text-[#542A52] dark:text-[#FFB39A]">
+                {totalContributions.toLocaleString()}
+              </span>{" "}
+              contributions
               {isMobile && (
                 <span className="block text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
-                  Last 5 months: {lastFiveMonthsContributions.toLocaleString()} contributions
+                  Last 5 months: {lastFiveMonthsContributions.toLocaleString()}{" "}
+                  contributions
                 </span>
               )}
             </h2>
             <span className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
               {yesterdayActivity.minutes > 0 ? (
                 <span className="inline-flex items-center">
-                  Yesterday worked {yesterdayActivity.minutes}m {yesterdayActivity.seconds}s
+                  Yesterday worked {yesterdayActivity.minutes}m{" "}
+                  {yesterdayActivity.seconds}s
                 </span>
               ) : (
-                <span className="inline-flex items-center">No activity yesterday</span>
+                <span className="inline-flex items-center">
+                  No activity yesterday
+                </span>
               )}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">Less</span>
+            <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+              Less
+            </span>
             <div className="flex gap-[1px]">
               {[
                 colors.level0,
@@ -607,7 +618,9 @@ const GitHubStats = () => {
                 />
               ))}
             </div>
-            <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">More</span>
+            <span className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+              More
+            </span>
           </div>
         </div>
       </div>

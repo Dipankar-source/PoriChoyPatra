@@ -18,7 +18,6 @@ const NameHover = ({ isDark }) => {
 
   return (
     <div className="hidden lg:block">
-      <hr className="text-blue-100 mt-4" />
       <div
         className="h-64 flex items-center justify-center relative"
         onMouseEnter={handleMouseEnter}

@@ -1,935 +1,476 @@
-import { SparklesCore } from "@/components/ui/sparkles";
-import React, { useState, useEffect } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
-import { useTheme } from "../context/ThemeContext";
-import { useNavigate, useLocation, href } from "react-router-dom";
 import {
-  FaGithub,
-  FaBars,
-  FaTimes,
-  FaLinkedin,
-  FaTwitter,
-} from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShimmeringText } from "@/components/shimmering-text";
-import { MagneticWrapper } from "./CustomMouseFollower";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
-import {
-  Target,
-  Download,
-  FileText,
-  ScanQrCode,
-  BriefcaseBusiness,
-  FolderKanban,
   BookOpen,
-  Phone,
-  ArrowRight,
+  BriefcaseBusiness,
+  ChartNoAxesColumn,
+  ChevronDown,
+  FlaskConical,
+  FolderKanban,
+  Github,
+  House,
+  Mail,
+  Menu,
+  Moon,
+  Search,
+  Sun,
+  UserRound,
+  X,
 } from "lucide-react";
-import { PremiumSearch } from "@/uicomponents/searchs/premium-search";
-import assets from "@/assets/assets";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 import clickSoundPath from "../assets/sounds/click.mp3";
-import changeSoundPath from "../assets/sounds/change.mp3";
 
-const MoonIcon = ({ size = 15, className = "" }) => {
-  return (
-    <motion.svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      whileHover={{
-        rotate: [0, -15, 15, -10, 10, 0],
-        scale: 1.1,
-        transition: { duration: 0.8, ease: "easeInOut" },
-      }}
-    >
-      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-    </motion.svg>
-  );
-};
+const MotionDiv = motion.div;
+const MotionSection = motion.section;
 
-const SunIcon = ({ size = 15, className = "" }) => {
-  return (
-    <motion.svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      whileHover={{
-        rotate: [0, 20, -20, 15, -15, 0],
-        scale: 1.1,
-        transition: { duration: 0.8, ease: "easeInOut" },
-      }}
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m6.34 17.66-1.41 1.41" />
-      <path d="m19.07 4.93-1.41 1.41" />
-    </motion.svg>
-  );
+const PremiumSearch = lazy(() =>
+  import("@/uicomponents/searchs/premium-search").then((module) => ({
+    default: module.PremiumSearch,
+  })),
+);
+
+const primaryLinks = [
+  { label: "Home", description: "Profile and introduction", path: "/", section: "hero" },
+  { label: "Projects", description: "Selected work and case studies", path: "/", section: "projects" },
+  { label: "Experience", description: "Career and skills", path: "/", section: "experience" },
+];
+
+const moreGroups = [
+  {
+    label: "Portfolio",
+    items: [
+      {
+        label: "About",
+        description: "My journey, skills, and background",
+        path: "/",
+        section: "about",
+      },
+      {
+        label: "Experience",
+        description: "Roles and teams that shaped my work",
+        path: "/",
+        section: "experience",
+      },
+    ],
+  },
+  {
+    label: "Selected work",
+    items: [
+      {
+        label: "Projects",
+        description: "Products, experiments, and case studies",
+        path: "/",
+        section: "projects",
+      },
+      {
+        label: "Research",
+        description: "Papers and applied AI work",
+        path: "/",
+        section: "paperwork",
+      },
+    ],
+  },
+  {
+    label: "Explore",
+    compact: true,
+    items: [
+      { label: "Blog", description: "Articles on design and development", path: "/blog" },
+      { label: "GitHub activity", description: "Open-source work and contributions", path: "/", section: "github" },
+      { label: "Visitor analytics", description: "Portfolio traffic overview", path: "/", section: "visitors" },
+      { label: "Contact", description: "Discuss a project", path: "/contact" },
+    ],
+  },
+];
+
+const secondaryLinks = moreGroups.flatMap((group) => group.items);
+const mobileMoreLinks = secondaryLinks.filter(
+  (item) => !primaryLinks.some((primaryItem) => primaryItem.label === item.label),
+);
+
+const mobileLinkIcons = {
+  Home: { Icon: House, color: "from-blue-500 to-blue-700", tint: "59, 130, 246" },
+  Projects: { Icon: FolderKanban, color: "from-orange-500 to-orange-700", tint: "249, 115, 22" },
+  Experience: { Icon: BriefcaseBusiness, color: "from-emerald-500 to-emerald-700", tint: "16, 185, 129" },
+  About: { Icon: UserRound, color: "from-cyan-500 to-cyan-700", tint: "6, 182, 212" },
+  Research: { Icon: FlaskConical, color: "from-amber-500 to-amber-700", tint: "245, 158, 11" },
+  Blog: { Icon: BookOpen, color: "from-rose-500 to-rose-700", tint: "244, 63, 94" },
+  "GitHub activity": { Icon: Github, color: "from-slate-600 to-slate-800", tint: "71, 85, 105" },
+  "Visitor analytics": { Icon: ChartNoAxesColumn, color: "from-teal-500 to-teal-700", tint: "20, 184, 166" },
+  Contact: { Icon: Mail, color: "from-red-500 to-red-700", tint: "239, 68, 68" },
 };
 
 const Navbar = () => {
-  const { theme, toggleTheme, isDark, profileIndex, cycleProfile } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [sectionSelection, setSectionSelection] = useState(() => ({
+    locationKey: location.key,
+    section: location.hash.slice(1) || "hero",
+  }));
+  const activeSection =
+    sectionSelection.locationKey === location.key
+      ? sectionSelection.section
+      : location.hash.slice(1) || "hero";
 
-  const handleThemeToggle = React.useCallback(() => {
+  const handleThemeToggle = useCallback(() => {
     try {
       const audio = new Audio(clickSoundPath);
       audio.volume = 0.5;
-      audio.play().catch((e) => console.error("Audio playback failed", e));
-    } catch (e) {
-      console.error("Audio playback failed", e);
+      void audio.play().catch(() => {});
+    } catch {
+      // Theme switching should still work if audio playback is unavailable.
     }
     toggleTheme();
   }, [toggleTheme]);
 
-  const handleMobileProfileChange = () => {
-    cycleProfile();
-    try {
-      const audio = new Audio(changeSoundPath);
-      audio.volume = 0.5;
-      audio.play().catch((error) => console.error("Audio playback failed", error));
-    } catch (error) {
-      console.error("Audio playback failed", error);
-    }
-  };
-
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.shiftKey || e.metaKey) && e.key.toLowerCase() === "t") {
-        e.preventDefault();
+    const handleShortcut = (event) => {
+      const target = event.target;
+      const isTypingTarget =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+
+      if (
+        event.shiftKey &&
+        event.key.toLowerCase() === "t" &&
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !isTypingTarget
+      ) {
+        event.preventDefault();
         handleThemeToggle();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
   }, [handleThemeToggle]);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeLink, setActiveLink] = useState("/");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
-  const BLOG_POSTS = [
-    {
-      id: 1,
-      title: "A Premium Navbar Design",
-      excerpt: "Navbar design to serve a great user experience.",
-      date: "Dec 07",
-      readTime: "5m",
-      category: "Design",
-      image: assets.NavbarComponent,
-    },
-    {
-      id: 2,
-      title: "IOS Bento",
-      excerpt: "Experience of IOS in your boredom.",
-      date: "Dec 10",
-      readTime: "8m",
-      category: "Design",
-      image: assets.IOSBento,
-    },
-    {
-      id: 3,
-      title: "Chronos 3D Card",
-      excerpt: "A 3D card that hits different as a ui component.",
-      date: "Dec 08",
-      readTime: "6m",
-      category: "UX",
-      image: assets.ChronosCard,
-    },
-    {
-      id: 4,
-      title: "IOS Premium Accordion",
-      excerpt:
-        "A premium vibe for the persons for those IOS means a lot and great Experience.",
-      date: "Dec 05",
-      readTime: "12m",
-      category: "Frontend",
-      image: assets.IOSAccordion,
-    },
-  ];
+  const goTo = (item) => {
+    setMoreOpen(false);
+    setMobileOpen(false);
 
-  const openImageModal = () => {
-    setIsImageModalOpen(true);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeImageModal = () => {
-    setIsImageModalOpen(false);
-    document.body.style.overflow = "unset";
-  };
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    setActiveLink(location.pathname);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollThreshold = window.innerHeight * 0.21;
-          setIsScrolled(window.scrollY > scrollThreshold);
-          ticking = false;
-        });
-        ticking = true;
+    if (item.section) {
+      setSectionSelection({ locationKey: location.key, section: item.section });
+      if (location.pathname !== "/") {
+        navigate(`/#${item.section}`);
+        window.setTimeout(() => {
+          document.getElementById(item.section)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        return;
       }
-    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  const navItems = [
-    { name: "Portfolio", path: "/" },
-    { name: "Projects", path: "/projects" },
-    { name: "Blog", path: "/blog" },
-  ];
-  const mobileNavItems = [
-    { name: "Portfolio", path: "/", icon: BriefcaseBusiness },
-    { name: "Projects", path: "/projects", icon: FolderKanban },
-    { name: "Blog", path: "/blog", icon: BookOpen },
-    { name: "Contact", path: "/contact", icon: Phone },
-  ];
-
-  const handleNavigation = (path) => {
-    if (path.startsWith("#")) {
-      const element = document.querySelector(path);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else {
-      navigate(path);
+      document.getElementById(item.section)?.scrollIntoView({ behavior: "smooth" });
+      return;
     }
-    setActiveLink(path);
-    setIsMobileMenuOpen(false);
+
+    navigate(item.path);
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const fadeUpVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: 20,
-      scale: 0.98,
-      transition: {
-        duration: 0.4,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const containerVariants = {
-    hidden: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        staggerChildren: 0.05,
-        staggerDirection: -1,
-      },
-    },
-  };
-
-  const navItemVariants = {
-    hover: {
-      y: -2,
-      scale: 1.05,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-  };
-
-  const githubButtonVariants = {
-    hover: {
-      scale: 1.05,
-      y: -1,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-    tap: {
-      scale: 0.95,
-    },
-  };
-
-  const themeToggleVariants = {
-    hover: {
-      scale: 1.1,
-      rotate: 5,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-    tap: {
-      scale: 0.9,
-    },
-  };
-
-  const mobileMenuVariants = {
-    closed: {
-      opacity: 0,
-      scale: 0.95,
-      transition: {
-        duration: 0.2,
-        ease: "easeInOut",
-      },
-    },
-    open: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const mobileMenuItemVariants = {
-    closed: {
-      opacity: 0,
-      x: -20,
-    },
-    open: {
-      opacity: 1,
-      x: 0,
-    },
-  };
-
-  const isActiveLink = (path) => {
-    if (path === "/") {
-      return activeLink === "/";
+  const isActive = (item) => {
+    if (item.section) {
+      return (
+        (location.pathname === "/" && activeSection === item.section) ||
+        (item.section === "projects" && location.pathname.startsWith("/projects"))
+      );
     }
-    if (path === "/blog") {
-      return activeLink === "/blog";
-    }
-    if (path === "#projects") {
-      return location.hash === "#projects";
-    }
-    return activeLink.startsWith(path);
+    return location.pathname === item.path;
+  };
+
+  const renderLink = (item, mobile = false) => {
+    const mobileIcon = mobileLinkIcons[item.label];
+    const MobileIcon = mobileIcon?.Icon;
+
+    return (
+    <button
+      key={item.label}
+      type="button"
+      onClick={() => goTo(item)}
+      style={mobile && isActive(item) ? {
+        backgroundImage: `linear-gradient(110deg, rgba(${mobileIcon.tint}, ${isDark ? 0.18 : 0.11}), rgba(${mobileIcon.tint}, 0.025))`,
+      } : undefined}
+      className={`relative flex text-left transition-colors ${mobile ? "group min-h-[54px] w-full flex-row items-center gap-2 rounded-md border border-neutral-200/80 bg-white/60 px-2 py-1 dark:border-neutral-800 dark:bg-neutral-900/60" : "min-h-10 items-center px-2.5 text-[13px] font-medium leading-none tracking-[0.01em]"} ${isActive(item) ? "font-semibold text-neutral-950 dark:text-white" : "text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"}`}
+    >
+      {mobile ? (
+        <>
+          <span
+            aria-hidden="true"
+            className={`relative inline-flex size-7 shrink-0 items-center justify-center rounded-[5px] border border-white/45 bg-linear-to-br ${mobileIcon.color} text-white shadow-[0_3px_7px_rgba(15,23,42,0.22),inset_0_1px_1px_rgba(255,255,255,0.45)] ring-1 ring-black/5 transition-transform duration-200 group-hover:scale-105`}
+          >
+            <span className="absolute inset-x-1 top-0.5 h-px bg-white/50" />
+            <MobileIcon className="size-3.5" strokeWidth={2.4} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13px] font-medium">{item.label}</span>
+            {item.description && (
+              <span className="mt-0.5 block line-clamp-1 text-[9px] font-normal leading-tight text-neutral-500 dark:text-neutral-400">
+                {item.description}
+              </span>
+            )}
+          </span>
+        </>
+      ) : (
+        <span>{item.label}</span>
+      )}
+      {isActive(item) && !mobile && (
+        <span className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-neutral-900 dark:bg-white" />
+      )}
+      {mobile && isActive(item) && (
+        <span className="absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-neutral-900 dark:bg-white" />
+      )}
+    </button>
+    );
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
-        duration: 0.6,
-      }}
-      className={`w-full h-15 rounded-md mt-0 lg:mt-0 lg:rounded-none flex justify-between items-center px-4 sm:px-6 lg:px-8 transition-colors duration-300 z-[9990] sticky top-0 ${
-        isDark
-          ? "bg-transparent backdrop-blur-sm"
-          : "bg-transparent backdrop-blur-sm"
-      } relative`}
+    <nav
+      aria-label="Main navigation"
+      className="relative flex h-[54px] items-center justify-between bg-[#F7F7F4]/95 px-3 backdrop-blur dark:bg-[#0F0F0F]/95 sm:px-5"
     >
-      <div className="flex items-center justify-center relative z-20">
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key="logo-image"
-              className="w-8 h-8 object-cover rounded-full lg:hidden cursor-pointer"
-              src={profileIndex === 0 ? "/profile1.webp" : "/profile.webp"}
-              alt="DipFolio Logo"
-              onClick={openImageModal}
-              initial={{ opacity: 1, scale: 1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{
-                opacity: 0,
-                scale: 0.8,
-                transition: { duration: 0.3, ease: "easeOut" },
-              }}
-              whileHover={{
-                scale: 1.1,
-                transition: { duration: 0.2 },
-              }}
-              whileTap={{ scale: 0.9 }}
-            />
-          </AnimatePresence>
-        </div>
+      <button
+        type="button"
+        onClick={() => goTo(primaryLinks[0])}
+        className="aktura-font text-[32px] leading-none text-neutral-950 dark:text-white"
+        aria-label="Dipankar Barik, home"
+      >
+        D
+      </button>
 
-        {createPortal(
-          <AnimatePresence>
-            {isImageModalOpen && (
-              <motion.div
-                className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-black/80 backdrop-blur-md"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={closeImageModal}
-                />
-
-                <motion.div
-                  className="relative z-10 max-w-2xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
-                  initial={{
-                    opacity: 0,
-                    scale: 0.8,
-                    y: 20,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.8,
-                    y: 20,
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <motion.button
-                    className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-sm flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-200 border border-white/20 dark:border-gray-700/50"
-                    onClick={handleMobileProfileChange}
-                    aria-label="Scan to change profile image"
-                    title="Change profile image"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <ScanQrCode size={20} className="text-black" />
-                  </motion.button>
-
-                  <div className="relative grid">
-                    <AnimatePresence initial={false} mode="sync">
-                      <motion.div
-                        key={profileIndex}
-                        className="relative col-start-1 row-start-1 overflow-hidden"
-                        initial={{ opacity: 0.55, scaleX: 0.93 }}
-                        animate={{
-                          opacity: [0.55, 1, 0.65, 1],
-                          scaleX: [0.93, 1.04, 0.98, 1],
-                        }}
-                        exit={{ opacity: 0, scaleX: 1.06 }}
-                        transition={{ duration: 0.42, ease: "linear" }}
-                      >
-                        <img
-                          className="block max-h-[70vh] w-full object-contain"
-                          src={
-                            profileIndex === 0
-                              ? "/profile1.webp"
-                              : "/profile.webp"
-                          }
-                          alt="Dipankar Barik"
-                        />
-                        <motion.img
-                          aria-hidden="true"
-                          className="absolute inset-0 h-full w-full object-contain mix-blend-screen"
-                          src={
-                            profileIndex === 0
-                              ? "/profile1.webp"
-                              : "/profile.webp"
-                          }
-                          style={{ filter: "sepia(1) saturate(8) hue-rotate(300deg)" }}
-                          animate={{
-                            x: [-9, 7, -6, 4, 0],
-                            opacity: [0.95, 0.15, 0.8, 0.4, 0],
-                            clipPath: [
-                              "inset(8% 0 76% 0)",
-                              "inset(34% 0 42% 0)",
-                              "inset(68% 0 12% 0)",
-                              "inset(0)",
-                            ],
-                          }}
-                          transition={{ duration: 0.42, ease: "linear" }}
-                        />
-                        <motion.img
-                          aria-hidden="true"
-                          className="absolute inset-0 h-full w-full object-contain mix-blend-screen"
-                          src={
-                            profileIndex === 0
-                              ? "/profile1.webp"
-                              : "/profile.webp"
-                          }
-                          style={{ filter: "sepia(1) saturate(8) hue-rotate(150deg)" }}
-                          animate={{
-                            x: [9, -7, 6, -4, 0],
-                            opacity: [0.9, 0.1, 0.75, 0.35, 0],
-                            clipPath: [
-                              "inset(70% 0 10% 0)",
-                              "inset(38% 0 36% 0)",
-                              "inset(6% 0 78% 0)",
-                              "inset(0)",
-                            ],
-                          }}
-                          transition={{ duration: 0.42, ease: "linear" }}
-                        />
-                        <motion.div
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-0"
-                          style={{
-                            backgroundImage:
-                              "repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.72) 4px 5px)",
-                          }}
-                          animate={{ opacity: [0.95, 0.35, 0.85, 0] }}
-                          transition={{ duration: 0.42, ease: "linear" }}
-                        />
-                        <motion.div
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-x-0 h-4 bg-white/90 mix-blend-screen"
-                          animate={{
-                            y: [0, 24, 8, 67, 0],
-                            opacity: [0, 1, 0.15, 0.9, 0],
-                          }}
-                          transition={{ duration: 0.42, ease: "linear" }}
-                        />
-                      </motion.div>
-                    </AnimatePresence>
-
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3, duration: 0.4 }}
-                    >
-                      <div className="text-center">
-                        <p className="whitespace-nowrap text-sm text-gray-200">
-                          "Building better web experiences."
-                        </p>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body,
-        )}
-      </div>
-
-      <div className="hidden md:flex items-center space-x-4 lg:space-x-5 relative z-50">
-        {navItems.map((item) => (
-          <motion.button
-            key={item.path}
-            onClick={() => handleNavigation(item.path)}
-            variants={navItemVariants}
-            whileHover="hover"
-            className={`relative transition-all cursor-pointer duration-300 text-sm lg:text-base px-3 py-2 rounded-lg ${
-              isActiveLink(item.path)
-                ? isDark
-                  ? "text-white"
-                  : "text-black"
-                : isDark
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-black"
-            }`}
-          >
-            {item.name}
-            {isActiveLink(item.path) && (
-              <motion.div
-                className={`absolute bottom-1 left-1/2 w-1 h-1 rounded-full ${
-                  isDark ? "bg-indigo-400" : "bg-indigo-600"
-                }`}
-                layoutId="activeIndicator"
-                transition={{
-                  type: "spring",
-                  stiffness: 500,
-                  damping: 30,
-                }}
-              />
-            )}
-          </motion.button>
-        ))}
-
-        {/* Optional: The Premium Command Palette Trigger (passing data to it) */}
-        <div className="hidden md:block">
-          <PremiumSearch blogPosts={BLOG_POSTS} />
-        </div>
-
-        <motion.button
-          variants={githubButtonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          className={`lg:py-1 lg:px-3 py-1 px-2 rounded-sm cursor-pointer ${
-            isDark ? "bg-[#e1e1dd] text-black" : "text-white bg-gray-800"
-          }`}
+      <div className="hidden h-full items-center gap-1 md:flex">
+        {primaryLinks.map((item) => renderLink(item))}
+        <div
+          className="relative flex h-full items-center"
+          onMouseEnter={() => setMoreOpen(true)}
+          onMouseLeave={() => setMoreOpen(false)}
+          onFocus={() => setMoreOpen(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setMoreOpen(false);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setMoreOpen(false);
+          }}
         >
-          <MagneticWrapper>
-            <div
-              onClick={() =>
-                window.open("https://github.com/Dipankar-source/", "_blank")
-              }
-              className="flex items-center gap-2"
-            >
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-              >
-                <FaGithub className="h-4 w-4" />
-              </motion.div>
-              <p className="text-sm font-semibold">1.5k</p>
-            </div>
-          </MagneticWrapper>
-        </motion.button>
-
-        <MagneticWrapper>
-          <div className="relative group">
-            <motion.button
-              variants={themeToggleVariants}
-              whileHover="hover"
-              whileTap="tap"
-              onClick={handleThemeToggle}
-              className={
-                "p-2 rounded-lg cursor-pointer transition-colors duration-300"
-              }
-              aria-label="Toggle theme"
-            >
-              <motion.div
-                key={isDark ? "sun" : "moon"}
-                initial={{ rotate: -180, scale: 0 }}
-                animate={{ rotate: 0, scale: 1 }}
-                exit={{ rotate: 180, scale: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                  duration: 0.5,
-                }}
-              >
-                {isDark ? (
-                  <SunIcon className="h-4.5 w-4.5" />
-                ) : (
-                  <MoonIcon className="h-4.5 w-4.5" />
-                )}
-              </motion.div>
-            </motion.button>
-
-            {/* Tooltip */}
-            <div
-              className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}
-            >
-              Shift + T
-            </div>
-          </div>
-        </MagneticWrapper>
-      </div>
-
-      <div className="flex md:hidden items-center space-x-1 relative z-50">
-        <PremiumSearch blogPosts={BLOG_POSTS} />
-        <div className="relative group">
-          <motion.button
-            variants={themeToggleVariants}
-            whileHover="hover"
-            whileTap="tap"
-            onClick={handleThemeToggle}
-            className={`p-2 rounded-lg cursor-pointer transition-colors duration-300 ${
-              isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-            }`}
-            aria-label="Toggle theme"
+          <button
+            type="button"
+            aria-expanded={moreOpen}
+            aria-haspopup="true"
+            aria-controls="more-navigation-panel"
+            onClick={() => setMoreOpen(true)}
+            className="inline-flex h-10 items-center gap-1 px-2.5 text-[13px] font-medium leading-none tracking-[0.01em] text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
           >
-            <motion.div
-              key={isDark ? "sun" : "moon"}
-              initial={{ rotate: -180, scale: 0 }}
-              animate={{ rotate: 0, scale: 1 }}
-              exit={{ rotate: 180, scale: 0 }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 20,
-                duration: 0.5,
-              }}
+            <span className="leading-none">More</span>
+          </button>
+          {moreOpen && (
+            <nav
+              id="more-navigation-panel"
+              aria-label="More navigation"
+              className="animate-in fade-in slide-in-from-top-2 duration-150 fixed left-1/2 top-[54px] z-50 w-[min(48rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-neutral-200/90 bg-[#F7F7F4] p-2 shadow-xl dark:border-neutral-800 dark:bg-[#151515]"
             >
-              {isDark ? (
-                <SunIcon className="h-4 w-4" />
-              ) : (
-                <MoonIcon className="h-4 w-4" />
-              )}
-            </motion.div>
-          </motion.button>
-
-          {/* Tooltip */}
-          <div
-            className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50 ${isDark ? "bg-white/10 text-white border border-white/20 backdrop-blur-md" : "bg-black/80 text-white backdrop-blur-md"}`}
+              <div className="grid grid-cols-3 divide-x divide-neutral-200 dark:divide-neutral-800">
+                {moreGroups.map((group) => (
+                  <div key={group.label} className="min-w-0 px-3 py-2 sm:px-5">
+                    <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
+                      {group.label}
+                    </h2>
+                    <div className={group.compact ? "space-y-1" : "space-y-3"}>
+                      {group.items.map((item) => (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => goTo(item)}
+                          aria-current={isActive(item) ? "page" : undefined}
+                          className={`block w-full rounded-sm text-left transition-colors ${
+                            group.compact
+                              ? "px-2 py-1.5 text-[13px]"
+                              : "px-2 py-1.5"
+                          } ${
+                            isActive(item)
+                              ? "text-neutral-950 dark:text-white"
+                              : "text-neutral-700 hover:bg-neutral-200/50 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/5 dark:hover:text-white"
+                          }`}
+                        >
+                          <span className="block text-[13px] font-medium">
+                            {item.label}
+                          </span>
+                          {item.description && (
+                            <span className="mt-1 block max-w-[15rem] text-[12px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+                              {item.description}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </nav>
+          )}
+        </div>
+        <Suspense
+          fallback={
+            <button
+              type="button"
+              aria-label="Search"
+              disabled
+              className="ml-1 inline-flex h-9 w-9 items-center justify-center text-neutral-600 dark:text-neutral-300"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+          }
+        >
+          <PremiumSearch />
+        </Suspense>
+        <button
+          type="button"
+          onClick={handleThemeToggle}
+          aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+          aria-keyshortcuts="Shift+T"
+          title={`Switch to ${isDark ? "light" : "dark"} theme (Shift+T)`}
+          className="group relative ml-1 inline-flex h-9 w-9 items-center justify-center text-neutral-600 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-full z-[70] mt-1 whitespace-nowrap rounded-full border border-neutral-300/80 bg-[#F7F7F4] px-2.5 py-1 text-[10px] font-medium text-neutral-600 opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:border-neutral-700 dark:bg-[#171717] dark:text-neutral-200"
           >
             Shift + T
-          </div>
-        </div>
+          </span>
+        </button>
+      </div>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={toggleMobileMenu}
-          className={`p-2 rounded-lg cursor-pointer ${
-            isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-          } transition-colors duration-300`}
-          aria-label="Toggle menu"
+      <div className="flex items-center gap-1 md:hidden">
+        <Suspense
+          fallback={
+            <button
+              type="button"
+              aria-label="Search"
+              disabled
+              className="inline-flex h-9 w-9 items-center justify-center text-neutral-600 dark:text-neutral-300"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+          }
         >
-          <AnimatePresence mode="wait">
-            {isMobileMenuOpen ? (
-              <motion.div
-                key="close"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FaTimes
-                  className={`h-4 w-4 ${isDark ? "text-white" : "text-black"}`}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="menu"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FaBars
-                  className={`h-4 w-4 ${isDark ? "text-white" : "text-black"}`}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.button>
+          <PremiumSearch />
+        </Suspense>
+        <button
+          type="button"
+          onClick={handleThemeToggle}
+          aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+          aria-keyshortcuts="Shift+T"
+          title={`Switch to ${isDark ? "light" : "dark"} theme (Shift+T)`}
+          className="group relative inline-flex h-9 w-9 items-center justify-center text-neutral-600 dark:text-neutral-300"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-full z-[70] mt-1 whitespace-nowrap rounded-full border border-neutral-300/80 bg-[#F7F7F4] px-2.5 py-1 text-[10px] font-medium text-neutral-600 opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 dark:border-neutral-700 dark:bg-[#171717] dark:text-neutral-200"
+          >
+            Shift + T
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label={
+            mobileOpen ? "Close navigation menu" : "Open navigation menu"
+          }
+          aria-expanded={mobileOpen}
+          className="inline-flex h-9 w-9 items-center justify-center text-neutral-700 dark:text-neutral-200"
+        >
+          {mobileOpen ? (
+            <X className="h-4 w-4" />
+          ) : (
+            <Menu className="h-4 w-4" />
+          )}
+        </button>
       </div>
 
       {createPortal(
         <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={toggleMobileMenu}
-                className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9990] md:hidden pointer-events-auto"
+          {mobileOpen && (
+            <MotionDiv
+              className="fixed inset-0 z-[80] md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              <button
+                type="button"
+                aria-label="Close navigation menu"
+                onClick={() => setMobileOpen(false)}
+                className="absolute inset-0 bg-black/35 backdrop-blur-[2px]"
               />
-
-              {/* Full-Screen Modern Mobile Menu */}
-              <motion.div
+              <MotionSection
+                role="dialog"
+                aria-modal="true"
+                aria-label="Mobile navigation"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className={`fixed inset-x-2 bottom-2 top-20 rounded-2xl shadow-2xl z-[9991] md:hidden overflow-hidden flex flex-col pointer-events-auto ${
-                  isDark
-                    ? "bg-[#09090b] border border-white/10"
-                    : "bg-white border border-neutral-200"
-                }`}
+                transition={{ type: "spring", stiffness: 320, damping: 32 }}
+                className="absolute inset-x-3 bottom-3 flex max-h-[min(78dvh,42rem)] flex-col overflow-hidden rounded-xl border border-neutral-200 bg-[#F7F7F4] p-4 shadow-2xl dark:border-neutral-800 dark:bg-[#121212]"
               >
-                <div className="flex flex-1 flex-col justify-between overflow-y-auto p-4 sm:p-5">
-                  {/* Top Navigation Links */}
+                <header className="mb-4 flex items-center justify-between border-b border-neutral-200 pb-3 dark:border-neutral-800">
                   <div>
-                    <h3 className="mb-3 border-b border-neutral-200 px-1 pb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:border-white/10 dark:text-neutral-400">
-                      Navigation
+                    <p className="dancing-font tracking-wider text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400 dark:text-neutral-500">
+                      Menu
+                    </p>
+                    <h2 className="dancing-font tracking-wider mt-1 text-base font-bold text-neutral-950 dark:text-white">
+                      Explore DipFolio
+                    </h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileOpen(false)}
+                    aria-label="Close navigation menu"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </header>
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain space-y-5 mb-14">
+                  <div>
+                    <h3 className="dancing-font tracking-wider mb-2 text-sm font-normal text-neutral-500 dark:text-neutral-400">
+                      Main navigation
                     </h3>
-                    <div className="space-y-1.5">
-                      {mobileNavItems.map((item, index) => (
-                        <motion.button
-                          key={item.path}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.04 }}
-                          onClick={() => handleNavigation(item.path)}
-                          className={`group flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                            isActiveLink(item.path)
-                              ? isDark
-                                ? "border-white/10 bg-white/10 text-white"
-                                : "border-[#542A52]/15 bg-[#FFB39A]/20 text-[#542A52]"
-                              : isDark
-                                ? "border-transparent text-neutral-300 hover:border-white/10 hover:bg-white/5 hover:text-white"
-                                : "border-transparent text-neutral-700 hover:border-neutral-200 hover:bg-neutral-50 hover:text-[#542A52]"
-                          }`}
-                        >
-                          <span className="flex items-center gap-3">
-                            <span
-                              className={`flex h-9 w-9 items-center justify-center rounded-md border ${
-                                isActiveLink(item.path)
-                                  ? isDark
-                                    ? "border-white/10 bg-white/10"
-                                    : "border-[#542A52]/10 bg-white"
-                                  : isDark
-                                    ? "border-white/10 bg-white/5"
-                                    : "border-neutral-200 bg-white"
-                              }`}
-                            >
-                              <item.icon className="h-4 w-4" />
-                            </span>
-                            <span className="text-sm font-medium">{item.name}</span>
-                          </span>
-                          {isActiveLink(item.path) && (
-                            <ArrowRight className="h-4 w-4 opacity-60" />
-                          )}
-                        </motion.button>
-                      ))}
+                    <div className="grid grid-cols-2 gap-2">
+                      {primaryLinks.map((item) => renderLink(item, true))}
                     </div>
                   </div>
-
-                  {/* Bottom Actions */}
-                  <div className="mt-6 flex flex-col gap-4 border-t border-neutral-200 pt-4 dark:border-white/10">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex items-center gap-2"
-                    >
-                      <a
-                        href="https://github.com/Dipankar-source/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub profile"
-                        className={`flex h-10 w-10 items-center justify-center rounded-md border transition-colors ${isDark ? "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white" : "border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-[#542A52]"}`}
-                      >
-                        <FaGithub className="h-5 w-5" />
-                      </a>
-                      <a
-                        href="https://linkedin.com/in/dipankarbarik"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="LinkedIn profile"
-                        className={`flex h-10 w-10 items-center justify-center rounded-md border transition-colors ${isDark ? "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white" : "border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-[#542A52]"}`}
-                      >
-                        <FaLinkedin className="h-5 w-5" />
-                      </a>
-                      <a
-                        href="https://twitter.com/_dipankarsource"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="X profile"
-                        className={`flex h-10 w-10 items-center justify-center rounded-md border transition-colors ${isDark ? "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white" : "border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-[#542A52]"}`}
-                      >
-                        <FaTwitter className="h-5 w-5" />
-                      </a>
-                    </motion.div>
-
-                    <motion.button
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      onClick={() => window.open("/Resume_Portfolio.pdf")}
-                      className={`flex h-11 w-full items-center justify-center gap-2 rounded-lg border text-sm font-semibold transition-colors ${
-                        isDark ? "bg-white text-black" : "bg-black text-white"
-                      }`}
-                    >
-                      <Download className="h-5 w-5" /> Download Resume
-                    </motion.button>
+                  <div>
+                    <h3 className="dancing-font mb-2 text-[10px] font-semibold uppercase tracking-[0.13em] text-neutral-400 dark:text-neutral-500">
+                      More to explore
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {mobileMoreLinks.map((item) => renderLink(item, true))}
+                    </div>
                   </div>
                 </div>
-              </motion.div>
-            </>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-linear-to-t from-[#F7F7F4]/95 to-transparent backdrop-blur-[6px] mask-[linear-gradient(to_top,#000_15%,transparent)] dark:from-[#121212]/95"
+                />
+              </MotionSection>
+            </MotionDiv>
           )}
         </AnimatePresence>,
         document.body,
       )}
-
-      <div className="absolute inset-1 z-10">
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className={`absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm ${
-            isDark ? "opacity-100" : "opacity-30"
-          }`}
-        />
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-          className={`absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4 ${
-            isDark ? "opacity-100" : "opacity-40"
-          }`}
-        />
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className={`absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm ${
-            isDark ? "opacity-100" : "opacity-30"
-          }`}
-        />
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className={`absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4 ${
-            isDark ? "opacity-100" : "opacity-40"
-          }`}
-        />
-      </div>
-    </motion.nav>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-full z-[2] w-screen -translate-x-1/2 border-t border-dashed border-neutral-300/80 dark:border-neutral-800"
+      />
+    </nav>
   );
 };
 

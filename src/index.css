@@ -4,6 +4,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+::selection {
+  color: var(--contact-text);
+  background-color: var(--beech);
+}
+
+.dark ::selection {
+  color: var(--contact-text);
+  background-color: var(--palm);
+}
+
 @theme inline {
   --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
   --color-border: var(--border);
@@ -57,6 +67,40 @@ html.theme-wipe-to-light::after {
   html.theme-wipe::after {
     animation-duration: 1ms;
   }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .testimonial-marquee-track {
+    animation: none !important;
+  }
+}
+
+@keyframes testimonial-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-marquee-track {
+  animation: testimonial-marquee 26s linear infinite;
+  will-change: transform;
+}
+
+.testimonial-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+img,
+video {
+  content-visibility: auto;
 }
 
 @theme inline {
@@ -119,7 +163,7 @@ html.theme-wipe-to-light::after {
   --radius: 0.625rem;
   --palm: #542A52;
   --beech: #FFB39A;
-  --contact-bg: #ffffff;
+  --contact-bg: #F7F7F4;
   --contact-text: #18181b;
   --contact-muted: #71717a;
   --contact-border: #e4e4e7;
@@ -205,9 +249,46 @@ html.theme-wipe-to-light::after {
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
-.dipfolio-font {
-  font-family: 'Playfair Display', serif;
+@font-face {
+  font-family: "Aktura";
+  src: url("./assets/fonts/Aktura-Regular.otf") format("opentype");
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dancing Script";
+  src: url("./assets/fonts/dancing/DancingScript-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dancing Script";
+  src: url("./assets/fonts/dancing/DancingScript-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.aktura-font {
+  font-family: "Aktura", serif;
+}
+
+.dancing-font {
+  font-family: "Dancing Script", cursive;
+}
+
+.dipfolio-font {
+  font-family: 'Libre Caslon Condensed', serif;
+  font-weight: 400;
+}
+
+.display-font {
+  font-family: 'Libre Caslon Condensed', serif;
+  font-weight: 500;
 }
 
 .body-font {
@@ -225,4 +306,14 @@ html.theme-wipe-to-light::after {
 }
 ::-webkit-scrollbar{
   width: 1px;
+}
+  #carbonads #carbon-responsive {
+    --carbon-padding: calc(var(--spacing) * 3);
+    --carbon-bg-primary: color-mix(in oklab, var(--muted) 50%, var(--background));
+    --carbon-bg-secondary: var(--border);
+    --carbon-text-color: var(--foreground);
+    @apply gap-2 font-sans;
+}
+  #carbonads #carbon-responsive .carbon-poweredby {
+    @apply text-xs text-muted-foreground/80 opacity-100;
 }
