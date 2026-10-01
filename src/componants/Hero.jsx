@@ -154,12 +154,12 @@ const Hero = () => {
         />
       </div>
 
-      <div className="relative flex min-h-[130px] items-center gap-6 px-5 py-5 sm:gap-7 sm:px-[26px]">
+      <div className="relative flex min-h-[130px] items-center gap-6 px-4 py-5 sm:gap-7 sm:px-[26px]">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-1/2 w-screen -translate-x-1/2 border-t border-dashed border-neutral-300/70 dark:border-neutral-800"
         />
-        <div className="relative size-[104px] shrink-0 overflow-hidden rounded-[14px] border-[5px] border-neutral-300 bg-[#FFB39A] dark:bg-[#542A52] sm:size-25">
+        <div className="relative size-[87px] sm:size-[104px] shrink-0 overflow-hidden rounded-[14px] border-[5px] border-neutral-300 bg-[#FFB39A] dark:bg-[#542A52]">
           {profileIndex === 2 ? (
             <video
               src={assets.Profile}
@@ -192,13 +192,34 @@ const Hero = () => {
           </button>
         </div>
 
-        <div className="min-w-0">
-          <h1
-            id="profile-name"
-            className="aktura-font text-[18px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px] mt-1"
-          >
-            Dipankar <span className="hidden md:inline-block">Barik</span>
-          </h1>
+        <div className="w-full">
+          <div className="w-full flex items-center justify-between">
+            <h1
+              id="profile-name"
+              className="aktura-font flex text-[31px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px] mt-1"
+            >
+              Dipankar <span className="hidden md:inline-block">Barik</span>
+            </h1>
+            <button
+              type="button"
+              onClick={handleLike}
+              disabled={isLiking}
+              aria-pressed={isLiked}
+              aria-label={`${isLiked ? "Unlike" : "Like"} this portfolio${likeCount === null ? "" : `. ${likeCount} likes`}`}
+              title={isLiked ? "Unlike this portfolio" : "Like this portfolio"}
+              className=" inline-flex min-h-9 shrink-0 items-center  gap-1.5 rounded-md px-2 text-neutral-500 transition-colors  hover:text-rose-600 disabled:cursor-wait disabled:opacity-60 dark:text-neutral-400  dark:hover:text-rose-400"
+            >
+              <Heart
+                className={`size-[13px] sm:size-[18px] transition-[color,transform] duration-200 ${
+                  isLiked ? "scale-110 fill-rose-500 text-rose-500" : ""
+                }`}
+                aria-hidden="true"
+              />
+              <span className="min-w-[2ch] text-xs font-medium tabular-nums">
+                {likeCount === null ? "..." : likeCount.toLocaleString()}
+              </span>
+            </button>
+          </div>
           <p className="dancing-font mt-1 text-[9px] font-semibold tracking-[0.05em] text-neutral-700 sm:text-[20px] dark:text-stone-500">
             I'm{" "}
             <FlipWords
@@ -231,25 +252,6 @@ const Hero = () => {
           </nav>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLike}
-          disabled={isLiking}
-          aria-pressed={isLiked}
-          aria-label={`${isLiked ? "Unlike" : "Like"} this portfolio${likeCount === null ? "" : `. ${likeCount} likes`}`}
-          title={isLiked ? "Unlike this portfolio" : "Like this portfolio"}
-          className="ml-auto max-w-15 inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md px-2 text-neutral-500 transition-colors  hover:text-rose-600 disabled:cursor-wait disabled:opacity-60 dark:text-neutral-400  dark:hover:text-rose-400"
-        >
-          <Heart
-            className={`size-[18px] transition-[color,transform] duration-200 ${
-              isLiked ? "scale-110 fill-rose-500 text-rose-500" : ""
-            }`}
-            aria-hidden="true"
-          />
-          <span className="min-w-[2ch] text-xs font-medium tabular-nums">
-            {likeCount === null ? "..." : likeCount.toLocaleString()}
-          </span>
-        </button>
         <span
           aria-hidden="true"
           className="pointer-events-none absolute bottom-0 left-1/2 w-screen -translate-x-1/2 border-b border-dashed border-neutral-300/70 dark:border-neutral-800"
