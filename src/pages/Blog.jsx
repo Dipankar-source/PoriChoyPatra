@@ -7,7 +7,6 @@ import {
   Search,
 } from "lucide-react";
 import assets from "@/assets/assets";
-import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 import { useTheme } from "@/context/ThemeContext";
@@ -138,7 +137,6 @@ const Blog = () => {
     <div
       className={`min-h-screen transition-all duration-300 ease-in-out overflow-x-hidden ${bgMain} ${textColor} font-sans`}
     >
-      {/* <CustomMouseFollower className="hidden lg:block" /> */}
 
       <div className={`lg:mx-92 ${bgMain}`}>
         <div className="fixed top-0 left-0 right-0 z-50 lg:ml-92 lg:mr-92">

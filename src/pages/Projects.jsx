@@ -9,11 +9,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/context/ThemeContext";
 import { ArrowUpRight, Github, ExternalLink, Search } from "lucide-react";
-import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import Navbar from "@/componants/Navbar";
 import assets from "@/assets/assets";
 import Footer from "@/componants/Footer";
-import PremiumSort from "@/uicomponents/dropdown/premium-sort";
 
 const PROJECTS = [
   {
@@ -743,7 +741,6 @@ const Projects = () => {
       <div
         className={`min-h-screen transition-all duration-300 overflow-x-hidden ${bgMain} ${textColor} font-sans`}
       >
-        {/* <CustomMouseFollower className="hidden lg:block" /> */}
 
         <div className={`lg:mx-92 ${bgMain}`}>
           <div className="fixed top-0 left-0 right-0 z-50 lg:ml-92 lg:mr-92">

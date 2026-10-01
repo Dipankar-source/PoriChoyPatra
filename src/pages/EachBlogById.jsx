@@ -19,7 +19,6 @@ import { useTheme } from "@/context/ThemeContext";
 import assets from "@/assets/assets";
 
 // Components
-import CustomMouseFollower from "@/componants/CustomMouseFollower";
 import FooterSystem from "@/componants/Footer";
 import Navbar from "@/componants/Navbar";
 
@@ -506,7 +505,6 @@ const EachBlogById = () => {
     <div
       className={`min-h-screen transition-colors duration-300 ease-in-out overflow-x-hidden  ${bgMain} ${textColor} font-sans`}
     >
-      {/* <CustomMouseFollower className="hidden lg:block" /> */}
 
       <div
         className={`lg:mx-92 ${bgMain} min-h-screen flex flex-col border-1 ${borderColor}`}
