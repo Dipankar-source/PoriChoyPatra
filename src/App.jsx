@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import { LoaderOverlay } from "@/components/ui/loader";
 
+
 const PageViewTracker = lazy(() => import("@/components/PageViewTracker"));
 const GoogleAdSlot = lazy(() =>
   import("@/components/google-ads").then((module) => ({
@@ -16,10 +17,11 @@ const googleAdSlot = import.meta.env.VITE_GOOGLE_ADS_SLOT || "8636273498";
 const Home = lazy(() => import("./pages/Home"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Projects = lazy(() => import("./pages/Projects"));
+const BlogWritting = lazy(() => import("./pages/BlogWritting"));
 const Contact = lazy(() => import("./componants/Contact"));
 const EachBlogById = lazy(() => import("./pages/EachBlogById"));
 
-const GlobalLoader = () => <LoaderOverlay messages="Loading..." />;
+const GlobalLoader = () => <LoaderOverlay messages="Here you go..." />;
 
 const App = () => {
   const { pathname } = useLocation();
@@ -51,6 +53,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/blog-writing" element={<BlogWritting />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog/:id" element={<EachBlogById />} />
           </Routes>

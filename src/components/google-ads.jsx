@@ -6,6 +6,7 @@ const ADSENSE_CLIENT = "ca-pub-5444056349971184";
 
 export function GoogleAdSlot({
   slot = import.meta.env.VITE_GOOGLE_ADS_SLOT,
+  placement = "floating",
   className,
 }) {
   const adRef = useRef(null);
@@ -66,23 +67,44 @@ export function GoogleAdSlot({
     <aside
       aria-label="Advertisement"
       className={cn(
-          "fixed bottom-4 right-4 z-[60] w-[min(17rem,calc(100vw-2rem))] overflow-hidden rounded-md border border-border bg-background/95 p-2.5 shadow-lg backdrop-blur-sm",
+        placement === "inline"
+          ? "relative block w-full overflow-hidden rounded-none border-0 bg-transparent p-0 shadow-none backdrop-blur-none md:hidden"
+          : "hidden md:fixed md:bottom-4 md:right-4 md:z-[60] md:block md:w-[min(17rem,calc(100vw-2rem))] md:overflow-hidden md:rounded-md md:border md:border-border md:bg-background/95 md:p-2.5 md:shadow-lg md:backdrop-blur-sm",
         className,
       )}
     >
-      <div className="mb-2 flex items-center justify-between pr-8">
+      <div
+        className={cn(
+          "flex items-center",
+          placement === "inline"
+            ? "justify-between border-b border-dashed border-border/70 px-3 py-2.5"
+            : "mb-2 justify-between pr-8",
+        )}
+      >
         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Sponsored
         </span>
-        <button
-          type="button"
-          onClick={() => setDismissed(true)}
-          aria-label="Close advertisement"
-          title="Close advertisement"
-            className="absolute right-1 top-1 z-[61] flex h-6 w-6 items-center justify-center rounded-sm bg-background/90 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-            <X className="h-3.5 w-3.5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {placement === "inline" && (
+            <span className="border border-border/70 px-1.5 py-0.5 font-mono text-[9px] leading-none text-muted-foreground">
+              AD
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => setDismissed(true)}
+            aria-label="Close advertisement"
+            title="Close advertisement"
+            className={cn(
+              "flex items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+              placement === "inline"
+                ? "size-7 rounded-sm"
+                : "absolute right-1 top-1 z-[61] size-6 rounded-sm bg-background/90",
+            )}
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
       </div>
 
       <div className="relative min-h-24">
@@ -98,13 +120,34 @@ export function GoogleAdSlot({
           />
         )}
         {showPlaceholder && (
-            <div className="pointer-events-none absolute inset-0 flex items-center gap-2 bg-background">
-            <div className="h-11 w-11 shrink-0 rounded-sm bg-muted" />
-            <div className="min-w-0 flex-1 space-y-1.5">
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-0 flex items-center bg-background",
+              placement === "inline" ? "gap-3 px-3 py-3" : "gap-2",
+            )}
+          >
+            <div
+              className={cn(
+                "shrink-0 bg-muted",
+                placement === "inline" ? "size-16 rounded-sm" : "size-11 rounded-sm",
+              )}
+            />
+            <div className="min-w-0 flex-1 space-y-2">
               <div className="h-2.5 w-3/4 rounded-sm bg-muted" />
               <div className="h-2 w-full rounded-sm bg-muted/70" />
               <div className="h-2 w-2/3 rounded-sm bg-muted/70" />
-              <p className="pt-1 text-[10px] text-muted-foreground">{placeholderText}</p>
+              {placement === "inline" ? (
+                <div className="flex items-center justify-between gap-2 pt-0.5">
+                  <p className="truncate text-[10px] leading-none text-muted-foreground">
+                    {placeholderText}
+                  </p>
+                  <div className="h-5 w-14 shrink-0 rounded-sm bg-muted/80" />
+                </div>
+              ) : (
+                <p className="pt-1 text-[10px] text-muted-foreground">
+                  {placeholderText}
+                </p>
+              )}
             </div>
           </div>
         )}

@@ -365,12 +365,11 @@ const GitHubStats = () => {
     const skeletonMonths = isMobile ? 5 : 12;
 
     return (
-      <div className="w-full px-2 sm:px-4 mt-3 sm:mt-4">
+      <div className="w-full px-4 sm:px-4 mt-4 sm:mt-4">
         <GridSectionHeader>
           <p className="aktura-font tracking-wider text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 dark:text-white">
             <ScrollFountain particleCount={25}>GitHub</ScrollFountain>
           </p>
-          <p className="text-sm italic tracking-wider">How do I learn?</p>
         </GridSectionHeader>
 
         <div className="w-full rounded-md  min-h-[100px] sm:min-h-[120px]">
@@ -473,7 +472,7 @@ const GitHubStats = () => {
         <PageGridLines section sectionOffset={27} />
 
         <GridSectionHeader >
-          <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-9 mb-3">
+          <p className="aktura-font tracking-wider text-[28px] leading-tight text-neutral-950 dark:text-neutral-50 mt-10 mb-3">
             GitHub
           </p>
         </GridSectionHeader>

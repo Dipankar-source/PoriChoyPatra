@@ -174,7 +174,7 @@ const Trace = ({ d, color, node, timing, speed, reduced }) => {
 
 /* ------------------------------ Chip -------------------------------------- */
 
-const Chip = ({ gradId, palette, text, index, reduced }) => (
+const Chip = ({ gradId, palette, reduced }) => (
   <g>
     {[CHIP.x - PIN.w + 1, CHIP.x + CHIP.w - 1].flatMap((x) =>
       PIN_Y.map((y) => (
@@ -232,28 +232,6 @@ const Chip = ({ gradId, palette, text, index, reduced }) => (
       }}
     />
 
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.text
-        key={index}
-        x={CHIP.x + CHIP.w / 2}
-        y={CHIP.y + CHIP.h / 2}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="#d4d4d8"
-        fontSize="15"
-        fontWeight="500"
-        style={{
-          fontFamily:
-            "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif",
-        }}
-        initial={{ opacity: 0, y: CHIP.y + CHIP.h / 2 + 6 }}
-        animate={{ opacity: 1, y: CHIP.y + CHIP.h / 2 }}
-        exit={{ opacity: 0, y: CHIP.y + CHIP.h / 2 - 6 }}
-        transition={{ duration: 0.3 }}
-      >
-        {text}
-      </motion.text>
-    </AnimatePresence>
   </g>
 );
 
@@ -275,7 +253,7 @@ export const Loader = ({
     <div
       role="status"
       aria-live="polite"
-      className={cn("max-w-full", SIZES[size] ?? SIZES.md, className)}
+      className={cn("relative max-w-full", SIZES[size] ?? SIZES.md, className)}
     >
       <svg
         viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
@@ -304,12 +282,22 @@ export const Loader = ({
         <Chip
           gradId={gradId}
           palette={palette}
-          text={text}
-          index={index}
           reduced={reduced}
         />
       </svg>
-      <span className="sr-only">{list[0]}</span>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={index}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm font-medium text-zinc-300"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.3 }}
+        >
+          {text}
+        </motion.span>
+      </AnimatePresence>
+      <span className="sr-only">{text}</span>
     </div>
   );
 };

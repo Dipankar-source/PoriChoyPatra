@@ -50,7 +50,7 @@ const FooterSystem = () => {
   };
 
   return (
-    <footer className="dipfolio-font w-full border-t border-neutral-100 bg-[#F7F7F4] pt-6 pb-20 transition-colors duration-300 dark:border-white/5 dark:bg-[#0F0F0F]">
+    <footer className="dipfolio-font w-full bg-[#F7F7F4] pt-6 pb-20 transition-colors duration-300 dark:border-white/5 dark:bg-[#0F0F0F]">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 md:flex-row">
         <div className="hidden items-center gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 sm:text-sm md:flex">
           <div className="group flex cursor-help items-center gap-2">

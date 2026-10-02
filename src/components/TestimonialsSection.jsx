@@ -74,7 +74,7 @@ const TestimonialsSection = () => {
 
   return (
     <section
-      className="relative w-full px-4 py-6 sm:px-0 sm:py-7"
+      className="relative w-full px-4 py-6 sm:px-4 sm:py-7"
       aria-labelledby="testimonials-heading"
     >
 

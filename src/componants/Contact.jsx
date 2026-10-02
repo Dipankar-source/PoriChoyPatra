@@ -1,32 +1,20 @@
-import React, { useState, useEffect } from "react";
-// distinct imports assuming you have these icons installed via lucide-react
+import { useState } from "react";
 import {
-  Copy,
+  ArrowUpRight,
   Check,
-  Send,
-  Mail,
-  MapPin,
-  Phone,
+  ChevronDown,
+  Copy,
   Github,
   Linkedin,
-  Twitter,
   Loader2,
+  Mail,
+  MapPin,
+  MessageSquareText,
+  Phone,
+  Send,
+  Twitter,
 } from "lucide-react";
-
-// Assuming these are your existing components.
-// If you are using standard React, ensure paths are correct.
-import FooterSystem from "@/componants/Footer";
-import Navbar from "@/componants/Navbar";
-import { useTheme } from "@/context/ThemeContext";
-import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
-
-const PALM_BEECH_SHADER_COLORS = [
-  [84, 42, 82],
-  [255, 179, 154],
-];
-const CONTACT_SHADER_OPACITIES = [
-  0.04, 0.05, 0.06, 0.07, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18,
-];
+import PageFrame, { BackBar, DASH, HLine, Hatch } from "@/components/PageFrame";
 
 const SOCIALS = [
   {
@@ -49,424 +37,417 @@ const SOCIALS = [
   },
 ];
 
-const CONTACT_METHODS = [
+const DETAILS = [
   {
-    icon: Mail,
-    title: "Email",
+    key: "email",
+    label: "Email",
     value: "dipankarbarik2002@gmail.com",
-    description: "For direct communication",
+    icon: Mail,
+    copyable: true,
   },
   {
-    icon: MapPin,
-    title: "Location",
-    value: "West Bengal, India",
-    description: "Based in Kolkata",
-  },
-  {
-    icon: Phone,
-    title: "Phone",
+    key: "phone",
+    label: "Phone",
     value: "+91 97331324__",
-    description: "Available for calls",
+    icon: Phone,
+    copyable: true,
+  },
+  {
+    key: "location",
+    label: "Location",
+    value: "Barasat, West Bengal, India",
+    icon: MapPin,
+    copyable: false,
   },
 ];
 
+const LOCATION_COORDINATES = { latitude: 22.7314985, longitude: 88.4884966 };
+
+const getLocationMapUrls = ({ latitude, longitude }) => {
+  if (
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude) ||
+    Math.abs(latitude) > 90 ||
+    Math.abs(longitude) > 180
+  ) {
+    return null;
+  }
+
+  return {
+    embed: `https://maps.google.com/maps?q=${latitude}%2C${longitude}&z=15&output=embed`,
+    external: `https://www.google.com/maps/search/?api=1&query=${latitude}%2C${longitude}`,
+  };
+};
+
+const FIELD =
+  "w-full rounded-lg border border-neutral-300/80 bg-transparent px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-500 focus:border-emerald-500 dark:border-neutral-800";
+
+const Field = ({ label, name, children }) => (
+  <div className="space-y-2">
+    <label
+      htmlFor={name}
+      className="block font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400"
+    >
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
+const DetailRow = ({ item, copied, onCopy, locationOpen, onToggleLocation }) => {
+  const Icon = item.icon;
+  const isLocation = item.key === "location";
+  const mapUrls = isLocation ? getLocationMapUrls(LOCATION_COORDINATES) : null;
+  const content = (
+    <>
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <Icon
+          className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+          aria-hidden="true"
+        />
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-4">
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400 sm:w-24 sm:shrink-0">
+            {item.label}
+          </span>
+          <span className="min-w-0 truncate text-base text-neutral-900 dark:text-neutral-100">
+            {item.value}
+          </span>
+        </div>
+      </div>
+      {item.copyable && (
+        <span
+          className="shrink-0 text-neutral-500 dark:text-neutral-400"
+          aria-live="polite"
+        >
+          {copied ? (
+            <span className="inline-flex items-center gap-1 font-mono text-xs text-emerald-600 dark:text-emerald-400">
+              <Check className="size-3.5" aria-hidden="true" /> Copied
+            </span>
+          ) : (
+            <Copy
+              className="size-4 transition-colors group-hover:text-neutral-950 dark:group-hover:text-white"
+              aria-hidden="true"
+            />
+          )}
+        </span>
+      )}
+    </>
+  );
+
+  return (
+    <div className="relative">
+      {item.copyable ? (
+        <button
+          type="button"
+          onClick={() => onCopy(item)}
+          aria-label={`Copy ${item.label.toLowerCase()}`}
+          className="group flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors duration-300 hover:bg-neutral-200/30 dark:hover:bg-white/[0.03] sm:px-6"
+        >
+          {content}
+        </button>
+      ) : isLocation ? (
+        <>
+          <button
+            type="button"
+            onClick={onToggleLocation}
+            aria-expanded={locationOpen}
+            aria-controls="contact-location-map"
+            className="group flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors duration-300 hover:bg-neutral-200/30 dark:hover:bg-white/[0.03] sm:px-6"
+          >
+            {content}
+            <ChevronDown
+              className={`size-4 shrink-0 text-neutral-500 transition-transform ${locationOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+          {locationOpen && (
+            <div
+              id="contact-location-map"
+              className="px-4 pb-4 sm:px-6"
+            >
+              {mapUrls ? (
+                <div className="overflow-hidden rounded-md border border-dashed border-neutral-300/80 dark:border-neutral-800">
+                  <iframe
+                    title={`Map of ${item.value}`}
+                    src={mapUrls.embed}
+                    loading="lazy"
+                    className="block h-64 w-full border-0"
+                  />
+                  <a
+                    href={mapUrls.external}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between border-t border-dashed border-neutral-300/80 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-neutral-950 dark:border-neutral-800 dark:hover:text-white"
+                  >
+                    Open map
+                    <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                  </a>
+                </div>
+              ) : (
+                <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed border-neutral-300/80 bg-neutral-100/60 px-5 text-center dark:border-neutral-800 dark:bg-white/[0.02]">
+                  <p className="max-w-sm text-sm text-neutral-500 dark:text-neutral-400">
+                    Add your latitude and longitude in the location coordinates near the top of Contact.jsx to load the map.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          {content}
+        </div>
+      )}
+      <HLine className="bottom-0" />
+    </div>
+  );
+};
+
 const Contact = () => {
-  const { isDark } = useTheme();
-  const [isClient, setIsClient] = useState(false);
   const [copied, setCopied] = useState("");
-  const [formData, setFormData] = useState({
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
     message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState("");
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState("");
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Theme constants
-  const theme = {
-    bg: "bg-[var(--contact-bg)]",
-    text: "text-[var(--contact-text)]",
-    subText: "text-[var(--contact-muted)]",
-    border: "border-[var(--contact-border)]",
-    cardBg: "bg-[var(--contact-surface)]",
-    inputBg: "bg-[var(--contact-input)]",
-    separatorBg: "bg-[var(--contact-separator)]",
-    accent: "text-[var(--contact-accent)]",
+  const handleCopy = async (item) => {
+    try {
+      await navigator.clipboard.writeText(item.value);
+      setCopied(item.key);
+      setTimeout(() => setCopied(""), 2000);
+    } catch {
+      /* clipboard blocked: ignore */
+    }
   };
 
-  const handleCopy = (text, type) => {
-    navigator.clipboard.writeText(text);
-    setCopied(type);
-    setTimeout(() => setCopied(""), 2000);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus("");
-
+    setSending(true);
+    setStatus("");
     try {
-      const response = await fetch("https://formspree.io/f/xvgeykek", {
+      const res = await fetch("https://formspree.io/f/xvgeykek", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          message: formData.message,
-          _replyto: formData.email,
-          _subject: `Portfolio Inquiry: ${formData.firstName}`,
+          ...form,
+          _replyto: form.email,
+          _subject: `Portfolio Inquiry: ${form.firstName}`,
         }),
       });
-
-      if (response.ok) {
-        setSubmitStatus("success");
-        setFormData({ firstName: "", lastName: "", email: "", message: "" });
+      if (res.ok) {
+        setStatus("success");
+        setForm({ firstName: "", lastName: "", email: "", message: "" });
       } else {
-        setSubmitStatus("error");
+        setStatus("error");
       }
-    } catch (error) {
-      setSubmitStatus("error");
+    } catch {
+      setStatus("error");
     } finally {
-      setIsSubmitting(false);
+      setSending(false);
     }
   };
 
-  if (!isClient) return null; // Or a simple loader
-
   return (
-    <div
-      className={`min-h-screen font-sans selection:bg-(--beech) selection:text-(--palm) ${theme.bg} ${theme.text}`}
-    >
-      {/* Navbar Wrapper to match strict margin constraints if needed, 
-          though usually Navbars are full width. Keeping logic as requested. */}
-      <div className={`fixed top-0 left-0 right-0 z-50 ${theme.bg}`}>
-        <div className="lg:mx-92 border-x border-transparent">
-          <Navbar />
-        </div>
-      </div>
+    <PageFrame>
+      <BackBar to="/" label="Home" />
 
-      <div
-        className={`lg:mx-92 border-x ${theme.border} min-h-screen flex flex-col pt-20`}
+      {/* Title */}
+      <header className="relative px-4 pb-6 pt-6 sm:px-6">
+        <h1 className="aktura-font text-[44px] leading-none tracking-wider sm:text-[56px]">
+          Contact
+        </h1>
+        <p className="mt-2 dancing-font max-w-[56ch] text-2xl text-neutral-500 dark:text-neutral-400">
+          Have a project in mind or just want to chat? I'm open to new
+          opportunities and collaborations.
+        </p>
+
+        <HLine className="bottom-0" />
+      </header>
+
+      {/* Details */}
+      <section aria-label="Contact details">
+        {DETAILS.map((item) => (
+          <DetailRow
+            key={item.key}
+            item={item}
+            copied={copied === item.key}
+            onCopy={handleCopy}
+            locationOpen={locationOpen}
+            onToggleLocation={() => setLocationOpen((open) => !open)}
+          />
+        ))}
+      </section>
+
+      {/* Socials */}
+      <section
+        aria-label="Socials"
+        className="relative grid grid-cols-1 sm:grid-cols-3"
       >
-        {/* Hero / Header */}
-        <div
-          className={`relative isolate overflow-hidden border-b px-8 py-12 md:py-16 ${theme.border}`}
-        >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--contact-accent-soft),transparent_70%)]" />
-          <div className="pointer-events-none absolute inset-0 opacity-40">
-            <CanvasRevealEffect
-              animationSpeed={0.2}
-              colors={PALM_BEECH_SHADER_COLORS}
-              opacities={CONTACT_SHADER_OPACITIES}
-              dotSize={2.5}
-              showGradient={false}
-              containerClassName="!absolute !inset-0 !bg-transparent"
-            />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 relative z-10">
-            Let's build{" "}
-            <span className={theme.accent}>something iconic.</span>
-          </h1>
-          <p
-            className={`text-lg md:text-xl font-light ${theme.subText} max-w-4xl relative z-10`}
+        {SOCIALS.map(({ name, link, handle, icon: Icon }) => (
+          <a
+            key={name}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`group flex items-center justify-between gap-3 border-b px-4 py-5 transition-colors duration-300 last:border-0 hover:bg-neutral-200/30 dark:hover:bg-white/[0.03] sm:border-b-0 sm:border-r sm:px-6 ${DASH}`}
           >
-            Have a project in mind or just want to chat? I'm currently open to
-            new opportunities and collaborations.
+            <span className="flex min-w-0 items-center gap-3">
+              <Icon
+                className="size-5 shrink-0 text-neutral-500 transition-colors group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
+                aria-hidden="true"
+              />
+              <span className="min-w-0">
+                <span className="block text-sm font-medium">{name}</span>
+                <span className="block truncate font-mono text-xs text-neutral-500 dark:text-neutral-400">
+                  {handle}
+                </span>
+              </span>
+            </span>
+            <ArrowUpRight
+              className="size-4 shrink-0 -translate-x-1 text-neutral-500 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+              aria-hidden="true"
+            />
+          </a>
+        ))}
+        <HLine className="bottom-0" />
+      </section>
+
+      {/* Form */}
+      <section aria-label="Send a message" className="relative">
+        <div className="flex flex-col items-center gap-2 px-4 py-8 text-center sm:py-4">
+          <h2 className="text-xl dispay-font tracking-tight">
+            Send a message
+          </h2>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            I'll get back to you within 24 hours.
           </p>
         </div>
+          <HLine className="bottom-[452px]" />
 
-        {/* Main Split Layout */}
-        <main className="flex flex-col xl:flex-row flex-1 relative">
-          {/* LEFT COLUMN: Contact Info */}
-          <div className="w-full xl:w-1/2 p-6 md:p-10 space-y-10">
-            {/* Direct Contact Cards */}
-            <div className="space-y-4">
-              <h3 className={`text-xs font-bold tracking-widest uppercase ${theme.accent} mb-6`}>
-                // Contact Details
-              </h3>
-              {CONTACT_METHODS.map((method) => (
-                <div
-                  key={method.title}
-                  onClick={() =>
-                    handleCopy(method.value, method.title.toLowerCase())
-                  }
-                  className={`group relative overflow-hidden rounded-xl border p-4 ${theme.border} ${theme.cardBg} cursor-pointer transition-colors duration-200 hover:border-(--contact-accent)`}
+        <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 md:py-8">
+          {status === "success" ? (
+            <div
+              className={`flex flex-col items-start gap-3 border border-dashed p-6 ${DASH}`}
+              role="status"
+            >
+              <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <Check className="size-5" aria-hidden="true" />
+              </span>
+              <h3 className="text-lg font-semibold">Message sent</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                Thank you. I'll be in touch soon.
+              </p>
+              <button
+                type="button"
+                onClick={() => setStatus("")}
+                className="text-sm text-emerald-600 underline underline-offset-4 dark:text-emerald-400"
+              >
+                Send another message
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <Field label="First name" name="firstName">
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    placeholder="John"
+                    required
+                    autoComplete="given-name"
+                    className={FIELD}
+                  />
+                </Field>
+                <Field label="Last name" name="lastName">
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    placeholder="Doe"
+                    required
+                    autoComplete="family-name"
+                    className={FIELD}
+                  />
+                </Field>
+              </div>
+
+              <Field label="Email" name="email">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="john@company.com"
+                  required
+                  autoComplete="email"
+                  className={FIELD}
+                />
+              </Field>
+
+              <Field label="Message" name="message">
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={5}
+                  value={form.message}
+                  onChange={handleChange}
+                  placeholder="Tell me about your project…"
+                  required
+                  className={`${FIELD} resize-none`}
+                />
+              </Field>
+
+              {status === "error" && (
+                <p
+                  role="alert"
+                  className="rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500"
                 >
-                  <div className="flex items-center gap-4 relative z-10">
-                    <div
-                      className="rounded-lg bg-(--contact-accent-soft) p-3 text-(--contact-accent)"
-                    >
-                      <method.icon size={20} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm font-medium ${theme.subText} mb-0.5`}
-                      >
-                        {method.title}
-                      </p>
-                      <p className="text-base font-semibold truncate pr-4">
-                        {method.value}
-                      </p>
-                    </div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md border border-(--contact-border) bg-transparent transition-colors group-hover:border-(--contact-accent) group-hover:bg-(--contact-accent)">
-                      {copied === method.title.toLowerCase() ? (
-                        <Check
-                          size={14}
-                          className="text-(--contact-accent) group-hover:text-(--contact-accent-foreground)"
-                        />
-                      ) : (
-                        <Copy
-                          size={14}
-                          className={`${theme.subText} group-hover:text-(--contact-accent-foreground)`}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Social Grid */}
-            <div>
-              <h3 className={`text-xs font-bold tracking-widest uppercase ${theme.accent} mb-6`}>
-                // Socials
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {SOCIALS.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group flex flex-col items-center justify-center rounded-xl border p-5 ${theme.border} ${theme.cardBg} transition-colors duration-200 hover:border-(--contact-accent) hover:bg-(--contact-accent-soft)`}
-                  >
-                    <social.icon
-                      className="mb-3 h-6 w-6 text-(--contact-accent) transition-transform group-hover:scale-110"
-                    />
-                    <span className="text-sm font-medium">{social.name}</span>
-
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* MIDDLE SEPARATOR (Strict Requirement) */}
-          {/* Vertical on Desktop */}
-          <div
-            className={`hidden xl:block w-12 border-x ${theme.border} relative overflow-hidden shrink-0 ${theme.separatorBg}`}
-          >
-            <TiltedLines isDark={isDark} />
-          </div>
-          {/* Horizontal on Mobile/Tablet */}
-          <div
-            className={`xl:hidden w-full h-12 border-y ${theme.border} relative overflow-hidden shrink-0 ${theme.separatorBg}`}
-          >
-            <TiltedLines isDark={isDark} />
-          </div>
-
-          {/* RIGHT COLUMN: Form */}
-          <div className="w-full xl:w-1/2 p-6 md:p-10">
-            <div className="h-full flex flex-col justify-center">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold mb-2">Send a message</h3>
-                <p className={`text-sm ${theme.subText}`}>
-                  Fill out the form below and I'll get back to you within 24
-                  hours.
+                  Something went wrong. Please try emailing directly.
                 </p>
-              </div>
+              )}
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {submitStatus === "success" ? (
-                  <div
-                    className={`flex animate-in flex-col items-center rounded-xl border p-8 text-center fade-in zoom-in duration-300 ${theme.border} bg-(--contact-accent-soft)`}
-                  >
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-(--contact-accent-soft)">
-                      <Check className="h-7 w-7 text-(--contact-accent)" />
-                    </div>
-                    <h3 className={`mb-2 text-xl font-bold ${theme.accent}`}>
-                      Message Sent!
-                    </h3>
-                    <p className={theme.subText}>
-                      Thank you, {formData.firstName}. I'll be in touch soon.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setSubmitStatus("")}
-                      className="mt-6 text-sm font-medium underline decoration-(--contact-accent) underline-offset-4 hover:text-(--contact-accent)"
-                    >
-                      Send another message
-                    </button>
-                  </div>
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-950 px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-neutral-950 sm:w-auto"
+              >
+                {sending ? (
+                  <>
+                    <Loader2
+                      className="size-4 animate-spin"
+                      aria-hidden="true"
+                    />{" "}
+                    Sending…
+                  </>
                 ) : (
                   <>
-                    <div className="grid grid-cols-2 gap-5">
-                      <FormInput
-                        label="First Name"
-                        name="firstName"
-                        placeholder="John"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        theme={theme}
-                        required
-                      />
-                      <FormInput
-                        label="Last Name"
-                        name="lastName"
-                        placeholder="Doe"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        theme={theme}
-                        required
-                      />
-                    </div>
-
-                    <FormInput
-                      label="Email Address"
-                      name="email"
-                      type="email"
-                      placeholder="john@company.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      theme={theme}
-                      required
-                    />
-
-                    <div className="space-y-2">
-                      <label
-                        className={`text-xs font-semibold uppercase tracking-wider ${theme.subText} ml-1`}
-                      >
-                        Message
-                      </label>
-                      <textarea
-                        name="message"
-                        rows={4}
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        placeholder="Tell me about your project..."
-                        className={`w-full p-4 rounded-xl border ${theme.border} ${theme.inputBg} 
-                                text-sm transition-all duration-300 
-                                placeholder:text-(--contact-muted) focus:border-(--contact-accent) focus:outline-none focus:ring-2 focus:ring-(--contact-accent-soft) resize-none`}
-                      />
-                    </div>
-
-                    {submitStatus === "error" && (
-                      <p className="text-red-500 text-sm bg-red-500/5 p-3 rounded-lg border border-red-500/20">
-                        Something went wrong. Please try emailing directly.
-                      </p>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className={`flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200
-                            ${isSubmitting
-                          ? "cursor-not-allowed bg-zinc-400 text-white"
-                          : "bg-(--contact-accent) text-(--contact-accent-foreground) hover:brightness-105"
-                        }`}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Sending...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Send Message</span>
-                          <Send className="w-4 h-4" />
-                        </>
-                      )}
-                    </button>
+                    Send message <Send className="size-4" aria-hidden="true" />
                   </>
                 )}
-              </form>
-            </div>
-          </div>
-        </main>
-
-        {/* Footer Area Wrapper */}
-        <div className={`border-t ${theme.border}`}>
-          <FooterSystem />
+              </button>
+            </form>
+          )}
         </div>
-      </div>
-    </div>
-  );
-};
+        <HLine className="bottom-0" />
+      </section>
 
-const FormInput = ({
-  label,
-  name,
-  type = "text",
-  placeholder,
-  value,
-  onChange,
-  theme,
-  required,
-}) => {
-  return (
-    <div className="space-y-2">
-      <label
-        className={`text-xs font-semibold uppercase tracking-wider ${theme.subText} ml-1`}
-      >
-        {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        placeholder={placeholder}
-        className={`w-full p-4 rounded-xl border ${theme.border} ${theme.inputBg} 
-        text-sm transition-all duration-300 
-        placeholder:text-(--contact-muted) focus:border-(--contact-accent) focus:outline-none focus:ring-2 focus:ring-(--contact-accent-soft)`}
-      />
-    </div>
-  );
-};
-
-const TiltedLines = ({ isDark }) => {
-  return (
-    <div className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern
-            id={`lines-${isDark ? "dark" : "light"}`}
-            x="0"
-            y="0"
-            width="8"
-            height="8"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4"
-              stroke="var(--contact-accent)"
-              strokeWidth="1"
-            />
-          </pattern>
-        </defs>
-        <rect
-          width="100%"
-          height="100%"
-          fill={`url(#lines-${isDark ? "dark" : "light"})`}
-        />
-      </svg>
-    </div>
+      <Hatch />
+    </PageFrame>
   );
 };
 
