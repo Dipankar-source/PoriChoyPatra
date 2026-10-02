@@ -17,9 +17,12 @@ const googleAdSlot = import.meta.env.VITE_GOOGLE_ADS_SLOT || "8636273498";
 const Home = lazy(() => import("./pages/Home"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Projects = lazy(() => import("./pages/Projects"));
+const Experience = lazy(() => import("./pages/Experience"));
 const BlogWritting = lazy(() => import("./pages/BlogWritting"));
+const BlogWritingAccess = lazy(() => import("./components/BlogWritingAccess"));
 const Contact = lazy(() => import("./componants/Contact"));
 const EachBlogById = lazy(() => import("./pages/EachBlogById"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const GlobalLoader = () => <LoaderOverlay messages="Here you go..." />;
 
@@ -30,7 +33,7 @@ const App = () => {
     const { pathname } = useLocation();
 
     useEffect(() => {
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }, [pathname]);
 
     return null;
@@ -53,9 +56,18 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/blog-writing" element={<BlogWritting />} />
+            {/* <Route path="/experience" element={<Experience />} /> */}
+            <Route
+              path="/blog-writing"
+              element={
+                <BlogWritingAccess>
+                  <BlogWritting />
+                </BlogWritingAccess>
+              }
+            />
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog/:id" element={<EachBlogById />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </ThemeProvider>

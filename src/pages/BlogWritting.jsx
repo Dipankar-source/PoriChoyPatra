@@ -30,15 +30,15 @@ import {
   LayoutTemplate,
   LayoutGrid,
   Lightbulb,
-  ChevronDown,
+  LogOut,
 } from "lucide-react";
-import { useTheme } from "@/context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/componants/Navbar";
 import { AdGridSection } from "@/components/PageFrame";
 import {
   deleteBlogPost,
   getBlogPosts,
+  migrateLegacyBlogPosts,
   saveBlogPost,
   toggleBlogPostStatus,
 } from "@/lib/blog-store";
@@ -91,11 +91,11 @@ const slugify = (s) =>
 const countWords = (s) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 
 const inputCls =
-  "w-full border border-neutral-200 bg-transparent px-3 py-2 text-sm outline-none focus:border-[#542A52] dark:border-neutral-800 dark:focus:border-[#FFB39A]";
+  "w-full rounded-md border border-neutral-200 bg-white/80 px-3 py-2 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 dark:border-neutral-800 dark:bg-[#191919] dark:text-neutral-100 dark:placeholder:text-neutral-600 dark:focus:border-emerald-400";
 const accentBtn =
-  "inline-flex items-center gap-2 bg-[#542A52] px-3 py-2 text-xs text-white dark:bg-[#FFB39A] dark:text-neutral-950";
+  "inline-flex items-center gap-2 rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-emerald-700 disabled:cursor-wait disabled:opacity-60 dark:bg-emerald-400 dark:text-neutral-950 dark:hover:bg-emerald-300";
 const ghostBtn =
-  "border border-neutral-300 px-3 py-2 text-xs hover:bg-neutral-100 dark:border-neutral-800 dark:hover:bg-white/5";
+  "inline-flex items-center gap-2 rounded-md border border-neutral-300/80 bg-white/50 px-2.5 py-2 text-[11px] text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:bg-white/[0.03] dark:text-neutral-300 dark:hover:bg-white/[0.07]";
 
 const Seg = ({ label, value, options, onChange }) => (
   <div>
@@ -116,8 +116,7 @@ const Seg = ({ label, value, options, onChange }) => (
   </div>
 );
 
-const BlogWritting = () => {
-  const { isDark } = useTheme();
+const BlogWritting = ({ onSignOut }) => {
   const navigate = useNavigate();
   const imageInputRef = useRef(null);
   const uploadRef = useRef(null);
@@ -140,10 +139,32 @@ const BlogWritting = () => {
   const [filter, setFilter] = useState("all");
   const [copied, setCopied] = useState(false);
   const [caret, setCaret] = useState(0);
-  const [menu, setMenu] = useState(false);
+  const [formatMenu, setFormatMenu] = useState(false);
   const [modal, setModal] = useState(null); // "sketch" | "card" | null
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrlError, setImageUrlError] = useState("");
 
-  useEffect(() => setPosts(getBlogPosts()), []);
+  useEffect(() => {
+    let active = true;
+    const loadPosts = async () => {
+      try {
+        const migratedCount = await migrateLegacyBlogPosts();
+        const savedPosts = await getBlogPosts();
+        if (!active) return;
+        setPosts(savedPosts);
+        if (migratedCount) {
+          setMessage(`Imported ${migratedCount} existing post${migratedCount === 1 ? "" : "s"} to the database.`);
+        }
+      } catch (error) {
+        if (active) setMessage(error.message || "Could not load posts from the database.");
+      }
+    };
+
+    loadPosts();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // ---------- derived ----------
   const words = useMemo(() => countWords(draft.content), [draft.content]);
@@ -439,29 +460,38 @@ const BlogWritting = () => {
   };
 
   const addImageUrl = () => {
-    const raw = window.prompt("Paste an image link (https://...)");
-    if (!raw) return;
-    const url = raw.trim();
-    const valid = /^(https?:\/\/|data:|blob:)/i.test(url) && (() => {
-      try {
-        new URL(url);
-        return true;
-      } catch {
-        return false;
-      }
-    })();
-    if (!valid) {
-      setMessage("Please paste a valid image URL starting with http://, https://, data:, or blob:.");
+    setImageUrl("");
+    setImageUrlError("");
+    setModal("image-url");
+  };
+
+  const insertImageUrl = (event) => {
+    event.preventDefault();
+    const url = imageUrl.trim();
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      setImageUrlError("Enter a valid image URL.");
       return;
     }
+
+    if (!/^(https?:|data:|blob:)$/.test(parsedUrl.protocol)) {
+      setImageUrlError("Use an http, https, or image data URL.");
+      return;
+    }
+
     const [id] = addMedia([
       {
         src: url,
-        name: url.split("/").pop()?.slice(0, 30) || "remote-image",
+        name: parsedUrl.pathname.split("/").pop()?.slice(0, 60) || "linked-image",
         kind: "link",
       },
     ]);
     insertFigure(id);
+    setModal(null);
+    setImageUrl("");
+    setImageUrlError("");
     setMessage("Image link added to your article.");
   };
   const saveGenerated = (src, name, kind) => {
@@ -596,38 +626,43 @@ const BlogWritting = () => {
   ];
 
   // ---------- persistence ----------
-  const save = (status = draft.status || "draft", silent = false) => {
+  const save = async (status = draft.status || "draft", silent = false) => {
     if (!draft.title.trim()) {
       if (!silent) setMessage("Add a title before saving this post.");
       return;
     }
-    const post = saveBlogPost({
-      ...draft,
-      id: activeId,
-      status,
-      slug: draft.slug || slugify(draft.title),
-      readTime: `${readMinutes}m`,
-      publishedAt:
-        status === "published"
-          ? draft.publishedAt || new Date().toISOString()
-          : draft.publishedAt,
-    });
-    setActiveId(post.id);
-    setDraft((d) => ({
-      ...d,
-      ...post,
-      tags: post.tags || d.tags,
-      media: post.media || d.media,
-    }));
-    setPosts(getBlogPosts());
-    setSavedAt(new Date());
-    setDirty(false);
-    if (!silent)
-      setMessage(
-        status === "published"
-          ? "Published to your portfolio blog."
-          : "Draft saved.",
-      );
+    try {
+      const post = await saveBlogPost({
+        ...draft,
+        id: activeId,
+        status,
+        slug: draft.slug || slugify(draft.title),
+        readTime: `${readMinutes}m`,
+        publishedAt:
+          status === "published"
+            ? draft.publishedAt || new Date().toISOString()
+            : draft.publishedAt,
+      });
+      setActiveId(post.id);
+      setDraft((d) => ({
+        ...d,
+        ...post,
+        tags: post.tags || d.tags,
+        media: post.media || d.media,
+      }));
+      setPosts(await getBlogPosts());
+      setSavedAt(new Date());
+      setDirty(false);
+      if (!silent) {
+        setMessage(
+          status === "published"
+            ? "Published to your portfolio blog."
+            : "Draft saved.",
+        );
+      }
+    } catch (error) {
+      setMessage(error.message || "Could not save this post to the database.");
+    }
   };
   saveRef.current = () => save();
 
@@ -685,36 +720,52 @@ const BlogWritting = () => {
     setMessage("");
     setPanel("post");
   };
-  const removePost = (id) => {
+  const removePost = async (id) => {
     if (!window.confirm("Delete this article permanently?")) return;
-    deleteBlogPost(id);
-    setPosts(getBlogPosts());
-    if (String(activeId) === String(id)) {
-      setActiveId(null);
-      setDraft(emptyPost);
-      setDirty(false);
+    try {
+      await deleteBlogPost(id);
+      setPosts(await getBlogPosts());
+      if (String(activeId) === String(id)) {
+        setActiveId(null);
+        setDraft(emptyPost);
+        setDirty(false);
+      }
+      setMessage("Article deleted.");
+    } catch (error) {
+      setMessage(error.message || "Could not delete this post.");
     }
   };
-  const changeStatus = (id) => {
-    toggleBlogPostStatus(id);
-    setPosts(getBlogPosts());
-    if (String(activeId) === String(id))
-      setDraft((d) => ({
-        ...d,
-        status: d.status === "published" ? "draft" : "published",
-      }));
+  const changeStatus = async (id) => {
+    try {
+      const updatedPost = await toggleBlogPostStatus(id);
+      setPosts(await getBlogPosts());
+      if (String(activeId) === String(id)) {
+        setDraft((d) => ({
+          ...d,
+          status: updatedPost.status,
+          publishedAt: updatedPost.publishedAt,
+        }));
+      }
+      setMessage(updatedPost.status === "published" ? "Article published." : "Article moved to drafts.");
+    } catch (error) {
+      setMessage(error.message || "Could not update this post.");
+    }
   };
-  const duplicatePost = (post) => {
-    const copy = saveBlogPost({
-      ...post,
-      id: null,
-      title: `${post.title || "Untitled"} (copy)`,
-      slug: `${post.slug || "post"}-copy`,
-      status: "draft",
-      publishedAt: undefined,
-    });
-    setPosts(getBlogPosts());
-    editPost(copy);
+  const duplicatePost = async (post) => {
+    try {
+      const copy = await saveBlogPost({
+        ...post,
+        id: null,
+        title: `${post.title || "Untitled"} (copy)`,
+        slug: `${post.slug || "post"}-copy`,
+        status: "draft",
+        publishedAt: undefined,
+      });
+      setPosts(await getBlogPosts());
+      editPost(copy);
+    } catch (error) {
+      setMessage(error.message || "Could not duplicate this post.");
+    }
   };
 
   const copyMarkdown = async () => {
@@ -765,31 +816,31 @@ const BlogWritting = () => {
   );
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#F7F7F4] text-neutral-950 dark:bg-[#0F0F0F] dark:text-neutral-50">
+    <div className="min-h-screen overflow-x-clip bg-[#F7F7F4] text-neutral-950 dark:bg-[#0F0F0F] dark:text-neutral-50">
       {!focus && (
         <div className="fixed inset-x-0 top-0 z-50 mx-auto w-full max-w-[1040px]">
           <Navbar />
         </div>
       )}
       <main
-        className={`mx-auto px-4 pb-20 sm:px-6 lg:px-8 ${focus ? "max-w-[1280px] pt-6" : "max-w-[1180px] pt-24"}`}
+        className={`mx-auto w-full px-3 pb-12 sm:px-5 lg:px-8 ${focus ? "max-w-7xl pt-4" : "max-w-[1440px] pt-[72px] sm:pt-20"}`}
       >
         {!focus && (
-          <header className="mb-8 flex flex-col gap-5 border-b border-dashed border-neutral-300 pb-7 dark:border-neutral-800 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+          <header className="mb-4 flex flex-col gap-3 border-b border-neutral-200/80 pb-4 dark:border-neutral-800 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+            <div className="min-w-0">
+              <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500 sm:text-[10px] sm:tracking-[0.18em]">
                 Private workspace / {publishedCount} published /{" "}
                 {posts.length - publishedCount} drafts
               </p>
-              <h1 className="aktura-font mt-2 text-4xl tracking-wider sm:text-5xl">
+              <h1 className="aktura-font mt-1.5 text-2xl tracking-wider sm:mt-2 sm:text-3xl">
                 Blog writing
               </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+              <p className="mt-1.5 max-w-xl text-xs leading-5 text-neutral-500 dark:text-neutral-400 sm:mt-2 sm:text-sm sm:leading-6">
                 Write, preview, publish, and maintain the articles that appear
                 on your public blog.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:shrink-0 sm:gap-2">
               <button
                 type="button"
                 onClick={() => navigate("/blog")}
@@ -801,16 +852,24 @@ const BlogWritting = () => {
                 <FilePlus2 className="size-4" aria-hidden="true" />
                 New post
               </button>
+              <button
+                type="button"
+                onClick={onSignOut}
+                className={`${ghostBtn} inline-flex items-center gap-1.5`}
+              >
+                <LogOut className="size-3.5" aria-hidden="true" />
+                Sign out
+              </button>
             </div>
           </header>
         )}
         {!focus && <AdGridSection />}
 
         <div
-          className={`grid gap-6 ${focus ? "" : "lg:grid-cols-[minmax(0,1fr)_320px]"}`}
+          className={`grid min-w-0 gap-4 sm:gap-5 ${focus ? "" : "lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]"}`}
         >
           {/* ---------- Writing surface ---------- */}
-          <section className="min-w-0 border border-neutral-300 bg-white/45 dark:border-neutral-800 dark:bg-white/2">
+          <section className="min-w-0 rounded-md border border-neutral-200/80 bg-white/75 shadow-sm dark:border-neutral-800 dark:bg-[#151515]">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
               <div className="flex gap-1">
                 {[
@@ -863,7 +922,7 @@ const BlogWritting = () => {
                   value={draft.title}
                   onChange={(e) => updateDraft("title", e.target.value)}
                   placeholder="Article title"
-                  className="w-full border-0 bg-transparent px-0 py-2 text-3xl font-semibold outline-none placeholder:text-neutral-300 dark:placeholder:text-neutral-700 sm:text-4xl"
+                  className="w-full border-0 bg-transparent px-0 py-2 text-2xl font-semibold outline-none placeholder:text-neutral-300 dark:placeholder:text-neutral-700 sm:text-3xl"
                 />
                 <input
                   value={draft.excerpt}
@@ -877,46 +936,65 @@ const BlogWritting = () => {
 
             {showEditor && (
               <div
-                className="flex flex-wrap items-center gap-0.5 border-b border-neutral-200 px-3 py-2 dark:border-neutral-800"
+                className="flex flex-wrap items-center gap-1 border-b border-neutral-200 px-2 py-2 dark:border-neutral-800 sm:px-3"
                 role="toolbar"
-                aria-label="Formatting"
+                aria-label="Editor tools"
               >
-                {tools.map(({ label, icon: Icon, run, text }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={run}
-                    title={label}
-                    aria-label={label}
-                    className="inline-flex size-8 items-center justify-center font-mono text-xs text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
-                  >
-                    {text || <Icon className="size-4" aria-hidden="true" />}
-                  </button>
-                ))}
-                <div className="relative ml-1">
+                <div className="relative">
                   <button
                     type="button"
-                    onClick={() => setMenu((m) => !m)}
-                    aria-expanded={menu}
+                    onClick={() => setFormatMenu((open) => !open)}
+                    aria-label="Writing tools"
+                    title="Writing tools"
+                    aria-expanded={formatMenu}
                     aria-haspopup="menu"
-                    className="inline-flex items-center gap-1.5 bg-[#542A52] px-2.5 py-1.5 text-xs text-white dark:bg-[#FFB39A] dark:text-neutral-950"
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-white/[0.07]"
                   >
-                    <Images className="size-3.5" aria-hidden="true" />
-                    Add visual
-                    <ChevronDown className="size-3" aria-hidden="true" />
+                    <PenTool className="size-4" aria-hidden="true" />
                   </button>
-                  {menu && (
+                  {formatMenu && (
                     <>
                       <button
                         type="button"
-                        aria-label="Close menu"
+                        aria-label="Close formatting menu"
                         className="fixed inset-0 z-10 cursor-default"
-                        onClick={() => setMenu(false)}
+                        onClick={() => setFormatMenu(false)}
                       />
                       <div
                         role="menu"
-                        className="absolute left-0 top-full z-20 mt-1 w-64 border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-800 dark:bg-[#171717]"
+                        aria-label="Writing tools"
+                        className="absolute left-0 top-full z-20 mt-1 grid max-h-[min(70vh,32rem)] w-[min(24rem,calc(100vw-2rem))] grid-cols-2 gap-1 overflow-y-auto rounded-md border border-neutral-200 bg-white p-2 shadow-xl dark:border-neutral-800 dark:bg-[#171717]"
                       >
+                        <p className="col-span-2 px-2 pb-1 pt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-400">
+                          Format
+                        </p>
+                        {tools.map(({ label, icon: Icon, run, text }) => (
+                          <button
+                            key={label}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setFormatMenu(false);
+                              run();
+                            }}
+                            title={label}
+                            className="flex min-h-10 items-center gap-2 rounded-md px-2 text-left text-xs text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-white/[0.07]"
+                          >
+                            {text ? (
+                              <span className="inline-flex size-4 shrink-0 items-center justify-center font-mono text-[10px]">
+                                {text}
+                              </span>
+                            ) : (
+                              <Icon className="size-4 shrink-0" aria-hidden="true" />
+                            )}
+                            <span className="truncate">
+                              {label.replace(/\s+\([^)]*\)$/, "")}
+                            </span>
+                          </button>
+                        ))}
+                        <p className="col-span-2 border-t border-neutral-200 px-2 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-400 dark:border-neutral-800">
+                          Insert
+                        </p>
                         {visualActions.map(
                           ({ label, hint, icon: Icon, run }) => (
                             <button
@@ -924,18 +1002,15 @@ const BlogWritting = () => {
                               type="button"
                               role="menuitem"
                               onClick={() => {
-                                setMenu(false);
+                                setFormatMenu(false);
                                 run();
                               }}
-                              className="flex w-full items-start gap-3 px-3 py-2 text-left hover:bg-neutral-100 dark:hover:bg-white/10"
+                              className="flex min-h-14 items-start gap-2 rounded-md px-2 py-2 text-left text-xs text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-white/[0.07]"
                             >
-                              <Icon
-                                className="mt-0.5 size-4 shrink-0"
-                                aria-hidden="true"
-                              />
-                              <span>
-                                <span className="block text-sm">{label}</span>
-                                <span className="block text-[11px] text-neutral-500">
+                              <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                              <span className="min-w-0">
+                                <span className="block truncate">{label}</span>
+                                <span className="mt-0.5 block line-clamp-2 text-[10px] leading-4 text-neutral-500 dark:text-neutral-400">
                                   {hint}
                                 </span>
                               </span>
@@ -946,27 +1021,26 @@ const BlogWritting = () => {
                     </>
                   )}
                 </div>
-                <span className="mx-2 h-5 w-px bg-neutral-200 dark:bg-neutral-800" />
                 <select
                   aria-label="Insert template"
                   value=""
                   onChange={(e) =>
                     e.target.value && applyTemplate(e.target.value)
                   }
-                  className="border border-neutral-200 bg-transparent px-2 py-1 text-xs outline-none dark:border-neutral-800 dark:bg-[#0F0F0F]"
+                  className="max-w-28 rounded-md border border-neutral-200 bg-white/70 px-2 py-2 text-[11px] outline-none dark:border-neutral-800 dark:bg-[#191919]"
                 >
                   <option value="">Templates</option>
                   {Object.keys(TEMPLATES).map((name) => (
                     <option key={name}>{name}</option>
                   ))}
                 </select>
-                <div className="ml-auto flex gap-0.5">
+                <div className="ml-auto flex gap-1">
                   <button
                     type="button"
                     onClick={copyMarkdown}
                     title="Copy markdown"
                     aria-label="Copy markdown"
-                    className="inline-flex size-8 items-center justify-center text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
+                    className="inline-flex size-9 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/[0.07]"
                   >
                     {copied ? (
                       <Check className="size-4" aria-hidden="true" />
@@ -979,7 +1053,7 @@ const BlogWritting = () => {
                     onClick={downloadMarkdown}
                     title="Download .md"
                     aria-label="Download markdown file"
-                    className="inline-flex size-8 items-center justify-center text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
+                    className="inline-flex size-9 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/[0.07]"
                   >
                     <Download className="size-4" aria-hidden="true" />
                   </button>
@@ -1082,8 +1156,8 @@ const BlogWritting = () => {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 px-4 py-3 dark:border-neutral-800 sm:px-6">
-              <div className="flex flex-wrap gap-4 font-mono text-[11px] text-neutral-500">
+            <div className="flex flex-col items-start justify-between gap-3 border-t border-neutral-200 px-3 py-3 dark:border-neutral-800 sm:flex-row sm:items-center sm:px-5">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] text-neutral-500 sm:gap-4 sm:text-[11px]">
                 <span>{words} words</span>
                 <span>{draft.content.length} characters</span>
                 <span>{readMinutes} min read</span>
@@ -1112,7 +1186,7 @@ const BlogWritting = () => {
             {message && (
               <p
                 role="status"
-                className="border-t border-neutral-200 px-4 py-3 text-sm text-[#542A52] dark:border-neutral-800 dark:text-[#FFB39A] sm:px-6"
+                className="border-t border-neutral-200 px-3 py-3 text-xs text-emerald-700 dark:border-neutral-800 dark:text-emerald-300 sm:px-5 sm:text-sm"
               >
                 {message}
               </p>
@@ -1121,7 +1195,7 @@ const BlogWritting = () => {
 
           {/* ---------- Side panel ---------- */}
           {!focus && (
-            <aside className="h-fit border border-neutral-300 bg-white/45 dark:border-neutral-800 dark:bg-white/2">
+            <aside className="h-fit min-w-0 rounded-md border border-neutral-200/80 bg-white/75 shadow-sm dark:border-neutral-800 dark:bg-[#151515]">
               <div
                 className="flex border-b border-neutral-200 dark:border-neutral-800"
                 role="tablist"
@@ -1141,7 +1215,7 @@ const BlogWritting = () => {
                     role="tab"
                     aria-selected={panel === id}
                     onClick={() => setPanel(id)}
-                    className={`flex-1 px-3 py-3 text-xs ${panel === id ? "border-b-2 border-[#542A52] font-semibold dark:border-[#FFB39A]" : "text-neutral-500"}`}
+                    className={`min-w-0 flex-1 px-1.5 py-3 text-[10px] transition-colors sm:px-3 sm:text-xs ${panel === id ? "border-b-2 border-emerald-600 font-semibold text-neutral-950 dark:border-emerald-400 dark:text-white" : "text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"}`}
                   >
                     {label}
                   </button>
@@ -1155,7 +1229,7 @@ const BlogWritting = () => {
                     <select
                       value={draft.category}
                       onChange={(e) => updateDraft("category", e.target.value)}
-                      className={`${inputCls} mt-1.5 dark:bg-[#0F0F0F]`}
+                      className={`${inputCls} mt-1.5`}
                     >
                       {CATEGORIES.map((c) => (
                         <option key={c}>{c}</option>
@@ -1176,7 +1250,7 @@ const BlogWritting = () => {
                       className="mt-1.5"
                     >
                       {draft.image ? (
-                        <div className="relative overflow-hidden border border-neutral-200 dark:border-neutral-800">
+                        <div className="relative overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800">
                           <img
                             src={draft.image}
                             alt={draft.imageAlt || "Cover preview"}
@@ -1196,7 +1270,7 @@ const BlogWritting = () => {
                         <button
                           type="button"
                           onClick={() => imageInputRef.current?.click()}
-                          className="flex w-full flex-col items-center gap-1 border border-dashed border-neutral-300 px-3 py-6 text-xs text-neutral-500 dark:border-neutral-700"
+                          className="flex w-full flex-col items-center gap-2 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-6 text-xs text-neutral-500 transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:bg-white/3 dark:hover:bg-white/6"
                         >
                           <ImagePlus className="size-5" aria-hidden="true" />
                           Drop an image or click to upload
@@ -1329,7 +1403,7 @@ const BlogWritting = () => {
                     type="button"
                     onClick={() => updateDraft("featured", !draft.featured)}
                     aria-pressed={draft.featured}
-                    className={`flex w-full items-center justify-between border px-3 py-2 text-xs ${draft.featured ? "border-[#542A52] dark:border-[#FFB39A]" : "border-neutral-200 dark:border-neutral-800"}`}
+                    className={`flex w-full items-center justify-between rounded-md border px-3 py-2 text-xs transition-colors ${draft.featured ? "border-emerald-500 bg-emerald-500/5" : "border-neutral-200 dark:border-neutral-800"}`}
                   >
                     <span className="inline-flex items-center gap-2">
                       <Star
@@ -1452,10 +1526,9 @@ const BlogWritting = () => {
                     </p>
                   )}
                   {mediaBytes > 2.5e6 && (
-                    <p className="text-xs leading-5 text-amber-600">
-                      Your images use {(mediaBytes / 1e6).toFixed(1)} MB.
-                      Browsers store about 5 MB in total, so host large images
-                      elsewhere and use From link.
+                    <p className="text-xs leading-5 text-amber-700 dark:text-amber-400">
+                      Your images use {(mediaBytes / 1e6).toFixed(1)} MB. Large
+                      images upload to Supabase when saved and may take longer.
                     </p>
                   )}
                 </div>
@@ -1599,6 +1672,109 @@ const BlogWritting = () => {
           e.target.value = "";
         }}
       />
+      {modal === "image-url" && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="image-url-title"
+          className="fixed inset-0 z-90 flex items-center justify-center bg-neutral-950/45 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setModal(null);
+              setImageUrlError("");
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setModal(null);
+              setImageUrlError("");
+            }
+          }}
+        >
+          <form
+            onSubmit={insertImageUrl}
+            className="w-full max-w-lg rounded-md border border-neutral-200 bg-[#F7F7F4] p-5 text-neutral-950 shadow-2xl dark:border-neutral-800 dark:bg-[#151515] dark:text-neutral-50 sm:p-6"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="image-url-title" className="text-base font-semibold">
+                  Add image from link
+                </h2>
+                <p className="mt-1 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
+                  Paste an image address to insert it at your cursor.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setModal(null);
+                  setImageUrlError("");
+                }}
+                aria-label="Close image link dialog"
+                className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-200/70 hover:text-neutral-950 dark:hover:bg-white/8 dark:hover:text-white"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="mt-5 flex min-w-0 items-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 p-1.5 pl-4 shadow-inner transition-colors focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/15 dark:border-neutral-700 dark:bg-[#242424] dark:focus-within:border-emerald-400">
+              <Link2
+                className="size-4 shrink-0 text-neutral-500 dark:text-neutral-400"
+                aria-hidden="true"
+              />
+              <label htmlFor="blog-image-url" className="sr-only">
+                Image URL
+              </label>
+              <input
+                id="blog-image-url"
+                type="text"
+                inputMode="url"
+                autoComplete="url"
+                autoCapitalize="none"
+                spellCheck={false}
+                autoFocus
+                value={imageUrl}
+                onChange={(event) => {
+                  setImageUrl(event.target.value);
+                  setImageUrlError("");
+                }}
+                placeholder="https://example.com/image.jpg"
+                aria-describedby={imageUrlError ? "blog-image-url-error" : undefined}
+                className="min-w-0 flex-1 bg-transparent py-2 text-sm text-neutral-900 outline-none placeholder:text-neutral-500 dark:text-white dark:placeholder:text-neutral-500"
+              />
+              <button
+                type="submit"
+                className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-emerald-600 px-4 text-xs font-medium text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:bg-emerald-400 dark:text-neutral-950 dark:hover:bg-emerald-300"
+              >
+                <ImagePlus className="size-3.5" aria-hidden="true" />
+                Add
+              </button>
+            </div>
+
+            {imageUrlError && (
+              <p
+                id="blog-image-url-error"
+                role="alert"
+                className="mt-2 px-4 text-xs text-red-600 dark:text-red-400"
+              >
+                {imageUrlError}
+              </p>
+            )}
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setModal(null);
+                  setImageUrlError("");
+                }}
+                className="rounded-md px-3 py-2 text-xs text-neutral-500 transition-colors hover:bg-neutral-200/70 hover:text-neutral-950 dark:hover:bg-white/8 dark:hover:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
       {modal === "sketch" && (
         <SketchModal
           onClose={() => setModal(null)}

@@ -155,8 +155,8 @@ const nextUp = (skip) =>
     .filter((p) => String(p.id) !== String(skip))
     .slice(0, 2);
 
-const fetchBlogData = (blogId) => {
-  const custom = getBlogPost(blogId);
+const fetchBlogData = async (blogId) => {
+  const custom = await getBlogPost(blogId);
   if (custom?.status === "published") {
     return {
       blog: {
@@ -255,11 +255,27 @@ const EachBlogById = () => {
     loading: true,
     blog: null,
     related: [],
+    error: false,
   });
 
   useEffect(() => {
-    setState({ loading: false, ...fetchBlogData(id || 1) });
+    let active = true;
+    setState({ loading: true, blog: null, related: [], error: false });
     window.scrollTo(0, 0);
+
+    fetchBlogData(id || 1)
+      .then((result) => {
+        if (active) setState({ loading: false, ...result, error: false });
+      })
+      .catch(() => {
+        if (active) {
+          setState({ loading: false, blog: null, related: [], error: true });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   const { loading, blog, related } = state;
@@ -283,9 +299,13 @@ const EachBlogById = () => {
       <PageFrame>
         <BackBar to="/blog" label="Blog" />
         <div className="px-4 py-20 text-center sm:px-6">
-          <h1 className="display-font text-4xl">Post not found</h1>
+          <h1 className="display-font text-4xl">
+            {state.error ? "Article unavailable" : "Post not found"}
+          </h1>
           <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-            This article doesn't exist or was unpublished.
+            {state.error
+              ? "The article could not be loaded. Please try again later."
+              : "This article doesn't exist or was unpublished."}
           </p>
           <Link
             to="/blog"

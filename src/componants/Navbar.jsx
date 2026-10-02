@@ -10,6 +10,8 @@ import {
   FolderKanban,
   Github,
   House,
+  LockKeyhole,
+  LoaderCircle,
   Mail,
   Menu,
   Moon,
@@ -20,10 +22,35 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { supabase } from "@/lib/supabase";
 import clickSoundPath from "../assets/sounds/click.mp3";
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
+const BLOG_ADMIN_EMAIL = (import.meta.env.VITE_BLOG_ADMIN_EMAIL || "")
+  .trim()
+  .toLowerCase();
+const BLOG_LOGIN_RATE_KEY = "dipfolio_blog_login_rate_v1";
+const BLOG_LOGIN_LOCK_MS = 10 * 60 * 1000;
+
+const readBlogLoginRate = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(BLOG_LOGIN_RATE_KEY) || "{}");
+    if (saved.lockoutUntil && saved.lockoutUntil <= Date.now()) {
+      localStorage.removeItem(BLOG_LOGIN_RATE_KEY);
+      return { attempts: 0, lockoutUntil: 0 };
+    }
+    return {
+      attempts: Math.min(2, Number(saved.attempts) || 0),
+      lockoutUntil: Number(saved.lockoutUntil) || 0,
+    };
+  } catch {
+    return { attempts: 0, lockoutUntil: 0 };
+  }
+};
+
+const formatLockoutTime = (seconds) =>
+  `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
 const PremiumSearch = lazy(() =>
   import("@/uicomponents/searchs/premium-search").then((module) => ({
@@ -33,7 +60,7 @@ const PremiumSearch = lazy(() =>
 
 const primaryLinks = [
   { label: "Home", description: "Profile and introduction", path: "/", section: "hero" },
-  { label: "Projects", description: "Selected work and case studies", path: "/", section: "projects" },
+  { label: "Projects", description: "Selected work and case studies", path: "/projects" },
   { label: "Experience", description: "Career and skills", path: "/", section: "experience" },
 ];
 
@@ -50,8 +77,7 @@ const moreGroups = [
       {
         label: "Experience",
         description: "Roles and teams that shaped my work",
-        path: "/",
-        section: "experience",
+        path: "/experience",
       },
     ],
   },
@@ -61,8 +87,7 @@ const moreGroups = [
       {
         label: "Projects",
         description: "Products, experiments, and case studies",
-        path: "/",
-        section: "projects",
+        path: "/projects",
       },
       {
         label: "Research",
@@ -77,6 +102,7 @@ const moreGroups = [
     compact: true,
     items: [
       { label: "Blog", description: "Articles on design and development", path: "/blog" },
+      { label: "Write Blog", description: "Create and manage blog posts", path: "/blog-writing" },
       { label: "GitHub activity", description: "Open-source work and contributions", path: "/", section: "github" },
       { label: "Visitor analytics", description: "Portfolio traffic overview", path: "/", section: "visitors" },
       { label: "Contact", description: "Discuss a project", path: "/contact" },
@@ -96,6 +122,7 @@ const mobileLinkIcons = {
   About: { Icon: UserRound, color: "from-cyan-500 to-cyan-700", tint: "6, 182, 212" },
   Research: { Icon: FlaskConical, color: "from-amber-500 to-amber-700", tint: "245, 158, 11" },
   Blog: { Icon: BookOpen, color: "from-rose-500 to-rose-700", tint: "244, 63, 94" },
+  "Write Blog": { Icon: LockKeyhole, color: "from-rose-500 to-rose-700", tint: "244, 63, 94" },
   "GitHub activity": { Icon: Github, color: "from-slate-600 to-slate-800", tint: "71, 85, 105" },
   "Visitor analytics": { Icon: ChartNoAxesColumn, color: "from-teal-500 to-teal-700", tint: "20, 184, 166" },
   Contact: { Icon: Mail, color: "from-red-500 to-red-700", tint: "239, 68, 68" },
@@ -107,6 +134,12 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [blogLoginOpen, setBlogLoginOpen] = useState(false);
+  const [blogPassword, setBlogPassword] = useState("");
+  const [blogLoginError, setBlogLoginError] = useState("");
+  const [blogLoginSubmitting, setBlogLoginSubmitting] = useState(false);
+  const [blogLoginRate, setBlogLoginRate] = useState(readBlogLoginRate);
+  const [rateClock, setRateClock] = useState(Date.now());
   const [sectionSelection, setSectionSelection] = useState(() => ({
     locationKey: location.key,
     section: location.hash.slice(1) || "hero",
@@ -115,6 +148,33 @@ const Navbar = () => {
     sectionSelection.locationKey === location.key
       ? sectionSelection.section
       : location.hash.slice(1) || "hero";
+  const lockoutSeconds = Math.max(
+    0,
+    Math.ceil((blogLoginRate.lockoutUntil - rateClock) / 1000),
+  );
+
+  useEffect(() => {
+    if (!blogLoginRate.lockoutUntil) return undefined;
+
+    const updateClock = () => {
+      const now = Date.now();
+      setRateClock(now);
+      if (blogLoginRate.lockoutUntil <= now) {
+        const reset = { attempts: 0, lockoutUntil: 0 };
+        setBlogLoginRate(reset);
+        try {
+          localStorage.removeItem(BLOG_LOGIN_RATE_KEY);
+        } catch {
+          // Supabase Auth still applies its own rate limits if storage is unavailable.
+        }
+        setBlogLoginError("");
+      }
+    };
+
+    updateClock();
+    const timer = window.setInterval(updateClock, 1000);
+    return () => window.clearInterval(timer);
+  }, [blogLoginRate.lockoutUntil]);
 
   const handleThemeToggle = useCallback(() => {
     try {
@@ -126,6 +186,127 @@ const Navbar = () => {
     }
     toggleTheme();
   }, [toggleTheme]);
+
+  const requestBlogWriting = async () => {
+    setMoreOpen(false);
+    setMobileOpen(false);
+    setBlogLoginError("");
+
+    if (!supabase || !BLOG_ADMIN_EMAIL) {
+      setBlogLoginError("Blog sign-in is not configured.");
+      setBlogLoginOpen(true);
+      return;
+    }
+
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user?.email?.trim().toLowerCase() === BLOG_ADMIN_EMAIL) {
+        navigate("/blog-writing");
+        return;
+      }
+    } catch {
+      setBlogLoginError("Unable to check your sign-in. Please try again.");
+    }
+
+    setBlogLoginOpen(true);
+  };
+
+  const saveFailedLogin = () => {
+    const attempts = blogLoginRate.attempts + 1;
+    const nextRate =
+      attempts >= 3
+        ? { attempts: 0, lockoutUntil: Date.now() + BLOG_LOGIN_LOCK_MS }
+        : { attempts, lockoutUntil: 0 };
+
+    setBlogLoginRate(nextRate);
+    try {
+      localStorage.setItem(BLOG_LOGIN_RATE_KEY, JSON.stringify(nextRate));
+    } catch {
+      // Supabase Auth still applies its own rate limits if storage is unavailable.
+    }
+
+    if (nextRate.lockoutUntil) {
+      setBlogLoginError("Too many failed attempts. Try again in 10:00.");
+    } else {
+      setBlogLoginError(
+        `Password incorrect. ${3 - attempts} attempt${attempts === 2 ? "" : "s"} remaining.`,
+      );
+    }
+  };
+
+  const submitBlogLogin = async (event) => {
+    event.preventDefault();
+    if (lockoutSeconds > 0 || blogLoginSubmitting) return;
+    if (!supabase || !BLOG_ADMIN_EMAIL) {
+      setBlogLoginError("Blog sign-in is not configured.");
+      return;
+    }
+
+    setBlogLoginSubmitting(true);
+    setBlogLoginError("");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: BLOG_ADMIN_EMAIL,
+        password: blogPassword,
+      });
+
+      if (error || data?.user?.email?.trim().toLowerCase() !== BLOG_ADMIN_EMAIL) {
+        saveFailedLogin();
+        return;
+      }
+
+      const reset = { attempts: 0, lockoutUntil: 0 };
+      setBlogLoginRate(reset);
+      try {
+        localStorage.removeItem(BLOG_LOGIN_RATE_KEY);
+      } catch {
+        // The authenticated session remains valid without local storage.
+      }
+      setBlogLoginOpen(false);
+      setBlogPassword("");
+      navigate("/blog-writing");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setBlogLoginError("Unable to sign in. Check your connection and try again.");
+    } finally {
+      setBlogLoginSubmitting(false);
+    }
+  };
+
+  const scrollToSection = (section) => {
+    const target = document.getElementById(section);
+    if (!target) return;
+
+    const alignTarget = () => {
+      const top = window.scrollY + target.getBoundingClientRect().top - 54;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    };
+
+    alignTarget();
+
+    let settleTimer;
+    const getPageHeight = () => document.documentElement.scrollHeight;
+    let previousHeight = getPageHeight();
+    const observer = new ResizeObserver(() => {
+      const nextHeight = getPageHeight();
+      if (nextHeight === previousHeight) return;
+
+      previousHeight = nextHeight;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        alignTarget();
+        observer.disconnect();
+      }, 180);
+    });
+
+    observer.observe(document.body);
+    observer.observe(document.documentElement);
+    window.setTimeout(() => {
+      window.clearTimeout(settleTimer);
+      alignTarget();
+      observer.disconnect();
+    }, 2500);
+  };
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -156,17 +337,22 @@ const Navbar = () => {
     setMoreOpen(false);
     setMobileOpen(false);
 
+    if (item.label === "Write Blog") {
+      requestBlogWriting();
+      return;
+    }
+
     if (item.section) {
       setSectionSelection({ locationKey: location.key, section: item.section });
       if (location.pathname !== "/") {
         navigate(`/#${item.section}`);
         window.setTimeout(() => {
-          document.getElementById(item.section)?.scrollIntoView({ behavior: "smooth" });
+          scrollToSection(item.section);
         }, 100);
         return;
       }
 
-      document.getElementById(item.section)?.scrollIntoView({ behavior: "smooth" });
+      scrollToSection(item.section);
       return;
     }
 
@@ -297,8 +483,11 @@ const Navbar = () => {
                               : "text-neutral-700 hover:bg-neutral-200/50 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/5 dark:hover:text-white"
                           }`}
                         >
-                          <span className="block text-[13px] font-medium">
+                          <span className="flex items-center gap-1.5 text-[13px] font-medium">
                             {item.label}
+                            {item.label === "Write Blog" && (
+                              <LockKeyhole className="size-3 text-neutral-400" aria-hidden="true" />
+                            )}
                           </span>
                           {item.description && (
                             <span className="mt-1 block max-w-[15rem] text-[12px] leading-relaxed text-neutral-500 dark:text-neutral-400">
@@ -444,7 +633,14 @@ const Navbar = () => {
                       Main navigation
                     </h3>
                     <div className="grid grid-cols-2 gap-2">
-                      {primaryLinks.map((item) => renderLink(item, true))}
+                      {primaryLinks.map((item) =>
+                        renderLink(
+                          item.label === "Experience"
+                            ? { ...item, path: "/experience", section: undefined }
+                            : item,
+                          true,
+                        ),
+                      )}
                     </div>
                   </div>
                   <div>
@@ -461,6 +657,110 @@ const Navbar = () => {
                   className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-linear-to-t from-[#F7F7F4]/95 to-transparent backdrop-blur-[6px] mask-[linear-gradient(to_top,#000_15%,transparent)] dark:from-[#121212]/95"
                 />
               </MotionSection>
+            </MotionDiv>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+      {createPortal(
+        <AnimatePresence>
+          {blogLoginOpen && (
+            <MotionDiv
+              key="blog-writing-login"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="blog-login-title"
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-4 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.16 }}
+              onMouseDown={(event) => {
+                if (event.target === event.currentTarget) {
+                  setBlogLoginOpen(false);
+                  setBlogPassword("");
+                }
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  setBlogLoginOpen(false);
+                  setBlogPassword("");
+                }
+              }}
+            >
+              <MotionDiv
+                className="relative w-full max-w-sm rounded-md border border-neutral-300/80 bg-[#F7F7F4]/95 p-6 text-neutral-950 shadow-2xl backdrop-blur-md dark:border-neutral-700/80 dark:bg-[#121212]/95 dark:text-neutral-50"
+                initial={{ y: 10, scale: 0.98 }}
+                animate={{ y: 0, scale: 1 }}
+                exit={{ y: 8, scale: 0.98 }}
+                transition={{ duration: 0.16 }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBlogLoginOpen(false);
+                    setBlogPassword("");
+                  }}
+                  aria-label="Close blog sign-in"
+                  className="absolute right-3 top-3 inline-flex size-8 items-center justify-center text-neutral-500 transition-colors hover:text-neutral-950 dark:hover:text-white"
+                >
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+
+                <h2
+                  id="blog-login-title"
+                  className="display-font mt-4 text-2xl tracking-wider"
+                >
+                  Write Blog
+                </h2>
+
+                {!supabase || !BLOG_ADMIN_EMAIL ? (
+                  <p role="alert" className="mt-4 text-sm text-red-600 dark:text-red-400">
+                    Blog sign-in is not configured.
+                  </p>
+                ) : (
+                  <form onSubmit={submitBlogLogin} className="mt-5 space-y-3">
+                    <label className="sr-only" htmlFor="blog-admin-password">
+                      Password
+                    </label>
+                    <input
+                      id="blog-admin-password"
+                      type="password"
+                      autoComplete="current-password"
+                      autoFocus
+                      value={blogPassword}
+                      onChange={(event) => setBlogPassword(event.target.value)}
+                      placeholder="Password"
+                      disabled={lockoutSeconds > 0 || blogLoginSubmitting}
+                      className="w-full rounded-md border border-neutral-300 bg-neutral-100 px-4 py-3 text-sm text-neutral-950 shadow-inner outline-none transition-colors placeholder:text-neutral-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60 dark:border-neutral-700 dark:bg-[#242424] dark:text-white dark:placeholder:text-neutral-400 dark:focus:border-blue-400"
+                      required
+                    />
+                    {blogLoginError && (
+                      <p role="alert" className="text-xs leading-5 text-red-600 dark:text-red-400">
+                        {lockoutSeconds > 0
+                          ? `Too many failed attempts. Try again in ${formatLockoutTime(lockoutSeconds)}.`
+                          : blogLoginError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={blogLoginSubmitting || lockoutSeconds > 0}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-[0_3px_8px_rgba(37,99,235,0.28)] transition-colors hover:bg-[#1D4ED8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-wait disabled:opacity-60 dark:bg-[#3B82F6] dark:hover:bg-[#2563EB]"
+                    >
+                      {blogLoginSubmitting ? (
+                        <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                      ) : (
+                        <LockKeyhole className="size-4" aria-hidden="true" />
+                      )}
+                      {lockoutSeconds > 0
+                        ? `Wait ${formatLockoutTime(lockoutSeconds)}`
+                        : blogLoginSubmitting
+                          ? "Checking password"
+                          : "Unlock writing"}
+                    </button>
+                  </form>
+                )}
+              </MotionDiv>
             </MotionDiv>
           )}
         </AnimatePresence>,

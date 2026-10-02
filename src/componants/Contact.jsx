@@ -333,7 +333,6 @@ const Contact = () => {
             I'll get back to you within 24 hours.
           </p>
         </div>
-          <HLine className="bottom-[452px]" />
 
         <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 md:py-8">
           {status === "success" ? (

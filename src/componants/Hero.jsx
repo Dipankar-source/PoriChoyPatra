@@ -176,7 +176,8 @@ const Hero = () => {
             <img
               src={profileIndex === 1 ? "/profile.webp" : "/profile1.webp"}
               alt=""
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
               className="h-full w-full object-cover"
             />

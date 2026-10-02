@@ -109,7 +109,7 @@ export const useMediaSrc = (src, media = {}) => {
 /* ------------------------------------------------------------------ */
 /* [figure src="media:x" size="large" align="center" caption="..."]   */
 /* ------------------------------------------------------------------ */
-const FIGURE_RE = /\[figure\s+([^\]]*)\]/g;
+const MEDIA_BLOCK_RE = /\[(figure|gallery)\s+([^\]]*)\]/g;
 
 const parseAttrs = (str) => {
   const attrs = {};
@@ -160,6 +160,60 @@ const Figure = ({ attrs, media = {} }) => {
         <figcaption
           className={`mt-3 font-mono text-xs text-neutral-500 dark:text-neutral-400 ${SIZE[attrs.size] || "sm:w-full"} w-full`}
         >
+          {attrs.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+};
+
+const GalleryImage = ({ src, media }) => {
+  const resolved = useMediaSrc(src, media);
+
+  if (resolved === null) {
+    return <div className="aspect-[4/3] animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-900" />;
+  }
+  if (!resolved) {
+    return (
+      <div className="flex aspect-[4/3] items-center justify-center rounded-lg border border-dashed border-neutral-300 px-3 text-center font-mono text-xs text-neutral-500 dark:border-neutral-700">
+        Image unavailable
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={resolved}
+      alt=""
+      loading="lazy"
+      className="aspect-[4/3] w-full rounded-lg bg-neutral-100 object-cover dark:bg-neutral-900"
+    />
+  );
+};
+
+const Gallery = ({ attrs, media = {} }) => {
+  const sources = (attrs.srcs || "")
+    .split(",")
+    .map((src) => src.trim())
+    .filter(Boolean);
+  if (!sources.length) return null;
+
+  const columns =
+    sources.length === 1
+      ? "grid-cols-1"
+      : sources.length === 2
+        ? "grid-cols-1 sm:grid-cols-2"
+        : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+
+  return (
+    <figure className="my-8">
+      <div className={`grid gap-3 ${columns}`}>
+        {sources.map((src, index) => (
+          <GalleryImage key={`${src}-${index}`} src={src} media={media} />
+        ))}
+      </div>
+      {attrs.caption && (
+        <figcaption className="mt-3 font-mono text-xs text-neutral-500 dark:text-neutral-400">
           {attrs.caption}
         </figcaption>
       )}
@@ -287,9 +341,9 @@ const PROSE =
 const BlogContent = ({ content = "", media = {} }) => {
   const parts = [];
   let last = 0;
-  for (const m of content.matchAll(FIGURE_RE)) {
+  for (const m of content.matchAll(MEDIA_BLOCK_RE)) {
     parts.push({ type: "text", value: content.slice(last, m.index) });
-    parts.push({ type: "figure", attrs: parseAttrs(m[1]) });
+    parts.push({ type: m[1], attrs: parseAttrs(m[2]) });
     last = m.index + m[0].length;
   }
   parts.push({ type: "text", value: content.slice(last) });
@@ -299,6 +353,8 @@ const BlogContent = ({ content = "", media = {} }) => {
       {parts.map((part, i) => {
         if (part.type === "figure")
           return <Figure key={i} attrs={part.attrs} media={media} />;
+        if (part.type === "gallery")
+          return <Gallery key={i} attrs={part.attrs} media={media} />;
         if (!part.value.trim()) return null;
         return looksLikeHtml(part.value) ? (
           <div

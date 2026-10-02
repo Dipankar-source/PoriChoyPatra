@@ -25,9 +25,25 @@ const Blog = () => {
   const [query, setQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const [publishedPosts, setPublishedPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    setPublishedPosts(getPublishedBlogPosts().map(toPublicBlogPost));
+    let active = true;
+    getPublishedBlogPosts()
+      .then((posts) => {
+        if (active) setPublishedPosts(posts.map(toPublicBlogPost));
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const posts = useMemo(() => {
@@ -101,7 +117,20 @@ const Blog = () => {
       </div>
 
       <section aria-label="Articles" className="min-h-[300px]">
-        {posts.length === 0 ? (
+        {isLoading ? (
+          <div className="relative px-4 py-16 text-center text-sm text-neutral-500 sm:px-6" role="status">
+            Loading articles…
+            <HLine className="bottom-0" />
+          </div>
+        ) : loadError ? (
+          <div className="relative px-4 py-16 text-center sm:px-6" role="alert">
+            <p className="text-lg font-medium">Articles are unavailable</p>
+            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+              Please try again later.
+            </p>
+            <HLine className="bottom-0" />
+          </div>
+        ) : posts.length === 0 ? (
           <div className="relative px-4 py-16 text-center sm:px-6">
             <p className="text-lg font-medium">No articles found</p>
             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">

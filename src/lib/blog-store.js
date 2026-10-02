@@ -1,62 +1,164 @@
-const STORAGE_KEY = "dipfolio_blog_posts_v1";
+import { supabase } from "@/lib/supabase";
 
-const readPosts = () => {
+const LEGACY_STORAGE_KEY = "dipfolio_blog_posts_v1";
+const MEDIA_BUCKET = "blog-media";
+
+const requireSupabase = () => {
+  if (!supabase) {
+    throw new Error("Supabase is not configured. Add the project URL and publishable key.");
+  }
+  return supabase;
+};
+
+const readLegacyPosts = () => {
   try {
-    const value = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "[]");
+    const value = JSON.parse(window.localStorage.getItem(LEGACY_STORAGE_KEY) || "[]");
     return Array.isArray(value) ? value : [];
   } catch {
     return [];
   }
 };
 
-const writePosts = (posts) => {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+const safePathPart = (value) =>
+  String(value).replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 100) || "image";
+
+const uploadInlineImage = async (src, path) => {
+  if (typeof src !== "string" || !src.startsWith("data:")) return src || "";
+
+  const client = requireSupabase();
+  const response = await fetch(src);
+  if (!response.ok) throw new Error("Could not read an uploaded blog image.");
+  const blob = await response.blob();
+  const extension = (blob.type.split("/")[1] || "bin")
+    .replace("svg+xml", "svg")
+    .replace(/[^a-zA-Z0-9]/g, "");
+  const storagePath = `${path}.${extension || "bin"}`;
+  const { error } = await client.storage.from(MEDIA_BUCKET).upload(storagePath, blob, {
+    cacheControl: "31536000",
+    contentType: blob.type || "application/octet-stream",
+    upsert: true,
+  });
+
+  if (error) throw error;
+  return client.storage.from(MEDIA_BUCKET).getPublicUrl(storagePath).data.publicUrl;
 };
 
-export const getBlogPosts = () => readPosts();
-
-export const getPublishedBlogPosts = () =>
-  readPosts().filter((post) => post.status === "published");
-
-export const getBlogPost = (id) =>
-  readPosts().find((post) => String(post.id) === String(id)) || null;
-
-export const saveBlogPost = (post) => {
-  const posts = readPosts();
-  const nextPost = {
-    ...post,
-    id: post.id || `local-${Date.now()}`,
-    updatedAt: new Date().toISOString(),
-  };
-  const index = posts.findIndex((item) => String(item.id) === String(nextPost.id));
-
-  if (index === -1) posts.unshift(nextPost);
-  else posts[index] = nextPost;
-
-  writePosts(posts);
-  return nextPost;
-};
-
-export const deleteBlogPost = (id) => {
-  writePosts(readPosts().filter((post) => String(post.id) !== String(id)));
-};
-
-export const toggleBlogPostStatus = (id) => {
-  const posts = readPosts().map((post) =>
-    String(post.id) === String(id)
-      ? {
-          ...post,
-          status: post.status === "published" ? "draft" : "published",
-          publishedAt:
-            post.status === "published"
-              ? post.publishedAt
-              : new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      : post,
+const toDatabaseRow = async (post) => {
+  const now = new Date().toISOString();
+  const id = String(post.id || crypto.randomUUID());
+  const safeId = safePathPart(id);
+  const image = await uploadInlineImage(post.image, `${safeId}/cover`);
+  const media = Object.fromEntries(
+    await Promise.all(
+      Object.entries(post.media || {}).map(async ([mediaId, item]) => {
+        const src = typeof item === "string" ? item : item?.src;
+        const uploadedSrc = await uploadInlineImage(src, `${safeId}/${safePathPart(mediaId)}`);
+        return [
+          mediaId,
+          typeof item === "string" ? uploadedSrc : { ...item, src: uploadedSrc },
+        ];
+      }),
+    ),
   );
-  writePosts(posts);
-  return posts.find((post) => String(post.id) === String(id)) || null;
+  const postData = {
+    ...post,
+    id,
+    image,
+    media,
+    updatedAt: now,
+    publishedAt:
+      post.status === "published" ? post.publishedAt || now : post.publishedAt || null,
+  };
+
+  return {
+    id,
+    status: postData.status === "published" ? "published" : "draft",
+    published_at: postData.status === "published" ? postData.publishedAt : null,
+    updated_at: now,
+    post_data: postData,
+  };
+};
+
+const rowsToPosts = (rows = []) => rows.map((row) => row.post_data);
+
+export const getBlogPosts = async () => {
+  const { data, error } = await requireSupabase()
+    .from("blog_posts")
+    .select("post_data")
+    .order("updated_at", { ascending: false });
+  if (error) throw error;
+  return rowsToPosts(data);
+};
+
+export const getPublishedBlogPosts = async () => {
+  const { data, error } = await requireSupabase()
+    .from("blog_posts")
+    .select("post_data")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+  if (error) throw error;
+  return rowsToPosts(data);
+};
+
+export const getBlogPost = async (id) => {
+  const { data, error } = await requireSupabase()
+    .from("blog_posts")
+    .select("post_data")
+    .eq("id", String(id))
+    .maybeSingle();
+  if (error) throw error;
+  return data?.post_data || null;
+};
+
+export const saveBlogPost = async (post) => {
+  const row = await toDatabaseRow(post);
+  const { data, error } = await requireSupabase()
+    .from("blog_posts")
+    .upsert(row, { onConflict: "id" })
+    .select("post_data")
+    .single();
+  if (error) throw error;
+  return data.post_data;
+};
+
+export const deleteBlogPost = async (id) => {
+  const { data, error } = await requireSupabase()
+    .from("blog_posts")
+    .delete()
+    .eq("id", String(id))
+    .select("id");
+  if (error) throw error;
+  if (!data?.length) throw new Error("The post was not found or could not be deleted.");
+};
+
+export const toggleBlogPostStatus = async (id) => {
+  const post = await getBlogPost(id);
+  if (!post) throw new Error("The post could not be found.");
+  const status = post.status === "published" ? "draft" : "published";
+  return saveBlogPost({
+    ...post,
+    status,
+    publishedAt: status === "published" ? new Date().toISOString() : null,
+  });
+};
+
+export const migrateLegacyBlogPosts = async () => {
+  const legacyPosts = readLegacyPosts();
+  if (!legacyPosts.length) return 0;
+
+  const client = requireSupabase();
+  const { data: existingPosts, error: checkError } = await client
+    .from("blog_posts")
+    .select("id")
+    .limit(1);
+  if (checkError) throw checkError;
+  if (existingPosts?.length) return 0;
+
+  const rows = await Promise.all(legacyPosts.map(toDatabaseRow));
+  const { error } = await client.from("blog_posts").upsert(rows, { onConflict: "id" });
+  if (error) throw error;
+  window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+  return rows.length;
 };
 
 export const markdownToHtml = (markdown = "") => {
