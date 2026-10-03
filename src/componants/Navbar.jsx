@@ -59,9 +59,9 @@ const PremiumSearch = lazy(() =>
 );
 
 const primaryLinks = [
-  { label: "Home", description: "Profile and introduction", path: "/", section: "hero" },
+  { label: "Home", description: "Profile and introduction", path: "/" },
   { label: "Projects", description: "Selected work and case studies", path: "/projects" },
-  { label: "Experience", description: "Career and skills", path: "/", section: "experience" },
+  { label: "Experience", description: "Career and skills", path: "/experience" },
 ];
 
 const moreGroups = [
@@ -336,6 +336,14 @@ const Navbar = () => {
   const goTo = (item) => {
     setMoreOpen(false);
     setMobileOpen(false);
+
+    if (item.label === "Home") {
+      navigate("/");
+      if (location.pathname === "/") {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      }
+      return;
+    }
 
     if (item.label === "Write Blog") {
       requestBlogWriting();
@@ -634,12 +642,7 @@ const Navbar = () => {
                     </h3>
                     <div className="grid grid-cols-2 gap-2">
                       {primaryLinks.map((item) =>
-                        renderLink(
-                          item.label === "Experience"
-                            ? { ...item, path: "/experience", section: undefined }
-                            : item,
-                          true,
-                        ),
+                        renderLink(item, true),
                       )}
                     </div>
                   </div>
