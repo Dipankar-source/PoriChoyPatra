@@ -128,6 +128,30 @@ const mobileLinkIcons = {
   Contact: { Icon: Mail, color: "from-red-500 to-red-700", tint: "239, 68, 68" },
 };
 
+const routePreloaders = {
+  "/": () => import("../pages/Home"),
+  "/projects": () => import("../pages/Projects"),
+  "/experience": () => import("../pages/Experience"),
+  "/blog": () => import("../pages/Blog"),
+  "/blog-writing": () => import("../pages/BlogWritting"),
+  "/contact": () => import("./Contact"),
+};
+
+const preloadRoute = (item) => {
+  const path = item.section ? "/" : item.path;
+  const loaders =
+    path === "/blog-writing"
+      ? [
+          routePreloaders[path],
+          () => import("../components/BlogWritingAccess"),
+        ]
+      : path.startsWith("/blog/")
+        ? [() => import("../pages/EachBlogById")]
+        : [routePreloaders[path] || (() => import("../pages/NotFound"))];
+
+  loaders.forEach((load) => void load().catch(() => {}));
+};
+
 const Navbar = () => {
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
@@ -336,6 +360,7 @@ const Navbar = () => {
   const goTo = (item) => {
     setMoreOpen(false);
     setMobileOpen(false);
+    preloadRoute(item);
 
     if (item.label === "Home") {
       navigate("/");
@@ -386,6 +411,8 @@ const Navbar = () => {
       key={item.label}
       type="button"
       onClick={() => goTo(item)}
+      onPointerEnter={() => preloadRoute(item)}
+      onFocus={() => preloadRoute(item)}
       style={mobile && isActive(item) ? {
         backgroundImage: `linear-gradient(110deg, rgba(${mobileIcon.tint}, ${isDark ? 0.18 : 0.11}), rgba(${mobileIcon.tint}, 0.025))`,
       } : undefined}
@@ -480,6 +507,8 @@ const Navbar = () => {
                           key={item.label}
                           type="button"
                           onClick={() => goTo(item)}
+                          onPointerEnter={() => preloadRoute(item)}
+                          onFocus={() => preloadRoute(item)}
                           aria-current={isActive(item) ? "page" : undefined}
                           className={`block w-full rounded-sm text-left transition-colors ${
                             group.compact

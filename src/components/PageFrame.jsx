@@ -60,6 +60,8 @@ export const PostRow = ({ to, title, meta }) => (
   <div className="relative">
     <Link
       to={to}
+      onPointerEnter={() => void import("@/pages/EachBlogById").catch(() => {})}
+      onFocus={() => void import("@/pages/EachBlogById").catch(() => {})}
       className="group flex items-baseline justify-between gap-4 px-4 py-4 transition-colors duration-300 hover:bg-neutral-200/30 dark:hover:bg-white/[0.03] rounded-lg sm:px-6"
     >
       <span className="min-w-0 truncate text-base text-neutral-800 transition-colors duration-300 group-hover:text-[#542A52] dark:text-neutral-200 dark:group-hover:text-[#FFB39A] sm:text-lg">

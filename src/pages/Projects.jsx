@@ -128,7 +128,7 @@ const ProjectCard = ({ project, onOpen }) => (
         loading="lazy"
         className="absolute bottom-0 right-0 h-[79%] w-[91%] rounded-tl-xl object-cover object-left-top shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition duration-500 ease-out group-hover:scale-[1.03] group-hover:origin-bottom-right"
       />
-      {project.banner && <Ribbon text={project.banner} />}
+      {project.highlight && <Ribbon text={project.highlight} />}
     </a>
 
     <div className="mt-4 flex items-start justify-between gap-4">
@@ -143,12 +143,22 @@ const ProjectCard = ({ project, onOpen }) => (
           </button>
         </h2>
         <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-300">
-          {project.tagline}
+          {project.summary}
         </p>
       </div>
-      <span className="mt-2 inline-flex shrink-0 items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
-        <span className="size-2 rounded-full bg-emerald-500" />
-        Live
+      <span
+        className={`mt-2 inline-flex shrink-0 items-center gap-1.5 text-sm ${
+          project.status === "Live"
+            ? "text-emerald-700 dark:text-emerald-400"
+            : "text-neutral-500 dark:text-neutral-400"
+        }`}
+      >
+        <span
+          className={`size-2 rounded-full ${
+            project.status === "Live" ? "bg-emerald-500" : "bg-neutral-400"
+          }`}
+        />
+        {project.status}
       </span>
     </div>
 
@@ -241,7 +251,7 @@ const ProjectModal = ({ project, onClose }) => {
                   {project.title}
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  {project.tagline}
+                  {project.summary}
                 </p>
               </div>
               <a
