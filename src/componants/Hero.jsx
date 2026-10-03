@@ -1,10 +1,9 @@
 import { FlipWords } from "@/components/ui/flip-words";
 import assets from "../assets/assets";
 import { useTheme } from "../context/ThemeContext";
-import { Heart, User, X } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import icons from "@/assets/icons";
 import { supabase } from "@/lib/supabase";
 import loveSoundPath from "../assets/sounds/love.mp3";
 
@@ -105,33 +104,6 @@ const Hero = () => {
     "Focused",
     "Curious",
   ];
-  const socials = [
-    {
-      label: "Instagram",
-      href: "https://www.instagram.com/techandbhakti",
-      Icon: icons.InstagramSocialIcon,
-      expandedClassName: "hover:w-24 focus-visible:w-24",
-    },
-    // {
-    //   label: "LinkedIn",
-    //   href: "https://linkedin.com/in/dipankarbarik/",
-    //   Icon: icons.LinkedInSocialIcon,
-    //   expandedClassName: "hover:w-20 focus-visible:w-20",
-    // },
-    {
-      label: "X",
-      href: "https://x.com/_dipankarsource",
-      Icon: icons.XIcon,
-      expandedClassName: "hover:w-12 focus-visible:w-12",
-    },
-    {
-      label: "GitHub",
-      href: "https://github.com/Dipankar-source/",
-      Icon: icons.GitHubSocialIcon,
-      expandedClassName: "hover:w-20 focus-visible:w-20",
-    },
-  ];
-
   return (
     <section className="relative w-full pt-1" aria-labelledby="profile-name">
       <div className="relative left-1/2 w-screen -translate-x-1/2 pb-1">
@@ -228,29 +200,6 @@ const Hero = () => {
               words={words}
             />
           </p>
-          <nav
-            aria-label="Social links"
-            className="mt-1.5 flex flex-wrap items-center gap-2"
-          >
-            {socials.map(({ label, href, Icon, expandedClassName }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className={`group/social relative z-0 inline-flex h-5 w-5 md:h-7 md:w-7 shrink-0 items-center overflow-hidden text-neutral-500 transition-[width,color] duration-300 ease-out hover:z-10 hover:text-neutral-950 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:text-neutral-400 dark:hover:text-white ${expandedClassName}`}
-              >
-                <Icon
-                  className="absolute left-1/2 top-1/2 size-[18px] shrink-0 -translate-x-1/2 -translate-y-1/2 transition-[left,transform] duration-300 ease-out group-hover/social:left-2 group-hover/social:translate-x-0 group-focus-visible/social:left-2 group-focus-visible/social:translate-x-0"
-                  aria-hidden="true"
-                />
-                <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 translate-x-1 whitespace-nowrap text-xs font-medium opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover/social:translate-x-0 group-hover/social:opacity-100 group-focus-visible/social:translate-x-0 group-focus-visible/social:opacity-100">
-                  {label}
-                </span>
-              </a>
-            ))}
-          </nav>
         </div>
 
         <span

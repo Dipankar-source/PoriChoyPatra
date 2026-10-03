@@ -10,6 +10,7 @@ const Projects = lazy(() => import("@/componants/Projects"));
 const Paperwork = lazy(() => import("@/componants/Paperwork"));
 import TableOfContents from "@/componants/TableOfContents";
 import PageGridLines from "@/components/PageGridLines";
+import Social from "@/componants/Social";
 const Elevation = lazy(() => import("@/componants/FooterElevation"));
 const Footer = lazy(() => import("@/componants/Footer"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
@@ -103,8 +104,13 @@ const Home = () => {
             </section>
 
             <DeferredSection id="about" minHeight={440}>
+              <Social />
+            </DeferredSection>
+
+            <DeferredSection id="about" minHeight={440}>
               <About />
             </DeferredSection>
+
             <DeferredSection id="experience" minHeight={520}>
               <Experience />
             </DeferredSection>
