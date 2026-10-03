@@ -792,7 +792,7 @@ const BlogWritting = ({ onSignOut }) => {
   const showEditor = view !== "preview";
   const showPreview = view !== "editor";
   const previewPane = (
-    <article className="prose prose-neutral max-w-none p-5 dark:prose-invert sm:p-8">
+    <article className="blog-prose prose prose-neutral max-w-none p-5 dark:prose-invert sm:p-8">
       {draft.image && (
         <img
           src={draft.image}

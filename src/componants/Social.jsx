@@ -8,16 +8,16 @@ const Social = () => {
       handle: "@_dipankarsource",
       href: "https://x.com/_dipankarsource",
       Icon: icons.XIcon,
-      iconClassName: "text-white",
-      iconBackground: "bg-neutral-900",
+      iconClassName: "dark:text-white text-black",
+      iconBackground: "dark:bg-neutral-900 bg-white/60",
     },
     {
       name: "GitHub",
       handle: "@Dipankar-source",
       href: "https://github.com/Dipankar-source",
       Icon: icons.GitHubSocialIcon,
-      iconClassName: "text-white",
-      iconBackground: "bg-neutral-900",
+      iconClassName: "dark:text-white text-black",
+      iconBackground: "dark:bg-neutral-900 bg-white/60",
     },
   ];
 

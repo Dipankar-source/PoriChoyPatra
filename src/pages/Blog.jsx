@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import assets from "@/assets/assets";
 import PremiumSort from "@/uicomponents/dropdown/premium-sort";
-import { getPublishedBlogPosts, toPublicBlogPost } from "@/lib/blog-store";
+import {
+  getCachedPublishedBlogPosts,
+  getPublishedBlogPosts,
+  toPublicBlogPost,
+} from "@/lib/blog-store";
 import PageFrame, {
   AdGridSection,
   BackBar,
@@ -22,10 +25,13 @@ const toTime = (d) => {
 const toMinutes = (s) => parseInt(String(s).replace("m", ""), 10) || 0;
 
 const Blog = () => {
+  const [cachedPosts] = useState(() => getCachedPublishedBlogPosts());
   const [query, setQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest");
-  const [publishedPosts, setPublishedPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [publishedPosts, setPublishedPosts] = useState(
+    () => cachedPosts?.map(toPublicBlogPost) || [],
+  );
+  const [isLoading, setIsLoading] = useState(cachedPosts === null);
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
@@ -35,7 +41,7 @@ const Blog = () => {
         if (active) setPublishedPosts(posts.map(toPublicBlogPost));
       })
       .catch(() => {
-        if (active) setLoadError(true);
+        if (active && !cachedPosts) setLoadError(true);
       })
       .finally(() => {
         if (active) setIsLoading(false);
@@ -44,7 +50,7 @@ const Blog = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [cachedPosts]);
 
   const posts = useMemo(() => {
     const q = query.trim().toLowerCase();

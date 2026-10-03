@@ -1,7 +1,46 @@
+import DOMPurify from "dompurify";
+import hljs from "highlight.js/lib/core";
+import bash from "highlight.js/lib/languages/bash";
+import css from "highlight.js/lib/languages/css";
+import javascript from "highlight.js/lib/languages/javascript";
+import json from "highlight.js/lib/languages/json";
+import python from "highlight.js/lib/languages/python";
+import typescript from "highlight.js/lib/languages/typescript";
+import xml from "highlight.js/lib/languages/xml";
+import { Marked } from "marked";
+import { markedHighlight } from "marked-highlight";
 import { supabase } from "@/lib/supabase";
 
 const LEGACY_STORAGE_KEY = "dipfolio_blog_posts_v1";
+const PUBLISHED_POSTS_CACHE_KEY = "dipfolio_published_blog_list_v1";
+const PUBLISHED_POSTS_CACHE_TTL = 5 * 60 * 1000;
 const MEDIA_BUCKET = "blog-media";
+let publishedPostsRequest = null;
+let publishedPostsRequestRevision = -1;
+let publishedPostsCacheRevision = 0;
+
+[
+  ["bash", bash],
+  ["css", css],
+  ["javascript", javascript],
+  ["json", json],
+  ["python", python],
+  ["typescript", typescript],
+  ["xml", xml],
+].forEach(([name, language]) => hljs.registerLanguage(name, language));
+
+const blogMarkdown = new Marked(
+  markedHighlight({
+    emptyLangClass: "hljs",
+    langPrefix: "hljs language-",
+    highlight(code, language) {
+      if (language && hljs.getLanguage(language)) {
+        return hljs.highlight(code, { language }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    },
+  }),
+);
 
 const requireSupabase = () => {
   if (!supabase) {
@@ -81,6 +120,55 @@ const toDatabaseRow = async (post) => {
 
 const rowsToPosts = (rows = []) => rows.map((row) => row.post_data);
 
+const readPublishedPostsCache = () => {
+  try {
+    const cached = JSON.parse(
+      window.localStorage.getItem(PUBLISHED_POSTS_CACHE_KEY) || "null",
+    );
+    if (!Array.isArray(cached?.posts) || !Number.isFinite(cached.cachedAt)) {
+      return null;
+    }
+    return cached;
+  } catch {
+    return null;
+  }
+};
+
+const toPublishedListPost = (post) => ({
+  id: post.id,
+  title: post.title,
+  excerpt: post.excerpt,
+  category: post.category,
+  publishedAt: post.publishedAt,
+  updatedAt: post.updatedAt,
+  readTime: post.readTime,
+});
+
+const writePublishedPostsCache = (posts) => {
+  try {
+    window.localStorage.setItem(
+      PUBLISHED_POSTS_CACHE_KEY,
+      JSON.stringify({ cachedAt: Date.now(), posts }),
+    );
+  } catch {
+    // The list can still load normally when storage is unavailable or full.
+  }
+};
+
+const invalidatePublishedPostsCache = () => {
+  publishedPostsCacheRevision += 1;
+  publishedPostsRequest = null;
+  publishedPostsRequestRevision = -1;
+  try {
+    window.localStorage.removeItem(PUBLISHED_POSTS_CACHE_KEY);
+  } catch {
+    // The next read will refresh from Supabase if storage is unavailable.
+  }
+};
+
+export const getCachedPublishedBlogPosts = () =>
+  readPublishedPostsCache()?.posts || null;
+
 export const getBlogPosts = async () => {
   const { data, error } = await requireSupabase()
     .from("blog_posts")
@@ -91,13 +179,51 @@ export const getBlogPosts = async () => {
 };
 
 export const getPublishedBlogPosts = async () => {
-  const { data, error } = await requireSupabase()
-    .from("blog_posts")
-    .select("post_data")
-    .eq("status", "published")
-    .order("published_at", { ascending: false });
-  if (error) throw error;
-  return rowsToPosts(data);
+  const cached = readPublishedPostsCache();
+  if (cached && Date.now() - cached.cachedAt < PUBLISHED_POSTS_CACHE_TTL) {
+    return cached.posts;
+  }
+
+  if (
+    publishedPostsRequest &&
+    publishedPostsRequestRevision === publishedPostsCacheRevision
+  ) {
+    return publishedPostsRequest;
+  }
+
+  const requestRevision = publishedPostsCacheRevision;
+  const request = (async () => {
+    try {
+      const { data, error } = await requireSupabase()
+        .from("blog_posts")
+        .select("post_data")
+        .eq("status", "published")
+        .order("published_at", { ascending: false });
+      if (error) throw error;
+
+      const posts = rowsToPosts(data).map(toPublishedListPost);
+      if (requestRevision === publishedPostsCacheRevision) {
+        writePublishedPostsCache(posts);
+      }
+      return posts;
+    } catch (error) {
+      if (requestRevision === publishedPostsCacheRevision && cached) {
+        return cached.posts;
+      }
+      throw error;
+    }
+  })();
+
+  publishedPostsRequest = request;
+  publishedPostsRequestRevision = requestRevision;
+  try {
+    return await request;
+  } finally {
+    if (publishedPostsRequest === request) {
+      publishedPostsRequest = null;
+      publishedPostsRequestRevision = -1;
+    }
+  }
 };
 
 export const getBlogPost = async (id) => {
@@ -118,6 +244,7 @@ export const saveBlogPost = async (post) => {
     .select("post_data")
     .single();
   if (error) throw error;
+  invalidatePublishedPostsCache();
   return data.post_data;
 };
 
@@ -129,6 +256,7 @@ export const deleteBlogPost = async (id) => {
     .select("id");
   if (error) throw error;
   if (!data?.length) throw new Error("The post was not found or could not be deleted.");
+  invalidatePublishedPostsCache();
 };
 
 export const toggleBlogPostStatus = async (id) => {
@@ -157,36 +285,14 @@ export const migrateLegacyBlogPosts = async () => {
   const rows = await Promise.all(legacyPosts.map(toDatabaseRow));
   const { error } = await client.from("blog_posts").upsert(rows, { onConflict: "id" });
   if (error) throw error;
+  invalidatePublishedPostsCache();
   window.localStorage.removeItem(LEGACY_STORAGE_KEY);
   return rows.length;
 };
 
 export const markdownToHtml = (markdown = "") => {
-  const escapeHtml = (value) =>
-    value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  return markdown
-    .split(/\n{2,}/)
-    .map((block) => {
-      const text = escapeHtml(block.trim())
-        .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-        .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-        .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*(.+?)\*/g, "<em>$1</em>")
-        .replace(/`(.+?)`/g, "<code>$1</code>")
-        .replace(/\n/g, "<br />");
-
-      if (/^<h[1-3]>/.test(text)) return text;
-      if (text.startsWith("- ")) {
-        return `<ul>${text
-          .split("<br />")
-          .map((item) => `<li>${item.replace(/^- /, "")}</li>`)
-          .join("")}</ul>`;
-      }
-      return `<p>${text}</p>`;
-    })
-    .join("");
+  const html = blogMarkdown.parse(markdown, { async: false, gfm: true });
+  return DOMPurify.sanitize(html);
 };
 
 export const toPublicBlogPost = (post) => ({

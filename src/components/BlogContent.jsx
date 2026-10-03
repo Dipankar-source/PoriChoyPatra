@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as store from "@/lib/blog-store";
+import { richMarkdownToHtml } from "@/lib/blog-media";
 
 /* ------------------------------------------------------------------ */
 /* Media resolving: "media:25171e" -> real image URL / data URL        */
@@ -221,122 +222,8 @@ const Gallery = ({ attrs, media = {} }) => {
   );
 };
 
-/* ------------------------------------------------------------------ */
-/* Text: HTML is passed through, plain text/markdown is rendered       */
-/* ------------------------------------------------------------------ */
-const looksLikeHtml = (s) =>
-  /<\/?(p|h[1-6]|ul|ol|li|div|br|strong|em|a|blockquote|pre|code|img|span)\b/i.test(
-    s,
-  );
-
-const inline = (text) =>
-  text
-    .split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g)
-    .map((part, i) => {
-      if (/^\*\*[^*]+\*\*$/.test(part))
-        return <strong key={i}>{part.slice(2, -2)}</strong>;
-      if (/^\*[^*]+\*$/.test(part)) return <em key={i}>{part.slice(1, -1)}</em>;
-      if (/^`[^`]+`$/.test(part))
-        return <code key={i}>{part.slice(1, -1)}</code>;
-      const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-      if (link && /^(https?:|mailto:|\/)/.test(link[2])) {
-        return (
-          <a key={i} href={link[2]} target="_blank" rel="noopener noreferrer">
-            {link[1]}
-          </a>
-        );
-      }
-      return part;
-    });
-
-const Markdownish = ({ text }) => {
-  const lines = text.split("\n");
-  const out = [];
-  let para = [];
-  let list = null;
-  let code = null;
-
-  const flushPara = () => {
-    if (para.length) {
-      out.push(<p key={out.length}>{inline(para.join(" "))}</p>);
-      para = [];
-    }
-  };
-  const flushList = () => {
-    if (!list) return;
-    const Tag = list.ordered ? "ol" : "ul";
-    out.push(
-      <Tag key={out.length}>
-        {list.items.map((t, i) => (
-          <li key={i}>{inline(t)}</li>
-        ))}
-      </Tag>,
-    );
-    list = null;
-  };
-
-  for (const line of lines) {
-    if (code) {
-      if (line.trim().startsWith("```")) {
-        out.push(
-          <pre key={out.length}>
-            <code>{code.join("\n")}</code>
-          </pre>,
-        );
-        code = null;
-      } else code.push(line);
-      continue;
-    }
-    if (line.trim().startsWith("```")) {
-      flushPara();
-      flushList();
-      code = [];
-      continue;
-    }
-
-    const h = line.match(/^(#{1,4})\s+(.*)$/);
-    const ul = line.match(/^\s*[-*]\s+(.*)$/);
-    const ol = line.match(/^\s*\d+\.\s+(.*)$/);
-    const q = line.match(/^>\s?(.*)$/);
-
-    if (h) {
-      flushPara();
-      flushList();
-      const Tag = `h${Math.min(h[1].length + 1, 4)}`;
-      out.push(<Tag key={out.length}>{inline(h[2])}</Tag>);
-    } else if (ul || ol) {
-      flushPara();
-      const ordered = Boolean(ol);
-      if (!list || list.ordered !== ordered) {
-        flushList();
-        list = { ordered, items: [] };
-      }
-      list.items.push((ul || ol)[1]);
-    } else if (q) {
-      flushPara();
-      flushList();
-      out.push(<blockquote key={out.length}>{inline(q[1])}</blockquote>);
-    } else if (!line.trim()) {
-      flushPara();
-      flushList();
-    } else {
-      flushList();
-      para.push(line.trim());
-    }
-  }
-  flushPara();
-  flushList();
-  if (code)
-    out.push(
-      <pre key={out.length}>
-        <code>{code.join("\n")}</code>
-      </pre>,
-    );
-  return <>{out}</>;
-};
-
 const PROSE =
-  "prose prose-neutral max-w-[72ch] dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-emerald-600 dark:prose-a:text-emerald-400 prose-img:rounded-lg";
+  "blog-prose prose prose-neutral max-w-[72ch] dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-emerald-600 dark:prose-a:text-emerald-400 prose-img:rounded-lg";
 
 const BlogContent = ({ content = "", media = {} }) => {
   const parts = [];
@@ -356,16 +243,14 @@ const BlogContent = ({ content = "", media = {} }) => {
         if (part.type === "gallery")
           return <Gallery key={i} attrs={part.attrs} media={media} />;
         if (!part.value.trim()) return null;
-        return looksLikeHtml(part.value) ? (
+        return (
           <div
             key={i}
             className={PROSE}
-            dangerouslySetInnerHTML={{ __html: part.value }}
+            dangerouslySetInnerHTML={{
+              __html: richMarkdownToHtml(part.value, media),
+            }}
           />
-        ) : (
-          <div key={i} className={PROSE}>
-            <Markdownish text={part.value} />
-          </div>
         );
       })}
     </div>
