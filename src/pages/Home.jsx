@@ -123,6 +123,7 @@ const Home = () => {
             <DeferredSection id="namehover" minHeight={360}>
               <NameHover isDark={isDark} />
             </DeferredSection>
+            
             <DeferredSection id="paperwork" minHeight={480}>
               <Paperwork />
             </DeferredSection>

@@ -9,12 +9,11 @@ const SECTIONS = [
   { id: "experience", title: "What I've done" },
   { id: "github", title: "How I learn" },
   { id: "projects", title: "What I've built" },
-  { id: "namehover", title: "A little extra" },
   { id: "paperwork", title: "What I've explored" },
   { id: "testimonials", title: "What people say" },
-  { id: "visitors", title: "Who's here" },
+  { id: "visitors", title: "Who's there" },
   { id: "contact", title: "Get in touch" },
-  { id: "footer", title: "The ending" },
+
 ];
 
 const TableOfContents = () => {
