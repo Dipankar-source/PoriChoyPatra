@@ -202,6 +202,17 @@ const Navbar = () => {
 
   const handleThemeToggle = useCallback(() => {
     try {
+      if (
+        window.matchMedia("(max-width: 767px)").matches &&
+        typeof navigator.vibrate === "function"
+      ) {
+        navigator.vibrate(12);
+      }
+    } catch {
+      // Theme switching should still work when vibration is unavailable.
+    }
+
+    try {
       const audio = new Audio(clickSoundPath);
       audio.volume = 0.5;
       void audio.play().catch(() => {});
