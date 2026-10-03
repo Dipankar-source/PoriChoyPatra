@@ -1,5 +1,5 @@
 import ExperienceSection from "@/componants/Experience";
-import PageFrame, { BackBar, Hatch } from "@/components/PageFrame";
+import PageFrame, { BackBar, Hatch, HLine } from "@/components/PageFrame";
 
 const Experience = () => (
   <PageFrame>
