@@ -12,61 +12,60 @@ import { AdGridSection } from "@/components/PageFrame";
 /* ------------------------------------------------------------------ */
 const PROJECTS = [
   {
-    id: 1,
-    gradient: "linear-gradient(135deg,#e0e7ff 0%,#818cf8 50%,#4338ca 100%)",
-    title: "Career Nexus",
-    tagline: "AI-assisted professional networking.",
+    id: "trust_io",
+    title: "Trust-io",
+    summary: "A smart platform for making confident purchase decisions.",
     description:
-      "A professional network connecting job seekers, recruiters, and mentors through one focused workspace.",
-    details:
-      "An AI-assisted professional networking platform with real-time job matching, mentor connections, and a collaborative community space.",
-    image: assets.careerNexusFullDetail,
-    tech: ["Node.js", "React.js", "TailwindCSS", "MongoDB", "JWT", "AI/ML"],
+      "Helps users evaluate products and make informed decisions before purchasing.",
+    tech: ["React", "Framer Motion", "Tailwind CSS"],
+    github: "https://github.com/Dipankar-source/",
+    demo: "https://trust-io-frontend.onrender.com/",
+    status: "Live",
+    image: assets.Trustio,
+    highlight: "1000+ active users",
+    gradient: "linear-gradient(135deg, #dff5ff 0%, #7dd3fc 48%, #0284c7 100%)",
+  },
+
+  {
+    id: "ish-trip",
+    title: "IshTrip",
+    summary: "An online bus booking platform for convenient travel planning.",
+    description:
+      "Enables users to search for bus routes and book journeys through a simple and accessible interface.",
+    tech: ["React", "Tailwind CSS", "MongoDB"],
     github: "https://github.com/Dipankar-source/CareerNexus",
     demo: "https://career-nexus-demo.vercel.app",
+    status: "Suspended",
+    image: assets.careerNexusFullDetail,
+    gradient: "linear-gradient(135deg, #f0ffe3 0%, #a3e635 52%, #65a30d 100%)",
   },
+
   {
-    id: 2,
-    gradient: "linear-gradient(135deg,#fae8ff 0%,#e879f9 50%,#7e22ce 100%)",
-    banner: "On NPM",
-    title: "Ishani-Ui",
-    tagline: "React component library on NPM.",
+    id: "ishani-ui",
+    title: "Ishani-UI",
+    summary: "A reusable React component library for modern interfaces.",
     description:
-      "A reusable React component library for building consistent interfaces with less repetition.",
-    details:
-      "An open-source UI library with production-ready components, accessible patterns, and flexible styling for modern React projects.",
-    image: assets.NPMContribution,
-    tech: ["React", "NPM", "Tailwind", "TypeScript", "Storybook"],
+      "A collection of reusable UI components designed to help developers build consistent and polished React interfaces faster.",
+    tech: ["React", "NPM", "Tailwind CSS"],
     github: "https://github.com/Dipankar-source/ishani-ui",
     demo: "https://www.npmjs.com/package/ishani-ui",
+    status: "Live",
+    image: assets.NPMContribution,
+    gradient: "linear-gradient(135deg, #fff0f3 0%, #fb7185 52%, #e11d48 100%)",
   },
+
   {
-    id: 3,
-    gradient: "linear-gradient(135deg,#ffedd5 0%,#fb923c 50%,#c2410c 100%)",
-    title: "Brainu Bot",
-    tagline: "University helpdesk chatbot.",
+    id: "ishi-fy",
+    title: "IshiFy",
+    summary: "An AI-powered tool for creating presentations faster.",
     description:
-      "A university support assistant designed to make everyday information easier to find.",
-    details:
-      "A conversational assistant for Brainware University with real-time support, natural language interaction, and university information integration.",
-    image: assets.BranuBot,
-    tech: ["React", "Firebase", "Gemini API", "Node.js", "Express"],
+      "Uses AI to simplify the presentation creation process, helping users generate and organize PPT content with less manual effort.",
+    tech: ["React", "Firebase", "Gemini API"],
     github: "https://github.com/Dipankar-source/Student-HelpDesk-ChatBot",
     demo: "https://student-helpdesk-chatbot-0do3.onrender.com/dashboard",
-  },
-  {
-    id: 4,
-    gradient: "linear-gradient(135deg,#ccfbf1 0%,#2dd4bf 50%,#0f766e 100%)",
-    title: "AI Portfolio",
-    tagline: "Portfolio with AI-assisted content.",
-    description:
-      "A personal portfolio system exploring AI-assisted content and expressive interface design.",
-    details:
-      "A responsive portfolio template combining modern design patterns, AI-powered content generation, smooth motion, and a restrained visual system.",
-    image: assets.Portfolio,
-    tech: ["React.js", "ishani-ui", "Aceternity.ui", "Framer", "Render"],
-    github: "https://github.com/Dipankar-source/PoriChoyPatra",
-    demo: "https://porichoypatra.onrender.com/",
+    status: "Suspended",
+    image: assets.BranuBot,
+    gradient: "linear-gradient(135deg, #fff1e6 0%, #fb923c 52%, #ea580c 100%)",
   },
 ];
 

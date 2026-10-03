@@ -27,7 +27,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const GlobalLoader = () => <LoaderOverlay messages="Here you go..." />;
 
 const App = () => {
-  const { pathname } = useLocation();
+  const { pathname, key: pageViewKey } = useLocation();
   // Scroll to top component
   function ScrollToTop() {
     const { pathname } = useLocation();
@@ -47,6 +47,7 @@ const App = () => {
         </Suspense>
         <Suspense fallback={null}>
           <GoogleAdSlot
+            key={pageViewKey}
             slot={googleAdSlot}
             className={pathname === "/" ? "hidden md:block" : undefined}
           />
