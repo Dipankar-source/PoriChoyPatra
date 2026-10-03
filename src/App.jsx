@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
-import { LoaderOverlay } from "@/components/ui/loader";
+import RouteSkeleton from "@/components/RouteSkeleton";
 
 
 const PageViewTracker = lazy(() => import("@/components/PageViewTracker"));
@@ -23,8 +23,6 @@ const BlogWritingAccess = lazy(() => import("./components/BlogWritingAccess"));
 const Contact = lazy(() => import("./componants/Contact"));
 const EachBlogById = lazy(() => import("./pages/EachBlogById"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-
-const GlobalLoader = () => <LoaderOverlay messages="Here you go..." />;
 
 const App = () => {
   const { pathname, key: pageViewKey } = useLocation();
@@ -52,7 +50,7 @@ const App = () => {
             className={pathname === "/" ? "hidden md:block" : undefined}
           />
         </Suspense>
-        <Suspense fallback={<GlobalLoader />}>
+        <Suspense fallback={<RouteSkeleton pathname={pathname} />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
