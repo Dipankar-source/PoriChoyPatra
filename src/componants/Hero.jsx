@@ -7,6 +7,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import loveSoundPath from "../assets/sounds/love.mp3";
 
+const compactCountFormatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
+  maximumFractionDigits: 1,
+});
+
 const Hero = () => {
   const { profileIndex, cycleProfile } = useTheme();
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -126,7 +132,7 @@ const Hero = () => {
         />
       </div>
 
-      <div className="relative flex min-h-[130px] items-center gap-6 px-4 py-5 sm:gap-7 sm:px-[26px]">
+      <div className="relative flex min-h-[130px] items-center gap-2 px-4 py-5 sm:gap-7 sm:px-[26px]">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-1/2 w-screen -translate-x-1/2 border-t border-dashed border-neutral-300/70 dark:border-neutral-800"
@@ -174,7 +180,7 @@ const Hero = () => {
               >
                 Dipankar Barik
               </h1>
-              <p className="mt-1 text-xs font-medium text-neutral-700 dark:text-stone-400 sm:text-sm">
+              <p className="mt-1 text-[10px] font-medium text-neutral-700 dark:text-stone-400 sm:text-sm">
                 MERN Full-Stack Developer
               </p>
             </div>
@@ -185,7 +191,7 @@ const Hero = () => {
               aria-pressed={isLiked}
               aria-label={`${isLiked ? "Unlike" : "Like"} this portfolio${likeCount === null ? "" : `. ${likeCount} likes`}`}
               title={isLiked ? "Unlike this portfolio" : "Like this portfolio"}
-              className=" inline-flex min-h-9 shrink-0 items-center  gap-1.5 rounded-md px-2 text-neutral-500 transition-colors  hover:text-rose-600 disabled:cursor-wait disabled:opacity-60 dark:text-neutral-400  dark:hover:text-rose-400"
+              className=" inline-flex min-h-9 ml-4 mb-4 md:mb-0 md:ml-0 shrink-0 items-center gap-[2px] rounded-md px-2 text-neutral-500 transition-colors  hover:text-rose-600 disabled:cursor-wait disabled:opacity-60 dark:text-neutral-400  dark:hover:text-rose-400"
             >
               <Heart
                 className={`size-[13px] sm:size-[18px] transition-[color,transform] duration-200 ${
@@ -193,8 +199,19 @@ const Hero = () => {
                 }`}
                 aria-hidden="true"
               />
-              <span className="min-w-[2ch] text-xs font-medium tabular-nums">
-                {likeCount === null ? "..." : likeCount.toLocaleString()}
+              <span className="min-w-[2ch] text-[10px] font-medium tabular-nums md:text-xs">
+                {likeCount === null ? (
+                  "..."
+                ) : (
+                  <>
+                    <span className="sm:hidden">
+                      {compactCountFormatter.format(likeCount)}
+                    </span>
+                    <span className="hidden sm:inline">
+                      {likeCount.toLocaleString()}
+                    </span>
+                  </>
+                )}
               </span>
             </button>
           </div>
