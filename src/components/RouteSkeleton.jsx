@@ -1,3 +1,5 @@
+import Loader from "./ui/loader";
+
 const block = "animate-pulse rounded-sm bg-neutral-200/80 dark:bg-neutral-800/80";
 
 const Bar = ({ className = "" }) => (
@@ -208,6 +210,19 @@ const getPageSkeleton = (pathname) => {
 
 const RouteSkeleton = ({ pathname }) => {
   const isHome = pathname === "/";
+
+  if (isHome) {
+    return (
+      <div
+        role="status"
+        aria-label="Loading portfolio"
+        aria-busy="true"
+        className="grid min-h-screen place-items-center bg-[#F7F7F4] text-neutral-700 dark:bg-[#0F0F0F] dark:text-neutral-300"
+      >
+        <Loader/>
+      </div>
+    );
+  }
 
   return (
     <div

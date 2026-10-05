@@ -18,32 +18,12 @@ const VisitorAnalytics = lazy(() => import("@/componants/VisitorAnalytics"));
 const GitHubStats = lazy(() => import("@/componants/GitHubStats"));
 const NameHover = lazy(() => import("@/componants/NameHover"));
 
-const SectionSkeleton = ({ minHeight }) => (
+const SectionPlaceholder = ({ minHeight }) => (
   <div
     aria-hidden="true"
-    className="pointer-events-none relative w-full overflow-hidden px-5 py-6 sm:px-[26px]"
+    className="pointer-events-none w-full"
     style={{ minHeight }}
-  >
-    <div className="animate-pulse rounded-2xl border border-neutral-200/70 bg-white/70 dark:border-neutral-800 dark:bg-neutral-900/60">
-      <div className="flex items-center gap-4 border-b border-neutral-200/80 px-4 py-4 dark:border-neutral-800">
-        <div className="h-11 w-11 rounded-full bg-neutral-200 dark:bg-neutral-800" />
-        <div className="flex-1 space-y-2">
-          <div className="h-3 w-1/3 rounded-full bg-neutral-200 dark:bg-neutral-800" />
-          <div className="h-3 w-2/5 rounded-full bg-neutral-200/90 dark:bg-neutral-800" />
-        </div>
-      </div>
-      <div className="space-y-4 p-4">
-        <div className="h-3 w-2/3 rounded-full bg-neutral-200 dark:bg-neutral-800" />
-        <div className="h-3 w-full rounded-full bg-neutral-200/90 dark:bg-neutral-800" />
-        <div className="h-3 w-5/6 rounded-full bg-neutral-200/90 dark:bg-neutral-800" />
-        <div className="grid gap-3 pt-2 sm:grid-cols-3">
-          <div className="h-28 rounded-xl bg-neutral-200 dark:bg-neutral-800" />
-          <div className="h-28 rounded-xl bg-neutral-200/90 dark:bg-neutral-800" />
-          <div className="h-28 rounded-xl bg-neutral-200/90 dark:bg-neutral-800" />
-        </div>
-      </div>
-    </div>
-  </div>
+  />
 );
 
 const DeferredSection = ({ id, children, minHeight = 360 }) => {
@@ -72,11 +52,11 @@ const DeferredSection = ({ id, children, minHeight = 360 }) => {
     <section id={id} ref={sectionRef} className="relative w-full">
       <PageGridLines section />
       {isNearViewport ? (
-        <Suspense fallback={<SectionSkeleton minHeight={minHeight} />}>
+        <Suspense fallback={<SectionPlaceholder minHeight={minHeight} />}>
           {children}
         </Suspense>
       ) : (
-        <SectionSkeleton minHeight={minHeight} />
+        <SectionPlaceholder minHeight={minHeight} />
       )}
     </section>
   );

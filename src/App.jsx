@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import RouteSkeleton from "@/components/RouteSkeleton";
+import { preloadHomeMedia } from "@/lib/preload-home-media";
 
 
 const PageViewTracker = lazy(() => import("@/components/PageViewTracker"));
@@ -14,7 +15,14 @@ const GoogleAdSlot = lazy(() =>
 const googleAdSlot = import.meta.env.VITE_GOOGLE_ADS_SLOT || "8636273498";
 
 // Lazy-loaded pages
-const Home = lazy(() => import("./pages/Home"));
+const HOME_LOADER_MIN_MS = 1800;
+const Home = lazy(() =>
+  Promise.all([
+    import("./pages/Home"),
+    new Promise((resolve) => setTimeout(resolve, HOME_LOADER_MIN_MS)),
+    preloadHomeMedia(),
+  ]).then(([homeModule]) => homeModule),
+);
 const Blog = lazy(() => import("./pages/Blog"));
 const Projects = lazy(() => import("./pages/Projects"));
 const Experience = lazy(() => import("./pages/Experience"));

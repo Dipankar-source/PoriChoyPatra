@@ -1,317 +1,152 @@
 "use client";
-import React, { useEffect, useId, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 
-/* ------------------------------ Tokens ------------------------------------ */
+/* Two eyes, centred on an off-white (light) or off-black (dark) screen that
+   follows the system theme. The pupils glance left and right, the eyes blink,
+   and a line of text fades up beneath them, changing as the load progresses.
 
-// One colour per trace, in trace order (4 inputs, then 4 outputs).
-const PALETTE = [
-  "#a855f7",
-  "#22d3ee",
-  "#facc15",
-  "#22c55e",
-  "#22d3ee",
-  "#22c55e",
-  "#f97316",
-  "#facc15",
+  <LoaderOverlay duration={1800} onComplete={() => setReady(true)} />        */
+
+const MESSAGES = [
+  "Loading your page",
+  "Here you go",
+  "Almost done...",
+  "All set",
 ];
 
-const SIZES = { sm: "w-72", md: "w-[32rem]", lg: "w-[46rem]" };
-
-/* ------------------------------ Geometry ---------------------------------- */
-/* Everything is drawn in one 760x360 coordinate space and scales with the SVG. */
-
-const VIEW = { w: 760, h: 360 };
-const CHIP = { x: 280, y: 132, w: 200, h: 96, r: 26 };
-const PIN_Y = [141, 167, 193, 219];
-const PIN = { w: 9, h: 11 };
-
-// side "in": signal flows node -> chip. side "out": chip -> node.
-// midX is where the trace makes its vertical jog; omit it for a straight run.
-// d = seconds per pulse, gap = pause between pulses, delay = start offset.
-const TRACES = [
-  {
-    side: "in",
-    node: [110, 60],
-    pin: 0,
-    midX: 215,
-    d: 2.0,
-    gap: 0.6,
-    delay: 0.0,
-  },
-  {
-    side: "in",
-    node: [80, 120],
-    pin: 1,
-    midX: 195,
-    d: 2.4,
-    gap: 0.4,
-    delay: 0.5,
-  },
-  {
-    side: "in",
-    node: [50, 180],
-    pin: 2,
-    midX: 175,
-    d: 1.8,
-    gap: 0.8,
-    delay: 1.1,
-  },
-  {
-    side: "in",
-    node: [110, 300],
-    pin: 3,
-    midX: 215,
-    d: 2.2,
-    gap: 0.5,
-    delay: 0.3,
-  },
-  {
-    side: "out",
-    node: [655, 70],
-    pin: 0,
-    midX: 545,
-    d: 2.1,
-    gap: 0.7,
-    delay: 0.9,
-  },
-  {
-    side: "out",
-    node: [690, 130],
-    pin: 1,
-    midX: 565,
-    d: 2.5,
-    gap: 0.4,
-    delay: 0.2,
-  },
-  { side: "out", node: [715, 193], pin: 2, d: 1.7, gap: 0.9, delay: 1.4 },
-  {
-    side: "out",
-    node: [650, 300],
-    pin: 3,
-    midX: 545,
-    d: 2.3,
-    gap: 0.5,
-    delay: 0.7,
-  },
-];
-
-const buildPath = ({ side, node, pin, midX }) => {
-  const py = PIN_Y[pin];
-  const px = side === "in" ? CHIP.x : CHIP.x + CHIP.w;
-  const [from, to] = side === "in" ? [node, [px, py]] : [[px, py], node];
-  if (from[1] === to[1]) return `M${from[0]} ${from[1]} H${to[0]}`;
-  return `M${from[0]} ${from[1]} H${midX} V${to[1]} H${to[0]}`;
-};
-
-/* ------------------------------ Helpers ----------------------------------- */
+// Where the pupils look for each message, in px. Cycles if there are more messages.
+const GAZE = [-15, 15, -9, 0];
 
 const cn = (...p) => p.filter(Boolean).join(" ");
 
-const useCycle = (items, ms = 2400) => {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    if (items.length < 2) return;
-    const id = setInterval(() => setIndex((n) => (n + 1) % items.length), ms);
-    return () => clearInterval(id);
-  }, [items.length, ms]);
-  return { index, text: items[index % items.length] };
-};
-
-/* ------------------------------ Trace ------------------------------------- */
-/* A dim wire, plus a short light pulse that runs along it (glow + bright core).
-   Motion's pathLength/pathOffset drive the dash, so no manual path maths. */
-
-const PULSE = 0.16;
-
-const Trace = ({ d, color, node, timing, speed, reduced }) => {
-  const pulseProps = reduced
-    ? { initial: { pathLength: PULSE, pathOffset: 0.45 } }
-    : {
-        initial: { pathLength: PULSE, pathOffset: -PULSE },
-        animate: { pathLength: PULSE, pathOffset: [-PULSE, 1] },
-        transition: {
-          duration: timing.d / speed,
-          delay: timing.delay / speed,
-          repeat: Infinity,
-          repeatDelay: timing.gap / speed,
-          ease: "easeInOut",
-        },
-      };
-
-  return (
-    <g>
-      <path
-        d={d}
-        fill="none"
-        stroke="#38383c"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke={color}
-        strokeWidth="7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.18"
-        {...pulseProps}
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...pulseProps}
-      />
-      <circle cx={node[0]} cy={node[1]} r="5" fill="#050505" stroke="#2a2a2e" />
-    </g>
-  );
-};
-
-/* ------------------------------ Chip -------------------------------------- */
-
-const Chip = ({ gradId, palette, reduced }) => (
-  <g>
-    {[CHIP.x - PIN.w + 1, CHIP.x + CHIP.w - 1].flatMap((x) =>
-      PIN_Y.map((y) => (
-        <rect
-          key={`${x}-${y}`}
-          x={x}
-          y={y - PIN.h / 2}
-          width={PIN.w}
-          height={PIN.h}
-          rx="2.5"
-          fill="#8b8b90"
-        />
-      )),
-    )}
-
-    <rect
-      x={CHIP.x}
-      y={CHIP.y}
-      width={CHIP.w}
-      height={CHIP.h}
-      rx={CHIP.r}
-      fill={`url(#${gradId})`}
+const Eye = ({ cx, gaze, blinkDelay, reduced }) => (
+  <motion.g
+    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+    animate={reduced ? undefined : { scaleY: [1, 1, 0.06, 1] }}
+    transition={{
+      duration: 0.28,
+      times: [0, 0.4, 0.7, 1],
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatDelay: blinkDelay,
+    }}
+  >
+    <circle
+      cx={cx}
+      cy="60"
+      r="42"
+      className="fill-white stroke-[#cfcdc6] dark:fill-[#ecebe6] dark:stroke-transparent"
+      strokeWidth="1.5"
     />
-    <rect
-      x={CHIP.x + 3}
-      y={CHIP.y + 3}
-      width={CHIP.w - 6}
-      height={CHIP.h - 6}
-      rx={CHIP.r - 3}
-      fill="none"
-      stroke="#fff"
-      strokeOpacity="0.05"
-    />
-    {/* Rim slowly drifts through the trace colours. */}
-    <motion.rect
-      x={CHIP.x}
-      y={CHIP.y}
-      width={CHIP.w}
-      height={CHIP.h}
-      rx={CHIP.r}
-      fill="none"
-      strokeWidth="2"
-      initial={{ stroke: palette[0], strokeOpacity: 0.35 }}
-      animate={
+    <motion.g
+      initial={{ x: 0 }}
+      animate={{ x: gaze }}
+      transition={
         reduced
-          ? undefined
-          : {
-              stroke: [...palette, palette[0]],
-              strokeOpacity: [0.25, 0.55, 0.25],
-            }
+          ? { duration: 0 }
+          : { type: "spring", stiffness: 120, damping: 16, mass: 0.8 }
       }
-      transition={{
-        stroke: { duration: 14, repeat: Infinity, ease: "linear" },
-        strokeOpacity: { duration: 2.4, repeat: Infinity, ease: "easeInOut" },
-      }}
-    />
-
-  </g>
+    >
+      <circle cx={cx} cy="60" r="17" className="fill-[#141414]" />
+      <circle
+        cx={cx + 5}
+        cy="54"
+        r="4.5"
+        className="fill-white"
+        opacity="0.9"
+      />
+    </motion.g>
+  </motion.g>
 );
 
-
 export const Loader = ({
-  messages = "Loading",
-  palette = PALETTE,
-  speed = 1,
-  size = "md",
+  messages = MESSAGES,
+  duration = 1800,
+  onComplete,
   className,
 }) => {
   const reduced = !!useReducedMotion();
-  const gradId = useId().replace(/:/g, "");
-  const list = Array.isArray(messages) ? messages : [messages];
-  const { index, text } = useCycle(list);
-  const paths = useMemo(() => TRACES.map(buildPath), []);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const step = duration / messages.length;
+    let i = 0;
+    let timer;
+    const tick = () => {
+      if (i < messages.length - 1) {
+        i += 1;
+        setIndex(i);
+        timer = setTimeout(tick, step);
+      } else {
+        onComplete && (timer = setTimeout(onComplete, step * 0.6));
+      }
+    };
+    timer = setTimeout(tick, step);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration, messages.length]);
+
+  const gaze = GAZE[index % GAZE.length];
 
   return (
     <div
       role="status"
       aria-live="polite"
-      className={cn("relative max-w-full", SIZES[size] ?? SIZES.md, className)}
+      className={cn("flex flex-col items-center", className)}
     >
-      <svg
-        viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
-        className="block h-auto w-full"
+      <motion.svg
+        viewBox="0 0 320 120"
+        className="block h-auto w-64 max-w-full sm:w-72"
         aria-hidden="true"
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2c2c2f" />
-            <stop offset="100%" stopColor="#161618" />
-          </linearGradient>
-        </defs>
+        <Eye cx={95} gaze={gaze} blinkDelay={2.6} reduced={reduced} />
+        <Eye cx={225} gaze={gaze} blinkDelay={2.6} reduced={reduced} />
+      </motion.svg>
 
-        {TRACES.map((t, i) => (
-          <Trace
-            key={i}
-            d={paths[i]}
-            node={t.node}
-            color={palette[i % palette.length]}
-            timing={t}
-            speed={speed}
-            reduced={reduced}
-          />
-        ))}
-
-        <Chip
-          gradId={gradId}
-          palette={palette}
-          reduced={reduced}
-        />
-      </svg>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={index}
-          className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm font-medium text-zinc-300"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.3 }}
-        >
-          {text}
-        </motion.span>
-      </AnimatePresence>
-      <span className="sr-only">{text}</span>
+      <div className="relative mt-8 h-6 w-full text-center">
+        <AnimatePresence mode="wait" initial>
+          <motion.p
+            key={index}
+            className="absolute inset-0 text-sm font-medium tracking-tight text-[#2a2a28] dark:text-[#e4e3de]"
+            initial={{ opacity: 0, y: reduced ? 0 : 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {messages[index]}
+          </motion.p>
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
 
-/** Full-screen (or parent-covering with `fixed={false}`) dark backdrop. */
-export const LoaderOverlay = ({ fixed = true, ...props }) => (
-  <div
-    className={cn(
-      fixed ? "fixed" : "absolute",
-      "inset-0 z-50 flex items-center justify-center bg-[#0a0a0a]",
-    )}
-  >
-    <Loader size="lg" {...props} />
-  </div>
-);
+/** Covers the screen (or its parent with `fixed={false}`), then fades out and
+ *  calls `onComplete` once the exit has finished. */
+export const LoaderOverlay = ({ fixed = true, onComplete, ...props }) => {
+  const [show, setShow] = useState(true);
+  return (
+    <AnimatePresence onExitComplete={onComplete}>
+      {show && (
+        <motion.div
+          key="loader"
+          className={cn(
+            fixed ? "fixed" : "absolute",
+            "inset-0 z-50 flex items-center justify-center bg-[#f5f4f0] px-6 dark:bg-[#0f0f0f]",
+          )}
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+        >
+          <Loader {...props} onComplete={() => setShow(false)} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 export default Loader;
