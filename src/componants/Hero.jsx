@@ -167,12 +167,17 @@ const Hero = () => {
 
         <div className="w-full">
           <div className="w-full flex items-center justify-between">
-            <h1
-              id="profile-name"
-              className="aktura-font flex text-[31px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px] mt-1"
-            >
-              Dipankar <span className="hidden md:inline-block">Barik</span>
-            </h1>
+            <div className="min-w-0">
+              <h1
+                id="profile-name"
+                className="aktura-font mt-1 whitespace-nowrap text-[26px] leading-[1.05] text-neutral-950 dark:text-neutral-50 sm:text-[34px]"
+              >
+                Dipankar Barik
+              </h1>
+              <p className="mt-1 text-xs font-medium text-neutral-700 dark:text-stone-400 sm:text-sm">
+                MERN Full-Stack Developer
+              </p>
+            </div>
             <button
               type="button"
               onClick={handleLike}

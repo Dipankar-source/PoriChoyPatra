@@ -1,76 +1,47 @@
-<div align="center">
-  <h1>DipFolio - Personal Developer Portfolio</h1>
-</div>
+# Dipankar Barik | MERN Full-Stack Developer
 
-**DipFolio** is a modern, highly interactive, and visually striking personal portfolio built with **React**, **Vite**, and **Tailwind CSS**. Designed to showcase projects, skills, and professional experience, it leverages advanced animation libraries and 3D rendering to deliver a premium user experience.
+**Dipankar Barik** is a MERN Full-Stack Developer building responsive web experiences with React, Node.js, Express, and MongoDB. This repository contains the source for my personal portfolio, where I share selected projects, experience, and technical writing.
 
-## Key Features
+**[Live Project Demo](https://onrender.com)** · **[Developer Portfolio](https://onrender.com)**
 
-*   **Responsive Design**: Fully optimized for desktops, tablets, and mobile devices.
-*   **Dark & Light Mode**: Seamless theme switching with global keyboard shortcuts (Ctrl + T) and smooth transitions.
-*   **Advanced Animations**: Powered by **Framer Motion** for fluid page transitions, scroll animations, and interactive elements.
-*   **3D Elements**: Incorporates **Three.js** and **React Three Fiber** for rendering interactive 3D models.
-*   **Modern Routing**: Utilizes **React Router DOM** for fast, client-side navigation without page reloads.
-*   **Custom UI Components**: Features bespoke components like a custom mouse follower, magnetic wrappers, and a dynamic premium search palette.
+## About
 
-## Tech Stack
+The portfolio brings together project work, professional experience, writing, and contact information in one place. It is built with React and Vite, with a responsive interface and dedicated pages for projects, experience, and blog posts.
 
-*   **Core**: React 19, Vite, JavaScript
-*   **Styling**: Tailwind CSS 4, Tailwind Merge, CLSX
-*   **Animations**: Framer Motion, Motion, TSParticles
-*   **3D Rendering**: Three.js, @react-three/fiber
-*   **Routing**: React Router DOM v7
-*   **Icons & UI**: Radix UI, Lucide React, React Icons, Tabler Icons
+## Technology
 
-## Prerequisites
+- React 19 and JavaScript
+- Vite
+- Tailwind CSS
+- React Router
+- Node.js, Express, and MongoDB experience
 
-Before you begin, ensure you have the following installed on your machine:
-*   **Node.js**: Version 18.0.0 or higher.
-*   **npm** or **yarn**: Package managers for installing dependencies.
+## Run Locally
 
-## Installation and Setup
+Requirements: Node.js 18 or newer and npm.
 
-Follow these steps to get a development environment running:
+```bash
+npm install
+npm run dev
+```
 
-1.  **Clone the repository** (if applicable) and navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
+Create a production build and preview it locally:
 
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+```bash
+npm run build
+npm run preview
+```
 
-3.  **Start the development server**:
-    ```bash
-    npm run dev
-    ```
+The production build generates `dist/sitemap.xml`. Set `VITE_SITE_URL` to the canonical public origin before building when deploying to a custom domain or a project-specific Render hostname. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` if the build should also include published blog URLs in the sitemap.
 
-4.  **Open your browser**:
-    Navigate to `http://localhost:5173` to view the application.
+## Portfolio Pages
 
-## Project Structure
+- [Home](https://onrender.com/)
+- [Projects](https://onrender.com/projects)
+- [Experience](https://onrender.com/experience)
+- [Blog](https://onrender.com/blog)
+- [Contact](https://onrender.com/contact)
 
-A brief overview of the key directories within this frontend project:
+## Contact
 
-*   **`src/`**: Contains the main application source code.
-    *   **`assets/`**: Static assets like images, fonts, and sound files.
-    *   **`components/`**: Reusable UI elements, interactive wrappers, and layout structures (e.g., Navbar, Hero, AboutMe).
-    *   **`context/`**: React Context providers for global state management (e.g., ThemeContext).
-    *   **`uicomponents/`**: Specialized or external UI components (e.g., PremiumSearch).
-    *   **`App.jsx`**: The root component configuring routes and global layouts.
-    *   **`main.jsx`**: The entry point of the React application.
-
-## Available Scripts
-
-In the project directory, you can run the following commands:
-
-*   **`npm run dev`**: Runs the app in the development mode.
-*   **`npm run build`**: Builds the app for production to the `dist` folder, optimizing the build for the best performance.
-*   **`npm run lint`**: Runs ESLint to check for code quality and style issues.
-*   **`npm run preview`**: Serves the production build locally for previewing before deployment.
-
-## Acknowledgments
-
-This project utilizes several open-source libraries and design patterns to achieve its highly interactive and premium aesthetic. Special thanks to the creators and maintainers of React, Vite, Framer Motion, and Tailwind CSS.
+For collaboration and professional inquiries, visit the [Developer Portfolio](https://onrender.com).
