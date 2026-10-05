@@ -136,6 +136,7 @@ const readPublishedPostsCache = () => {
 
 const toPublishedListPost = (post) => ({
   id: post.id,
+  slug: post.slug,
   title: post.title,
   excerpt: post.excerpt,
   category: post.category,
@@ -234,6 +235,31 @@ export const getBlogPost = async (id) => {
     .maybeSingle();
   if (error) throw error;
   return data?.post_data || null;
+};
+
+export const getPublishedBlogPostByIdOrSlug = async (idOrSlug) => {
+  const client = requireSupabase();
+  const identifier = String(idOrSlug);
+  const byId = await client
+    .from("blog_posts")
+    .select("post_data")
+    .eq("id", identifier)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (byId.error) throw byId.error;
+  if (byId.data?.post_data) return byId.data.post_data;
+
+  const bySlug = await client
+    .from("blog_posts")
+    .select("post_data")
+    .eq("status", "published")
+    .filter("post_data->>slug", "eq", identifier)
+    .limit(1)
+    .maybeSingle();
+
+  if (bySlug.error) throw bySlug.error;
+  return bySlug.data?.post_data || null;
 };
 
 export const saveBlogPost = async (post) => {

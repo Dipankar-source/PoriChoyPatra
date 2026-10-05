@@ -14,7 +14,7 @@ import IOSBentoGrid from "@/uicomponents/bentos/ios-bento-grid";
 import PremiumNavbar from "@/uicomponents/navbars/premium-navbar";
 import ChronosCardDemo from "@/uicomponents/cards/chronosCardDemo";
 import IOSSettingsAccordion from "@/uicomponents/accordion/ios-accordion";
-import { getBlogPost, toPublicBlogPost } from "@/lib/blog-store";
+import { getPublishedBlogPostByIdOrSlug, toPublicBlogPost } from "@/lib/blog-store";
 import PageFrame, {
   AdGridSection,
   BackBar,
@@ -47,7 +47,7 @@ const nextUp = (skip) =>
     .slice(0, 2);
 
 const fetchBlogData = async (blogId) => {
-  const custom = await getBlogPost(blogId);
+  const custom = await getPublishedBlogPostByIdOrSlug(blogId);
   if (custom?.status === "published") {
     return {
       blog: {
@@ -309,7 +309,7 @@ const EachBlogById = () => {
           {related.map((post) => (
             <PostRow
               key={post.id}
-              to={`/blog/${post.id}`}
+              to={`/blog/${encodeURIComponent(post.slug || post.id)}`}
               title={post.title}
               meta={post.date}
             />

@@ -148,7 +148,7 @@ const Blog = () => {
           posts.map((post) => (
             <PostRow
               key={post.id}
-              to={`/blog/${post.id}`}
+              to={`/blog/${encodeURIComponent(post.slug || post.id)}`}
               title={post.title}
               meta={post.date}
             />

@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -32,9 +33,10 @@ if (supabaseUrl && supabaseKey) {
 
     const posts = await response.json();
     for (const row of posts) {
-      const id = row?.post_data?.id;
-      if (id !== undefined && id !== null && String(id).length > 0) {
-        routes.push(`/blog/${encodeURIComponent(String(id))}`);
+      const post = row?.post_data;
+      const identifier = post?.slug || post?.id;
+      if (identifier !== undefined && identifier !== null && String(identifier).length > 0) {
+        routes.push(`/blog/${encodeURIComponent(String(identifier))}`);
       }
     }
   } catch (error) {
